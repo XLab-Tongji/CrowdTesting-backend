@@ -10,11 +10,10 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "myuser")
+@Table(name = "user")
 public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -28,9 +27,6 @@ public class User implements UserDetails{
     }
     public User() {
 
-    }
-    public Integer getId() {
-        return id;
     }
     @Override
     public String getUsername() {
