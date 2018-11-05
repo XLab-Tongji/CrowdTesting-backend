@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.Collections;
 import java.util.List;
 @RestController
 public class TaskController {
@@ -13,37 +14,43 @@ public class TaskController {
     private TaskRepository taskRepository;
     @Autowired
     private Task_dataRepository task_dataRepository;
-    @RequestMapping(value = "/taskfindall",method = RequestMethod.GET)
-    public List<Task> taskfindall(){
-        return taskRepository.findAll();
+    @RequestMapping(value = "/task/find-all",method = RequestMethod.GET)
+    public List<Task> taskFindAll(){
+        List<Task> temp=taskRepository.findAll();
+        Collections.reverse(temp);
+        return temp;
     }
-    @RequestMapping(value = "/taskfind/id",method = RequestMethod.GET)
-    public Task taskfind_id(int id){
+    @RequestMapping(value = "/task/find-by-id",method = RequestMethod.GET)
+    public Task taskFindById(int id){
         return taskRepository.findById(id);
     }
-    @RequestMapping(value = "/taskfind/name",method = RequestMethod.GET)
-    public List<Task> taskfind_name(String name){
-        return taskRepository.findByName(name);
+    @RequestMapping(value = "/task/find-by-name",method = RequestMethod.GET)
+    public List<Task> taskFindByName(String name){
+        List<Task> temp=taskRepository.findByName(name);
+        Collections.reverse(temp);
+        return temp;
     }
-    @RequestMapping(value = "/taskfind/requesterid",method = RequestMethod.GET)
-    public List<Task> taskfind_requesterid(int requesterid){
-        return taskRepository.findByRequesterid(requesterid);
+    @RequestMapping(value = "/task/find-by-requester-id",method = RequestMethod.GET)
+    public List<Task> taskFindByRequesterId(int requesterid){
+        List<Task> temp=taskRepository.findByRequesterid(requesterid);
+        Collections.reverse(temp);
+        return temp;
     }
-    @RequestMapping(value = "/taskfind/reward",method = RequestMethod.GET)
-    public List<Task> taskfind_reward(int least,int most){
-        return taskRepository.findByRewardBetween(least,most);
+    @RequestMapping(value = "/task/find-by-reward",method = RequestMethod.GET)
+    public List<Task> taskFindByReward(int lowest,int highest){
+        return taskRepository.findByRewardBetween(lowest,highest);
     }
-    @RequestMapping(value = "/taskadd",method = RequestMethod.POST)
-    public void taskadd(String name,String description,int requester_id){
-        Task temp=new Task(name,description,requester_id);
+    @RequestMapping(value = "/task/add",method = RequestMethod.POST)
+    public void taskAdd(String name,String description,int requester_id,int reward){
+        Task temp=new Task(name,description,requester_id,reward);
         taskRepository.saveAndFlush(temp);
     }
-    @RequestMapping(value = "/taskupdate",method = RequestMethod.PUT)
-    public void taskupdata(Task temp){
-        taskRepository.saveAndFlush(temp);
+    @RequestMapping(value = "/task/update",method = RequestMethod.PUT)
+    public void taskUpdate(Task task){
+        taskRepository.saveAndFlush(task);
     }
-    @RequestMapping(value = "/taskdelete",method = RequestMethod.DELETE)
-    public void taskdelete(int id){
+    @RequestMapping(value = "/task/delete",method = RequestMethod.DELETE)
+    public void taskDelete(int id){
         taskRepository.deleteById(id);
         taskRepository.flush();
     }
