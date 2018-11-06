@@ -44,7 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/addUser","/select","/task_datafind","/task_dataadd","/taskfindall","/taskfind/id","/taskfind/name","/taskfind/requesterid","/taskfind/reward","/taskadd","/taskdelete").permitAll()
+                .antMatchers("/addUser","/select","/task/find-all","/task/find-by-name","/task/find-by-id","/task/find-by-requester-id","/task/find-by-reward","/task/add","/task/update","/task/delete","/task_data/add","/task_data/find","/changePassword").permitAll()
                 .antMatchers("/requesterinfo").hasRole("REQUESTER")
                 .antMatchers("/workerinfo").hasRole("WORKER")
                 .anyRequest().authenticated()

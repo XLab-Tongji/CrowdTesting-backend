@@ -13,7 +13,6 @@ import java.util.List;
 @Table(name = "muser")
 public class User implements UserDetails{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -28,6 +27,11 @@ public class User implements UserDetails{
     public User() {
 
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String getUsername() {
         return username;
