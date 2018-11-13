@@ -5,8 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "PERSONAL_TASK")
-@IdClass(PersonalTask.class)
-public class PersonalTask extends PersonalTaskKey {
+public class PersonalTask {
     @EmbeddedId
     private PersonalTaskKey id;
 
@@ -14,8 +13,20 @@ public class PersonalTask extends PersonalTaskKey {
 
     }
 
-    public PersonalTask(int workerId,int taskId) {
-        this.id.workerId = workerId;
-        this.id.taskId = taskId;
+    public int getWorkerId(){
+        return id.getWorkerId();
+    }
+
+    public int getTaskId(){
+        return id.getTaskId();
+    }
+
+    public PersonalTask(int workerId, int taskId) {
+        this.id = new PersonalTaskKey(workerId, taskId);
+    }
+
+
+    public void setId(int workerId, int taskId) {
+        this.id = new PersonalTaskKey(workerId, taskId);
     }
 }

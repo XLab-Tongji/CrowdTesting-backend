@@ -3,16 +3,18 @@ package com.example.now.entity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import com.example.now.entity.TokenDetail;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "muser")
-public class User implements UserDetails{
+@Table(name = "myuser")
+public class User implements UserDetails,TokenDetail{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -26,6 +28,9 @@ public class User implements UserDetails{
     }
     public User() {
 
+    }
+    public Integer getId() {
+        return id;
     }
 
     public void setPassword(String password) {

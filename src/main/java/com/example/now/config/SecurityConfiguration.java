@@ -1,58 +1,59 @@
 package com.example.now.config;
 import com.example.now.service.SecurityService;
+import com.example.now.filter.AuthenticationTokenFilter;
 import com.example.now.util.MD5Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 @Configuration//指定为配置类
 @EnableWebSecurity//指定为Spring Security配置类
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
+    @Autowired
+    private EntryPointUnauthorizedHandler unauthorizedHandler;
+    @Autowired
+    private MyAccessDeniedHandler accessDeniedHandler;
     @Bean
     UserDetailsService Service(){
         return new SecurityService();
     }
 
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(Service()).passwordEncoder(new PasswordEncoder() {
-
-            //用户加密配置
-            @Override
-            public String encode(CharSequence charSequence) {
-                return MD5Util.encode((String)charSequence);
-            }
-
-            @Override
-            public boolean matches(CharSequence charSequence, String s) {
-                return s.equals(MD5Util.encode((String)charSequence));
-            }
-        });
+    @Bean
+    public AuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+        AuthenticationTokenFilter authenticationTokenFilter = new AuthenticationTokenFilter();
+        authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
+        return authenticationTokenFilter;
     }
-
-    /*
-    通过 authorizeRequests() 定义哪些URL需要被保护、哪些不需要被保护
-    通过 formLogin() 定义当需要用户登录时候，转到的登录页面。
-     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/addUser","/select","/task/find-all","/task/find-by-name","/task/find-by-id","/task/find-by-requester-id","/task/find-by-reward","/task/add","/task/update","/task/delete","/task_data/add","/task_data/find","/changePassword").permitAll()
-                .antMatchers("/requesterinfo").hasRole("REQUESTER")
-                .antMatchers("/workerinfo").hasRole("WORKER")
-                .anyRequest().authenticated()
+                .antMatchers("/changePassword","/worker/find-by-username","/requester/find-by-username","/task/find-by-name","/task/find-by-requester-id","/task/find-by-reward","/taskData/find","/personal-task/find-task-list","/personal-task/find-worker-list").authenticated()       // 需携带有效 token
+                .antMatchers("/requester/update","/requester/find-myself","/task/add","/task/update","/task/delete","/task/find-my-task","/taskData/add").hasRole("REQUESTER")
+                .antMatchers("/worker/update","/worker/find-myself","/personal-task/add","/personal-task/delete","/personal-task/find-my-task").hasRole("WORKER")
+                .anyRequest().permitAll()       // 允许所有请求通过
                 .and()
-                .formLogin()
-                .defaultSuccessUrl("/select")
-                .permitAll()
+                // 配置被拦截时的处理
+                .exceptionHandling()
+                .authenticationEntryPoint(this.unauthorizedHandler)   // 添加 token 无效或者没有携带 token 时的处理
+                .accessDeniedHandler(this.accessDeniedHandler)      //添加无权限时的处理
                 .and()
-                .csrf().disable();
+                .csrf()
+                .disable()                      // 禁用 Spring Security 自带的跨域处理
+                .sessionManagement()                        // 定制我们自己的 session 策略
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 调整为让 Spring Security 不创建和使用 session
+
+
+        http
+                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
 }

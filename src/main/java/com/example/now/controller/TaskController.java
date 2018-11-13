@@ -1,57 +1,88 @@
 package com.example.now.controller;
-import com.example.now.repository.Task_dataRepository;
 import com.example.now.entity.Task;
-import com.example.now.repository.TaskRepository;
+import com.example.now.service.RequesterService;
+import com.example.now.service.TaskService;
+import com.example.now.entity.ResultMap;
+import com.example.now.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 @RestController
+@RequestMapping("/task")
 public class TaskController {
+    @Value("${token.header}")
+    private String tokenHeader;
     @Autowired
-    private TaskRepository taskRepository;
+    private TokenUtils tokenUtils;
     @Autowired
-    private Task_dataRepository task_dataRepository;
-    @RequestMapping(value = "/task/find-all",method = RequestMethod.GET)
-    public List<Task> taskFindAll(){
-        List<Task> temp=taskRepository.findAll();
-        Collections.reverse(temp);
-        return temp;
+    private TaskService taskService;
+    @Autowired
+    private RequesterService requesterService;
+    @Autowired
+    private HttpServletRequest request;
+    @RequestMapping(value = "/find-all",method = RequestMethod.GET)
+    public ResultMap taskFindAll(){
+       return new ResultMap().success().data("tasks",taskService.findAllTask());
     }
-    @RequestMapping(value = "/task/find-by-id",method = RequestMethod.GET)
-    public Task taskFindById(int id){
-        return taskRepository.findById(id);
+    @RequestMapping(value = "/find-by-id",method = RequestMethod.GET)
+    public ResultMap taskFindById(int id){
+        return new ResultMap().success().data("task",taskService.findTaskById(id));
     }
-    @RequestMapping(value = "/task/find-by-name",method = RequestMethod.GET)
-    public List<Task> taskFindByName(String name){
-        List<Task> temp=taskRepository.findByName(name);
-        Collections.reverse(temp);
-        return temp;
+    @RequestMapping(value = "/find-by-name",method = RequestMethod.GET)
+    public ResultMap taskFindByName(String name){
+        List<Task> result=taskService.findTaskByName(name);
+        if(result.isEmpty()){
+            return new ResultMap().fail("204").message("there is no task with that name");
+        }
+        return new ResultMap().success().data("tasks",result);
     }
-    @RequestMapping(value = "/task/find-by-requester-id",method = RequestMethod.GET)
-    public List<Task> taskFindByRequesterId(int requesterid){
-        List<Task> temp=taskRepository.findByRequesterid(requesterid);
-        Collections.reverse(temp);
-        return temp;
+    @RequestMapping(value = "/find-by-requester-id",method = RequestMethod.GET)
+    public ResultMap taskFindByRequesterId(int requesterid){
+        List<Task> result=taskService.findTaskByRequesterId(requesterid);
+        if(result.isEmpty()){
+            return new ResultMap().success("204").message("there is no task published by that requester");
+        }
+        return new ResultMap().success().data("tasks",result);
     }
-    @RequestMapping(value = "/task/find-by-reward",method = RequestMethod.GET)
-    public List<Task> taskFindByReward(int lowest,int highest){
-        return taskRepository.findByRewardBetween(lowest,highest);
+    @RequestMapping(value = "/find-by-reward",method = RequestMethod.GET)
+    public ResultMap taskFindByReward(int lowest,int highest){
+        List<Task> result=taskService.findTaskByReward(lowest,highest);
+        if(result.isEmpty()){
+            return new ResultMap().success("204").message("there is no task whose reward is in the given range");
+        }
+        return new ResultMap().success().data("tasks",result);
     }
-    @RequestMapping(value = "/task/add",method = RequestMethod.POST)
-    public void taskAdd(String name,String description,int requester_id,int reward){
-        Task temp=new Task(name,description,requester_id,reward);
-        taskRepository.saveAndFlush(temp);
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    public ResultMap taskAdd(String name,String description,int requester_id,int reward){
+        String message=taskService.addTask(name, description, requester_id, reward);
+        if(message!="succeed"){
+            return new ResultMap().fail("400").message(message);
+        }
+        return new ResultMap().success("201").message(message);
     }
-    @RequestMapping(value = "/task/update",method = RequestMethod.PUT)
-    public void taskUpdate(Task task){
-        taskRepository.saveAndFlush(task);
+    @RequestMapping(value = "/update",method = RequestMethod.PUT)
+    public ResultMap taskUpdate(Task task){
+        String message=taskService.updateTask(task);
+        return new ResultMap().success("201").message(message);
     }
-    @RequestMapping(value = "/task/delete",method = RequestMethod.DELETE)
-    public void taskDelete(int id){
-        taskRepository.deleteById(id);
-        taskRepository.flush();
+    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
+    public ResultMap taskDelete(int id){
+        String message=taskService.deleteTask(id);
+        return new ResultMap().success("201").message(message);
+    }
+    @RequestMapping(value = "/find-my-task",method = RequestMethod.GET)
+    public ResultMap findMyPublishTask(){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        List<Task> tasks=taskService.findTaskByRequesterId(requesterService.findRequesterByUsername(username).getRequesterId());
+        if(tasks.isEmpty()){
+            return new ResultMap().success("204").message("there is no task published by you");
+        }
+        return new ResultMap().success().data("tasks",tasks);
     }
 }
