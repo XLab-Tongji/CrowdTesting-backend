@@ -95,9 +95,10 @@ public class Task {
 
     }
 
-    public Task(String name,String description,int requester_id){
+    public Task(String name,String description,int requester_id,int reward){
         this.name=name;
         this.description=description;
         this.requesterid=requester_id;
+        this.reward=reward;
     }
 }
