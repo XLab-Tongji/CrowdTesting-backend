@@ -21,7 +21,7 @@ public class WorkerServiceImpl implements WorkerService{
     }
     @Override
     public String addWorker(String username,String name){
-        if(username==""||name=="")
+        if(username==null||name==null)
         {
             return "username or name is empty";
         }

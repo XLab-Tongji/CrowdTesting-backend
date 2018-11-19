@@ -25,11 +25,11 @@ public class LoginController {
 
     private ResultMap checkAccount(String username,String password, UserDetails loginDetail){
         if (loginDetail == null){
-            return new ResultMap().fail("434").message("账号不存在！");
+            return new ResultMap().fail("404").message("账号不存在！");
         }else {
             String encodePassword = MD5Util.encode(password);
             if (!loginDetail.getPassword().equals(encodePassword)){
-                return new ResultMap().fail("438").message("密码错误！");
+                return new ResultMap().fail("401").message("密码错误！");
             }
         }
         return null;

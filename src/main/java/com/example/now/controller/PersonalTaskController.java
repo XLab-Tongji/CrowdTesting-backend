@@ -49,7 +49,10 @@ public class PersonalTaskController {
     }
 
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public ResultMap personalTaskAdd(Integer workerId,Integer taskId){
+    public ResultMap personalTaskAdd(Integer taskId){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        int workerId=workerService.findWorkerByUsername(username).getWorkerId();
         String message=personalTaskService.addPersonalTask(workerId, taskId);
         if(message!="succeed"){
             return new ResultMap().fail("400").message(message);

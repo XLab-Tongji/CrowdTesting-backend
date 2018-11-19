@@ -58,8 +58,10 @@ public class TaskController {
         return new ResultMap().success().data("tasks",result);
     }
     @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public ResultMap taskAdd(String name,String description,int requester_id,int reward){
-        String message=taskService.addTask(name, description, requester_id, reward);
+    public ResultMap taskAdd(String name,String description,int reward){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        String message=taskService.addTask(name, description, requesterService.findRequesterByUsername(username).getRequesterId(), reward);
         if(message!="succeed"){
             return new ResultMap().fail("400").message(message);
         }

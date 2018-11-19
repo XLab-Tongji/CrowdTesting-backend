@@ -10,11 +10,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "myuser")
+@Table(name = "muser")
 public class User implements UserDetails,TokenDetail{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -28,9 +26,6 @@ public class User implements UserDetails,TokenDetail{
     }
     public User() {
 
-    }
-    public Integer getId() {
-        return id;
     }
 
     public void setPassword(String password) {

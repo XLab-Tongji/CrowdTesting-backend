@@ -26,9 +26,8 @@ public class UserServiceImpl implements UserService{
         User user = new User(username,encodePassword,role);
         userRepository.saveAndFlush(user);
         String message;
-        if(role=="ROLE_REQUESTER"){
+        if(role.equals("ROLE_REQUESTER"))
             message=requesterService.addRequester(username, name);
-        }
         else
             message=workerService.addWorker(username, name);
         return message;
