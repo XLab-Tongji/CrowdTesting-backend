@@ -9,37 +9,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class WebController {
     @Autowired
     private UserRepository userRepository;
-    @GetMapping("/addUser")
-    public String addUser(Model model) {
-        return "addUser";
-    }
-    @PostMapping("/addUser")
-    public String after_addUser(String name,String password,String role) {
+    @RequestMapping(value = "/addUser",method = RequestMethod.POST)
+    public String addUser(String name,String password,String role) {
         String encodePassword = MD5Util.encode(password);
+        User temp = userRepository.findByUsername(name);
+        if(temp != null)
+            return "user has existed";
         User user = new User(name,encodePassword,role);
-        userRepository.save(user);
-        return "redirect:/select";
+        userRepository.saveAndFlush(user);
+        return "success";
     }
-    @GetMapping("/select")
-    public String select() {
-        return "select";
-    }
-    @GetMapping("/requesterinfo")
-    public String requesterinfo(Model model) {
-        return "requesterinfo";
-    }
-    @GetMapping("/workerinfo")
-    public String workerinfo(Model model) {
-        return "workerinfo";
+    @RequestMapping(value = "/changePassword",method = RequestMethod.PUT)
+    public String changePassword(String name,String password) {
+        User user = userRepository.findByUsername(name);
+        if(user == null)
+            return "user did not exist";
+        user.setPassword(password);
+        userRepository.saveAndFlush(user);
+        return "success";
     }
 }
