@@ -12,11 +12,11 @@ public class PersonalTaskKey implements Serializable {
     public Integer taskId;
 
     @Override
-    public String toString(){
-        return "PersonalTaskKey[workerId="+workerId.toString()+",taskId="+taskId.toString()+"]";
+    public String toString() {
+        return "PersonalTaskKey[workerId=" + workerId.toString() + ",taskId=" + taskId.toString() + "]";
     }
 
-    public PersonalTaskKey(){
+    public PersonalTaskKey() {
 
     }
 
@@ -28,8 +28,8 @@ public class PersonalTaskKey implements Serializable {
         return taskId;
     }
 
-    public PersonalTaskKey(int workerId, int taskId){
-        this.workerId=workerId;
-        this.taskId=taskId;
+    public PersonalTaskKey(int workerId, int taskId) {
+        this.workerId = workerId;
+        this.taskId = taskId;
     }
 }

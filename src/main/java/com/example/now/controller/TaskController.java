@@ -1,4 +1,5 @@
 package com.example.now.controller;
+
 import com.example.now.entity.Task;
 import com.example.now.service.RequesterService;
 import com.example.now.service.TaskService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 @RestController
 @RequestMapping("/task")
 public class TaskController {
@@ -25,66 +27,75 @@ public class TaskController {
     private RequesterService requesterService;
     @Autowired
     private HttpServletRequest request;
-    @RequestMapping(value = "/find-all",method = RequestMethod.GET)
-    public ResultMap taskFindAll(){
-       return new ResultMap().success().data("tasks",taskService.findAllTask());
+
+    @RequestMapping(value = "/find-all", method = RequestMethod.GET)
+    public ResultMap taskFindAll() {
+        return new ResultMap().success().data("tasks", taskService.findAllTask());
     }
-    @RequestMapping(value = "/find-by-id",method = RequestMethod.GET)
-    public ResultMap taskFindById(int id){
-        return new ResultMap().success().data("task",taskService.findTaskById(id));
+
+    @RequestMapping(value = "/find-by-id", method = RequestMethod.GET)
+    public ResultMap taskFindById(int id) {
+        return new ResultMap().success().data("task", taskService.findTaskById(id));
     }
-    @RequestMapping(value = "/find-by-name",method = RequestMethod.GET)
-    public ResultMap taskFindByName(String name){
-        List<Task> result=taskService.findTaskByName(name);
-        if(result.isEmpty()){
+
+    @RequestMapping(value = "/find-by-name", method = RequestMethod.GET)
+    public ResultMap taskFindByName(String name) {
+        List<Task> result = taskService.findTaskByName(name);
+        if (result.isEmpty()) {
             return new ResultMap().fail("204").message("there is no task with that name");
         }
-        return new ResultMap().success().data("tasks",result);
+        return new ResultMap().success().data("tasks", result);
     }
-    @RequestMapping(value = "/find-by-requester-id",method = RequestMethod.GET)
-    public ResultMap taskFindByRequesterId(int requesterid){
-        List<Task> result=taskService.findTaskByRequesterId(requesterid);
-        if(result.isEmpty()){
+
+    @RequestMapping(value = "/find-by-requester-id", method = RequestMethod.GET)
+    public ResultMap taskFindByRequesterId(int requesterid) {
+        List<Task> result = taskService.findTaskByRequesterId(requesterid);
+        if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no task published by that requester");
         }
-        return new ResultMap().success().data("tasks",result);
+        return new ResultMap().success().data("tasks", result);
     }
-    @RequestMapping(value = "/find-by-reward",method = RequestMethod.GET)
-    public ResultMap taskFindByReward(int lowest,int highest){
-        List<Task> result=taskService.findTaskByReward(lowest,highest);
-        if(result.isEmpty()){
+
+    @RequestMapping(value = "/find-by-reward", method = RequestMethod.GET)
+    public ResultMap taskFindByReward(int lowest, int highest) {
+        List<Task> result = taskService.findTaskByReward(lowest, highest);
+        if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no task whose reward is in the given range");
         }
-        return new ResultMap().success().data("tasks",result);
+        return new ResultMap().success().data("tasks", result);
     }
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public ResultMap taskAdd(String name,String description,int reward){
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ResultMap taskAdd(String name, String description, int reward) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        String message=taskService.addTask(name, description, requesterService.findRequesterByUsername(username).getRequesterId(), reward);
-        if(message!="succeed"){
+        String message = taskService.addTask(name, description, requesterService.findRequesterByUsername(username).getRequesterId(), reward);
+        if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message);
     }
-    @RequestMapping(value = "/update",method = RequestMethod.PUT)
-    public ResultMap taskUpdate(Task task){
-        String message=taskService.updateTask(task);
+
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    public ResultMap taskUpdate(Task task) {
+        String message = taskService.updateTask(task);
         return new ResultMap().success("201").message(message);
     }
-    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
-    public ResultMap taskDelete(int id){
-        String message=taskService.deleteTask(id);
+
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ResultMap taskDelete(int id) {
+        String message = taskService.deleteTask(id);
         return new ResultMap().success("201").message(message);
     }
-    @RequestMapping(value = "/find-my-task",method = RequestMethod.GET)
-    public ResultMap findMyPublishTask(){
+
+    @RequestMapping(value = "/find-my-task", method = RequestMethod.GET)
+    public ResultMap findMyPublishTask() {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        List<Task> tasks=taskService.findTaskByRequesterId(requesterService.findRequesterByUsername(username).getRequesterId());
-        if(tasks.isEmpty()){
+        List<Task> tasks = taskService.findTaskByRequesterId(requesterService.findRequesterByUsername(username).getRequesterId());
+        if (tasks.isEmpty()) {
             return new ResultMap().success("204").message("there is no task published by you");
         }
-        return new ResultMap().success().data("tasks",tasks);
+        return new ResultMap().success().data("tasks", tasks);
     }
 }

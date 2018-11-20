@@ -1,15 +1,18 @@
 package com.example.now.entity;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.sql.Time;
 import java.io.Serializable;
 import java.util.Date;
+
 @Embeddable
-public class TaskDataPrime implements Serializable{
+public class TaskDataPrime implements Serializable {
     @Column(name = "task_id")
     private Integer id;
     @Column
     private Timestamp time;
+
     public Integer getId() {
         return id;
     }
@@ -27,16 +30,16 @@ public class TaskDataPrime implements Serializable{
     }
 
     @Override
-    public String toString(){
-        return "TaskDataPrime[id="+id.toString()+",time="+time.toString()+"]";
+    public String toString() {
+        return "TaskDataPrime[id=" + id.toString() + ",time=" + time.toString() + "]";
     }
 
-    public TaskDataPrime(){
+    public TaskDataPrime() {
 
     }
 
-    public TaskDataPrime(int id){
-        this.id=id;
-        this.time=new Timestamp(new Date().getTime());
+    public TaskDataPrime(int id) {
+        this.id = id;
+        this.time = new Timestamp(new Date().getTime());
     }
 }

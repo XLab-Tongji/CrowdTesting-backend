@@ -1,4 +1,5 @@
 package com.example.now.controller;
+
 import com.example.now.service.LoginService;
 import com.example.now.entity.ResultMap;
 import com.example.now.util.MD5Util;
@@ -10,7 +11,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
+
 @RestController
 public class LoginController {
     private final LoginService loginService;
@@ -23,23 +26,23 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    private ResultMap checkAccount(String username,String password, UserDetails loginDetail){
-        if (loginDetail == null){
+    private ResultMap checkAccount(String username, String password, UserDetails loginDetail) {
+        if (loginDetail == null) {
             return new ResultMap().fail("404").message("账号不存在！");
-        }else {
+        } else {
             String encodePassword = MD5Util.encode(password);
-            if (!loginDetail.getPassword().equals(encodePassword)){
+            if (!loginDetail.getPassword().equals(encodePassword)) {
                 return new ResultMap().fail("401").message("密码错误！");
             }
         }
         return null;
     }
 
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public ResultMap login(String username,String password){
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResultMap login(String username, String password) {
         UserDetails loginDetail = loginService.getLoginDetail(username);
-        ResultMap ifLoginFail = checkAccount(username,password,loginDetail);
-        if (ifLoginFail != null){
+        ResultMap ifLoginFail = checkAccount(username, password, loginDetail);
+        if (ifLoginFail != null) {
             return ifLoginFail;
         }
 

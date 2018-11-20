@@ -13,11 +13,11 @@ public class PersonalTask {
 
     }
 
-    public int getWorkerId(){
+    public int getWorkerId() {
         return id.getWorkerId();
     }
 
-    public int getTaskId(){
+    public int getTaskId() {
         return id.getTaskId();
     }
 

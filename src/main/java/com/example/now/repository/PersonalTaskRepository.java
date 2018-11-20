@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface PersonalTaskRepository extends JpaRepository<PersonalTask, PersonalTaskKey> {
     public List<PersonalTask> findByIdWorkerId(int id);
+
     public List<PersonalTask> findByIdTaskId(int id);
+
     public PersonalTask findByIdWorkerIdAndIdTaskId(int workerId, int taskId);
 }

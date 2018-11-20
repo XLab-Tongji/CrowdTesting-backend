@@ -1,5 +1,7 @@
 package com.example.now.entity;
+
 import java.util.HashMap;
+
 public class ResultMap extends HashMap<String, Object> {
 
 
@@ -11,6 +13,7 @@ public class ResultMap extends HashMap<String, Object> {
         this.put("code", code);
         return this;
     }
+
     public ResultMap success() {
         return success("200");
     }
@@ -25,7 +28,7 @@ public class ResultMap extends HashMap<String, Object> {
         return this;
     }
 
-    public ResultMap data(String key,Object obj) {
+    public ResultMap data(String key, Object obj) {
         this.put(key, obj);
         return this;
     }

@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.example.now.entity.TokenDetail;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "muser")
-public class User implements UserDetails,TokenDetail{
+public class User implements UserDetails, TokenDetail {
     @Id
     @Column(name = "username")
     private String username;
@@ -19,11 +20,13 @@ public class User implements UserDetails,TokenDetail{
     private String password;
     @Column(name = "role")
     private String role;
-    public User(String name, String password,String role) {
+
+    public User(String name, String password, String role) {
         this.username = name;
         this.password = password;
-        this.role=role;
+        this.role = role;
     }
+
     public User() {
 
     }
@@ -36,10 +39,12 @@ public class User implements UserDetails,TokenDetail{
     public String getUsername() {
         return username;
     }
+
     @Override
     public String getPassword() {
         return password;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -62,6 +67,7 @@ public class User implements UserDetails,TokenDetail{
     public boolean isEnabled() {
         return true;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();

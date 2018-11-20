@@ -1,4 +1,5 @@
 package com.example.now.util;
+
 import com.example.now.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -13,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 @Component
 public class TokenUtils {
     private final Logger logger = Logger.getLogger(this.getClass());
@@ -22,6 +24,7 @@ public class TokenUtils {
 
     @Value("${token.expiration}")
     private Long expiration;
+
     public String generateToken(TokenDetail tokenDetail) {
         Map<String, Object> claims = new HashMap<String, Object>();
         claims.put("sub", tokenDetail.getUsername());
@@ -46,6 +49,7 @@ public class TokenUtils {
                     .compact();
         }
     }
+
     private Date generateExpirationDate() {
         return new Date(System.currentTimeMillis() + this.expiration * 1000);
     }

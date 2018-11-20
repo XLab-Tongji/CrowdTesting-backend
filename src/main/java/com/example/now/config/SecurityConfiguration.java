@@ -1,4 +1,5 @@
 package com.example.now.config;
+
 import com.example.now.service.SecurityService;
 import com.example.now.filter.AuthenticationTokenFilter;
 import com.example.now.util.MD5Util;
@@ -16,14 +17,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration//指定为配置类
 @EnableWebSecurity//指定为Spring Security配置类
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private EntryPointUnauthorizedHandler unauthorizedHandler;
     @Autowired
     private MyAccessDeniedHandler accessDeniedHandler;
+
     @Bean
-    UserDetailsService Service(){
+    UserDetailsService Service() {
         return new SecurityService();
     }
 
@@ -33,13 +35,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
         authenticationTokenFilter.setAuthenticationManager(authenticationManagerBean());
         return authenticationTokenFilter;
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/changePassword","/worker/find-by-username","/requester/find-by-username","/task/find-by-name","/task/find-by-requester-id","/task/find-by-reward","/taskData/find","/personal-task/find-task-list","/personal-task/find-worker-list","/personal-task/delete").authenticated()       // 需携带有效 token
-                .antMatchers("/requester/update","/requester/find-myself","/task/add","/task/update","/task/delete","/task/find-my-task","/taskData/add").hasRole("REQUESTER")
-                .antMatchers("/worker/update","/worker/find-myself","/personal-task/add","/personal-task/find-my-task").hasRole("WORKER")
+                .antMatchers("/changePassword", "/worker/find-by-username", "/requester/find-by-username", "/task/find-by-name", "/task/find-by-requester-id", "/task/find-by-reward", "/taskData/find", "/personal-task/find-task-list", "/personal-task/find-worker-list", "/personal-task/delete").authenticated()       // 需携带有效 token
+                .antMatchers("/requester/update", "/requester/find-myself", "/task/add", "/task/update", "/task/delete", "/task/find-my-task", "/taskData/add").hasRole("REQUESTER")
+                .antMatchers("/worker/update", "/worker/find-myself", "/personal-task/add", "/personal-task/find-my-task").hasRole("WORKER")
                 .anyRequest().permitAll()       // 允许所有请求通过
                 .and()
                 // 配置被拦截时的处理

@@ -1,4 +1,5 @@
 package com.example.now.entity;
+
 import javax.persistence.*;
 
 @Entity
@@ -6,35 +7,35 @@ import javax.persistence.*;
 public class Requester {
     @Id
     @GeneratedValue
-    @Column(name="REQUESTER_ID")
+    @Column(name = "REQUESTER_ID")
     private int requesterId;
 
-    @Column(nullable = false,name="USERNAME")
+    @Column(nullable = false, name = "USERNAME")
     private String username;
 
-    @Column(nullable = false,name="NAME")
+    @Column(nullable = false, name = "NAME")
     private String name;
 
-    @Column(name="TELE_NUMBER")
+    @Column(name = "TELE_NUMBER")
     private int teleNumber;
 
-    @Column(name="E_MAIL")
+    @Column(name = "E_MAIL")
     private String eMail;
 
-    @Column(name="AREA")
+    @Column(name = "AREA")
     private String area;
 
-    @Column(name="INSTITUTION_NAME")
+    @Column(name = "INSTITUTION_NAME")
     private String institutionName;
 
-    @Column(name="PAY_METHOD")
+    @Column(name = "PAY_METHOD")
     private String payMethod;
 
     public Requester() {
 
     }
 
-    public Requester(String username,String name) {
+    public Requester(String username, String name) {
         this.username = username;
         this.name = name;
     }

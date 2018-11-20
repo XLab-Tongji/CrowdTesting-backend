@@ -1,6 +1,8 @@
 package com.example.now.entity;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+
 @Entity
 @Table(name = "task_data")
 public class TaskData {
@@ -43,13 +45,13 @@ public class TaskData {
         this.prime = prime;
     }
 
-    public TaskData(){
+    public TaskData() {
 
     }
 
-    public TaskData(int id,int worker_num,float progress_rate){
-        this.prime=new TaskDataPrime(id);
-        this.worker_num=worker_num;
-        this.progress_rate=progress_rate;
+    public TaskData(int id, int worker_num, float progress_rate) {
+        this.prime = new TaskDataPrime(id);
+        this.worker_num = worker_num;
+        this.progress_rate = progress_rate;
     }
 }

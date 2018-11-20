@@ -1,4 +1,5 @@
 package com.example.now.controller;
+
 import com.example.now.entity.PersonalTask;
 import com.example.now.entity.PersonalTaskKey;
 import com.example.now.service.PersonalTaskService;
@@ -31,52 +32,54 @@ public class PersonalTaskController {
     private WorkerService workerService;
     @Autowired
     private HttpServletRequest request;
-    @RequestMapping(value = "/find-task-list",method = RequestMethod.GET)
-    public ResultMap personalTaskFindTaskList(int id){
-        List<Task> tasks=personalTaskService.findTaskByWorkerId(id);
-        if(tasks.isEmpty()){
+
+    @RequestMapping(value = "/find-task-list", method = RequestMethod.GET)
+    public ResultMap personalTaskFindTaskList(int id) {
+        List<Task> tasks = personalTaskService.findTaskByWorkerId(id);
+        if (tasks.isEmpty()) {
             return new ResultMap().success("204").message("this worker have no task");
         }
-        return new ResultMap().success("200").data("tasks",tasks);
+        return new ResultMap().success("200").data("tasks", tasks);
     }
-    @RequestMapping(value = "/find-worker-list",method = RequestMethod.GET)
-    public ResultMap personalTaskFindWorkerList(int id){
-        List<Worker> workers=personalTaskService.findWorkerByTaskId(id);
-        if(workers.isEmpty()){
+
+    @RequestMapping(value = "/find-worker-list", method = RequestMethod.GET)
+    public ResultMap personalTaskFindWorkerList(int id) {
+        List<Worker> workers = personalTaskService.findWorkerByTaskId(id);
+        if (workers.isEmpty()) {
             return new ResultMap().success("204").message("this task have no worker");
         }
-        return new ResultMap().success("200").data("workers",workers);
+        return new ResultMap().success("200").data("workers", workers);
     }
 
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public ResultMap personalTaskAdd(Integer taskId){
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public ResultMap personalTaskAdd(Integer taskId) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        int workerId=workerService.findWorkerByUsername(username).getWorkerId();
-        String message=personalTaskService.addPersonalTask(workerId, taskId);
-        if(message!="succeed"){
+        int workerId = workerService.findWorkerByUsername(username).getWorkerId();
+        String message = personalTaskService.addPersonalTask(workerId, taskId);
+        if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message);
     }
 
-    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
-    public ResultMap personalTaskDelete(Integer workerId,Integer taskId){
-        String message=personalTaskService.addPersonalTask(workerId, taskId);
-        if(message!="succeed"){
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ResultMap personalTaskDelete(Integer workerId, Integer taskId) {
+        String message = personalTaskService.addPersonalTask(workerId, taskId);
+        if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message);
     }
 
-    @RequestMapping(value="/find-my-task",method = RequestMethod.GET)
-    public ResultMap findMyTask(){
+    @RequestMapping(value = "/find-my-task", method = RequestMethod.GET)
+    public ResultMap findMyTask() {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        List<Task> tasks=personalTaskService.findTaskByWorkerId(workerService.findWorkerByUsername(username).getWorkerId());
-        if(tasks.isEmpty()){
+        List<Task> tasks = personalTaskService.findTaskByWorkerId(workerService.findWorkerByUsername(username).getWorkerId());
+        if (tasks.isEmpty()) {
             return new ResultMap().success("204").message("you have no task");
         }
-        return new ResultMap().success().data("tasks",tasks);
+        return new ResultMap().success().data("tasks", tasks);
     }
 }

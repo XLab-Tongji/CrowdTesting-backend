@@ -1,6 +1,7 @@
 package com.example.now.util;
 
 import java.security.MessageDigest;
+
 public class MD5Util {
     private static final String SALT = "tamboo";
 

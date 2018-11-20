@@ -1,5 +1,7 @@
 package com.example.now.entity;
+
 import javax.persistence.*;
+
 @Entity
 @Table(name = "task")
 public class Task {
@@ -23,6 +25,7 @@ public class Task {
     private String restrictions;
     @Column
     private String requests;
+
     public Integer getTask_id() {
         return id;
     }
@@ -91,14 +94,14 @@ public class Task {
         this.requests = requests;
     }
 
-    public Task(){
+    public Task() {
 
     }
 
-    public Task(String name,String description,int requester_id,int reward){
-        this.name=name;
-        this.description=description;
-        this.requesterid=requester_id;
-        this.reward=reward;
+    public Task(String name, String description, int requester_id, int reward) {
+        this.name = name;
+        this.description = description;
+        this.requesterid = requester_id;
+        this.reward = reward;
     }
 }

@@ -1,4 +1,5 @@
 package com.example.now.entity;
+
 import javax.persistence.*;
 
 @Entity
@@ -6,41 +7,41 @@ import javax.persistence.*;
 public class Worker {
     @Id
     @GeneratedValue
-    @Column(name="WORKER_ID")
+    @Column(name = "WORKER_ID")
     private int id;
 
-    @Column(nullable = false,name="USERNAME")
+    @Column(nullable = false, name = "USERNAME")
     private String username;
 
-    @Column(nullable = false,name="NAME")
+    @Column(nullable = false, name = "NAME")
     private String name;
 
-    @Column(name="TELE_NUMBER")
+    @Column(name = "TELE_NUMBER")
     private int teleNumber;
 
-    @Column(name="E_MAIL")
+    @Column(name = "E_MAIL")
     private String eMail;
 
-    @Column(name="BALANCE")
+    @Column(name = "BALANCE")
     private int balance;
 
-    @Column(name="WITHDRAWN_METHOD")
+    @Column(name = "WITHDRAWN_METHOD")
     private String withdrawnMethod;
 
-    @Column(name="EDUCATION")
+    @Column(name = "EDUCATION")
     private String education;
 
-    @Column(name="WORK_AREA")
+    @Column(name = "WORK_AREA")
     private String workArea;
 
-    @Column(name="AGE")
+    @Column(name = "AGE")
     private int age;
 
     public Worker() {
 
     }
 
-    public Worker(String username,String name) {
+    public Worker(String username, String name) {
         this.username = username;
         this.name = name;
     }
