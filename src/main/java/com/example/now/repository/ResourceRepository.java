@@ -3,5 +3,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.now.entity.Resource;
 import java.util.List;
 public interface ResourceRepository extends JpaRepository<Resource,Integer>{
-    Resource findById();
+    Resource findById(int id);
 }

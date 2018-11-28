@@ -27,7 +27,7 @@ public class QuestionResource {
         this.questionId = questionId;
     }
 
-    public Integer getResourceId() {
+    public int getResourceId() {
         return resourceId;
     }
 

@@ -13,11 +13,11 @@ public class Question {
     @Column
     private Integer resource_loading;
     @Column
-    private String type;
+    private Integer type;
     @Column(name = "task_id")
     private int taskId;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -41,11 +41,11 @@ public class Question {
         this.resource_loading = resource_loading;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
@@ -61,7 +61,7 @@ public class Question {
 
     }
 
-    public Question(String content, Integer resource_loading, String type, int task_id) {
+    public Question(String content, Integer resource_loading, Integer type, int task_id) {
         this.content = content;
         this.resource_loading = resource_loading;
         this.type = type;
