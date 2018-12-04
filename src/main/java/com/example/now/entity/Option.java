@@ -2,20 +2,20 @@ package com.example.now.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "option")
-public class    Option {
+@Table(name = "options")
+public class Option {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "option_id")
-    private Integer id;
+    private int id;
     @Column
     private String content;
     @Column(name = "question_id")
-    private Integer questionId;
+    private int questionId;
     @Column(name = "open_answer_permission")
-    private Integer openAnswerPermittion;
+    private int openAnswerPermittion;
     @Column(name = "option_number")
-    private Integer optionNumber;
+    private int optionNumber;
 
     public Integer getOpenAnswerPermittion() {
         return openAnswerPermittion;

@@ -67,12 +67,27 @@ public class QuestionServiceImpl implements QuestionService{
             }
             List<OptionSelected> optionSelecteds=new ArrayList<OptionSelected>();
             for(Option option:optionRepository.findByQuestionId(question.getId())){
-                optionSelecteds.add(optionSelectedRepository.findByOptionIdAndWorkerId(option.getId(),workerId));
+                OptionSelected optionSelected=optionSelectedRepository.findByOptionIdAndWorkerId(option.getId(),workerId);
+                if(optionSelected!=null){
+                    optionSelecteds.add(optionSelectedRepository.findByOptionIdAndWorkerId(option.getId(),workerId));
+                }
             }
             questionDetail.setAnswers(openAnswerRepository.findByQuestionIdAndWorkerId(question.getId(),workerId));
             questionDetail.setSelecteds(optionSelecteds);
             questionDetails.add(questionDetail);
         }
         return questionDetails;
+    }
+    @Override
+    public String selectOne(int optionId,int workerId){
+        OptionSelected optionSelected=new OptionSelected(optionId,workerId);
+        optionSelectedRepository.saveAndFlush(optionSelected);
+        return "success";
+    }
+    @Override
+    public String answerOne(int optionId,int workerId,String content){
+        OpenAnswer openAnswer=new OpenAnswer(content,optionRepository.findById(optionId).getQuestionId(),workerId,optionId);
+        openAnswerRepository.saveAndFlush(openAnswer);
+        return "success";
     }
 }

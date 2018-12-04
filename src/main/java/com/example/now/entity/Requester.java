@@ -88,7 +88,7 @@ public class Requester {
         this.payMethod = payMethod;
     }
 
-    public int getRequesterId() {
+    public Integer getRequesterId() {
         return requesterId;
     }
 

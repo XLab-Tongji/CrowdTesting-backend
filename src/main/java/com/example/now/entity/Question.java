@@ -7,13 +7,13 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id")
-    private Integer id;
+    private int id;
     @Column
     private String content;
     @Column
-    private Integer resource_loading;
+    private int resource_loading;
     @Column
-    private Integer type;
+    private int type;
     @Column(name = "task_id")
     private int taskId;
 

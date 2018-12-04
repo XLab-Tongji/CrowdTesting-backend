@@ -26,12 +26,12 @@ public class QuestionController {
     private WorkerService workerService;
     @Autowired
     private HttpServletRequest request;
-    @RequestMapping(value = "/add-question", method = RequestMethod.PUT)
+    @RequestMapping(value = "/add-question", method = RequestMethod.POST)
     public ResultMap questionAdd(int taskId,String content,int resourceLoading,int type){
         String message=questionService.addQuestionToTask(taskId, content, resourceLoading, type);
         return new ResultMap().success().message(message);
     }
-    @RequestMapping(value = "/option-add", method = RequestMethod.PUT)
+    @RequestMapping(value = "/add-option", method = RequestMethod.POST)
     public ResultMap optionAdd(String content,int questionId, int openAnswerPermittion, int optionNumber){
         String message=questionService.addOptionToQuestion(content, questionId, openAnswerPermittion, optionNumber);
         return new ResultMap().success().message(message);
@@ -55,5 +55,29 @@ public class QuestionController {
     @RequestMapping(value = "/see-his-answer", method = RequestMethod.GET)
     public ResultMap seeHisQuestion(int taskId,int workerId){
         return new ResultMap().success().data("Questions",questionService.seeAllQuestion(taskId,workerId));
+    }
+    @RequestMapping(value = "/select-one", method = RequestMethod.POST)
+    public ResultMap selectOne(int optionId){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        int userid=workerService.findWorkerByUsername(username).getWorkerId();
+        String message=questionService.selectOne(optionId,userid);
+        if(message.equals("success")){
+            return new ResultMap().success().message(message);
+        }
+        else
+            return new ResultMap().fail("400").message(message);
+    }
+    @RequestMapping(value = "/answer-one", method = RequestMethod.POST)
+    public ResultMap answerOne(int optionId,String content){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        int userid=workerService.findWorkerByUsername(username).getWorkerId();
+        String message=questionService.answerOne(optionId,userid,content);
+        if(message.equals("success")){
+            return new ResultMap().success().message(message);
+        }
+        else
+            return new ResultMap().fail("400").message(message);
     }
 }
