@@ -1,8 +1,10 @@
 package com.example.now.controller;
-import com.example.now.entity.QuestionDetail;
+import com.example.now.entity.*;
+import com.example.now.repository.TaskRepository;
 import com.example.now.service.QuestionService;
 import com.example.now.service.Iml.QuestionServiceImpl;
-import com.example.now.entity.ResultMap;
+import com.example.now.service.RequesterService;
+import com.example.now.service.TaskService;
 import com.example.now.service.WorkerService;
 import com.example.now.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,28 @@ public class QuestionController {
     private WorkerService workerService;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private TaskService taskService;
+    @Autowired
+    private RequesterService requesterService;
     @RequestMapping(value = "/add-question", method = RequestMethod.POST)
     public ResultMap questionAdd(int taskId,String content,int resourceLoading,int type){
-        String message=questionService.addQuestionToTask(taskId, content, resourceLoading, type);
-        return new ResultMap().success().message(message);
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        if(taskService.findTaskById(taskId).getRequesterid()!=requesterService.findRequesterByUsername(username).getRequesterId()){
+            return new ResultMap().fail("403").message("你没有权限访问此内容");
+        }
+        IdStore question=new IdStore();
+        String message=questionService.addQuestionToTask(taskId, content, resourceLoading, type,question);
+        return new ResultMap().success().message(message).data("questionId",question.getId());
     }
     @RequestMapping(value = "/add-option", method = RequestMethod.POST)
-    public ResultMap optionAdd(String content,int questionId, int openAnswerPermittion, int optionNumber){
-        String message=questionService.addOptionToQuestion(content, questionId, openAnswerPermittion, optionNumber);
-        return new ResultMap().success().message(message);
+    public ResultMap optionAdd(String content,Integer questionId, Integer openAnswerPermission , Integer optionNumber){
+        IdStore option=new IdStore();
+        String message=questionService.addOptionToQuestion(content, questionId, openAnswerPermission, optionNumber,option);
+        if(message.equals("succeed"))
+            return new ResultMap().fail("400").message(message);
+        return new ResultMap().success().message(message).data("optionId",option.getId());
     }
     @RequestMapping(value = "/see-all-question", method = RequestMethod.GET)
     public ResultMap seeAllQuestion(int taskId){
@@ -54,7 +69,21 @@ public class QuestionController {
     }
     @RequestMapping(value = "/see-his-answer", method = RequestMethod.GET)
     public ResultMap seeHisQuestion(int taskId,int workerId){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        if(taskService.findTaskById(taskId).getRequesterid()!=requesterService.findRequesterByUsername(username).getRequesterId()){
+            return new ResultMap().fail("403").message("你没有权限访问此内容");
+        }
         return new ResultMap().success().data("Questions",questionService.seeAllQuestion(taskId,workerId));
+    }
+    @RequestMapping(value="/see-all-answer",method = RequestMethod.GET)
+    public ResultMap seeAllAnswer(int taskId){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        if(taskService.findTaskById(taskId).getRequesterid()!=requesterService.findRequesterByUsername(username).getRequesterId()){
+            return new ResultMap().fail("403").message("你没有权限访问此内容");
+        }
+        return new ResultMap().success().data("Questions",questionService.seeAllAnswer(taskId));
     }
     @RequestMapping(value = "/select-one", method = RequestMethod.POST)
     public ResultMap selectOne(int optionId){

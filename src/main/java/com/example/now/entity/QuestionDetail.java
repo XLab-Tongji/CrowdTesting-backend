@@ -6,6 +6,7 @@ public class QuestionDetail {
     private List<Resource> resources;
     private List<OptionSelected> selecteds;
     private List<OpenAnswer> answers;
+    private List<Integer> selectedCounts;
     public Question getQuestion() {
         return question;
     }
@@ -44,6 +45,14 @@ public class QuestionDetail {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    public List<Integer> getSelectedCounts() {
+        return selectedCounts;
+    }
+
+    public void setSelectedCounts(List<Integer> selectedCounts) {
+        this.selectedCounts = selectedCounts;
     }
 
     public QuestionDetail() {

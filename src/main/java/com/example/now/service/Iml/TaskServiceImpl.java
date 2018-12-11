@@ -1,9 +1,11 @@
 package com.example.now.service.Iml;
 
+import com.example.now.entity.IdStore;
 import com.example.now.entity.Task;
 import com.example.now.service.TaskService;
 import com.example.now.repository.TaskRepository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Collections;
 
@@ -47,16 +49,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, int requester_id, int reward) {
+    public String addTask(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time, IdStore taskId) {
         if (name == null || description == null)
             return "inputs are not enough";
-        Task temp = new Task(name, description, requester_id, reward);
-        taskRepository.saveAndFlush(temp);
+        Task temp = new Task(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time);
+        Task result=taskRepository.saveAndFlush(temp);
+        taskId.setId(result.getTask_id());
         return "succeed";
     }
 
     @Override
-    public String updateTask(Task task) {
+    public String updateTask(int taskId,String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time) {
+        Task task=taskRepository.findById(taskId);
+        task.setAll(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time);
         taskRepository.saveAndFlush(task);
         return "succeed";
     }

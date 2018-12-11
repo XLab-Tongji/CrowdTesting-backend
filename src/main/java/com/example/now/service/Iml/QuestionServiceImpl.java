@@ -22,16 +22,20 @@ public class QuestionServiceImpl implements QuestionService{
     @Autowired
     private ResourceRepository resourceRepository;
     @Override
-    public String addQuestionToTask(int taskId,String content,int resourceLoading,int type){
+    public String addQuestionToTask(int taskId,String content,int resourceLoading,int type,IdStore made){
         Question question=new Question(content,resourceLoading,type,taskId);
-        questionRepository.saveAndFlush(question);
+        Question result=questionRepository.saveAndFlush(question);
+        made.setId(result.getId());
         return "succeed";
     }
 
     @Override
-    public String addOptionToQuestion(String content,int questionId, int openAnswerPermittion, int optionNumber){
-        Option option=new Option(content,questionId,openAnswerPermittion,optionNumber);
-        optionRepository.saveAndFlush(option);
+    public String addOptionToQuestion(String content,Integer questionId, Integer openAnswerPermission , Integer optionNumber,IdStore made){
+        if(questionId==null||content==null||openAnswerPermission ==null||optionNumber==null)
+            return "imformation is not enough";
+        Option option=new Option(content,questionId,openAnswerPermission ,optionNumber);
+        Option result=optionRepository.saveAndFlush(option);
+        made.setId(result.getId());
         return "succeed";
     }
 
@@ -79,6 +83,19 @@ public class QuestionServiceImpl implements QuestionService{
         return questionDetails;
     }
     @Override
+    public  List<QuestionDetail> seeAllAnswer(int taskId){
+        List<QuestionDetail> questionDetails=new ArrayList<QuestionDetail>();
+        questionDetails=seeAllQuestion(taskId);
+        for(QuestionDetail question:questionDetails){
+            List<Integer> counts=new ArrayList<>();
+            for(Option option:question.getOptions()){
+                counts.add(optionSelectedRepository.countByOptionId(option.getId()));
+            }
+            question.setSelectedCounts(counts);
+        }
+        return questionDetails;
+    }
+    @Override
     public String selectOne(int optionId,int workerId){
         OptionSelected optionSelected=new OptionSelected(optionId,workerId);
         optionSelectedRepository.saveAndFlush(optionSelected);
@@ -89,5 +106,16 @@ public class QuestionServiceImpl implements QuestionService{
         OpenAnswer openAnswer=new OpenAnswer(content,optionRepository.findById(optionId).getQuestionId(),workerId,optionId);
         openAnswerRepository.saveAndFlush(openAnswer);
         return "success";
+    }
+    @Override
+    public int addResource(int questionId,String link,String type){
+        Resource resource=new Resource(link,type);
+        resourceRepository.saveAndFlush(resource);
+        Question question=questionRepository.findById(questionId);
+        question.setResource_loading(1);
+        questionRepository.saveAndFlush(question);
+        QuestionResource questionResource=new QuestionResource(questionId,resource.getId());
+        questionResourceRepository.saveAndFlush(questionResource);
+        return resource.getId();
     }
 }

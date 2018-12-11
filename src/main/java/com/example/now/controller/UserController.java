@@ -26,8 +26,8 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResultMap register(String username, String name, String password, String role) {
-        String message = userService.register(username, name, password, role);
+    public ResultMap register(String username,String password, String role) {
+        String message = userService.register(username, password, role);
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }

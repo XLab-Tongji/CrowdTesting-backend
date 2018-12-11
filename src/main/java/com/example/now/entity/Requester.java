@@ -17,29 +17,61 @@ public class Requester {
     private String name;
 
     @Column(name = "TELE_NUMBER")
-    private int teleNumber;
+    private String teleNumber;
 
     @Column(name = "E_MAIL")
     private String eMail;
 
-    @Column(name = "AREA")
-    private String area;
+    @Column(name = "research_field")
+    private String research_field;
 
     @Column(name = "INSTITUTION_NAME")
     private String institutionName;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "PAY_METHOD")
     private String payMethod;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "age")
+    private int age;
+
+    @Column(name = "balance")
+    private int balance;
 
     public Requester() {
 
     }
 
-    public Requester(String username, String name) {
+    public Requester(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age) {
         this.username = username;
         this.name = name;
+        this.teleNumber = teleNumber;
+        this.eMail = eMail;
+        this.research_field = research_field;
+        this.institutionName = institutionName;
+        this.address = address;
+        this.payMethod = payMethod;
+        this.gender = gender;
+        this.age = age;
+        this.balance = 0;
     }
-
+    public void setAll(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age) {
+        this.username = username;
+        this.name = name;
+        this.teleNumber = teleNumber;
+        this.eMail = eMail;
+        this.research_field = research_field;
+        this.institutionName = institutionName;
+        this.address = address;
+        this.payMethod = payMethod;
+        this.gender = gender;
+        this.age = age;
+    }
     public String getName() {
         return name;
     }
@@ -48,11 +80,11 @@ public class Requester {
         this.name = name;
     }
 
-    public int getTeleNumber() {
+    public String getTeleNumber() {
         return teleNumber;
     }
 
-    public void setTeleNumber(int tele_number) {
+    public void setTeleNumber(String tele_number) {
         this.teleNumber = tele_number;
     }
 
@@ -64,13 +96,6 @@ public class Requester {
         this.eMail = eMail;
     }
 
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
 
     public String getInstitutionName() {
         return institutionName;
@@ -94,5 +119,61 @@ public class Requester {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setRequesterId(int requesterId) {
+        this.requesterId = requesterId;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String geteMail() {
+        return eMail;
+    }
+
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
+    }
+
+    public String getResearch_field() {
+        return research_field;
+    }
+
+    public void setResearch_field(String research_field) {
+        this.research_field = research_field;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 }

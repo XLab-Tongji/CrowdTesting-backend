@@ -13,16 +13,16 @@ public class Option {
     @Column(name = "question_id")
     private int questionId;
     @Column(name = "open_answer_permission")
-    private int openAnswerPermittion;
+    private int openAnswerPermission;
     @Column(name = "option_number")
     private int optionNumber;
 
-    public Integer getOpenAnswerPermittion() {
-        return openAnswerPermittion;
+    public Integer getopenAnswerPermission () {
+        return openAnswerPermission;
     }
 
-    public void setOpenAnswerPermittion(Integer openAnswerPermittion) {
-        this.openAnswerPermittion = openAnswerPermittion;
+    public void setopenAnswerPermission (Integer openAnswerPermission) {
+        this.openAnswerPermission = openAnswerPermission;
     }
 
     public Integer getOptionNumber() {
@@ -61,10 +61,10 @@ public class Option {
 
     }
 
-    public Option(String content, Integer questionId, Integer openAnswerPermittion, Integer optionNumber) {
+    public Option(String content, Integer questionId, Integer openAnswerPermission , Integer optionNumber) {
         this.content = content;
         this.questionId = questionId;
-        this.openAnswerPermittion = openAnswerPermittion;
+        this.openAnswerPermission = openAnswerPermission ;
         this.optionNumber = optionNumber;
     }
 }

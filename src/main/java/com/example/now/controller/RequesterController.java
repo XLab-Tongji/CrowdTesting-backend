@@ -1,5 +1,6 @@
 package com.example.now.controller;
 
+import com.example.now.entity.IdStore;
 import com.example.now.entity.Requester;
 import com.example.now.service.RequesterService;
 import com.example.now.entity.ResultMap;
@@ -42,14 +43,17 @@ public class RequesterController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap requesterAdd(String username, String name) {                      //创建一个requester
-        String message = requesterService.addRequester(username, name);
-        return new ResultMap().success("201").message(message);
+    public ResultMap requesterAdd(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age) {                      //创建一个requester
+        IdStore idStore=new IdStore();
+        String message = requesterService.addRequester(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age,idStore);
+        return new ResultMap().success("201").message(message).data("requesterId",idStore.getId());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap requesterUpdate(Requester requester) {                      //修改requester
-        String message = requesterService.updateRequester(requester);
+    public ResultMap requesterUpdate(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age) {                      //修改requester
+        String authToken = request.getHeader(this.tokenHeader);
+        String temp = this.tokenUtils.getUsernameFromToken(authToken);
+        String message = requesterService.updateRequester(requesterService.findRequesterByUsername(temp).getRequesterId(),username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age);
         return new ResultMap().success("201").message(message);
     }
 

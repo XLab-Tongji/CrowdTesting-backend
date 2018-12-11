@@ -1,7 +1,9 @@
 package com.example.now.entity;
 
 import javax.persistence.*;
-
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Date;
 @Entity
 @Table(name = "task")
 public class Task {
@@ -23,12 +25,19 @@ public class Task {
     private String type;
     @Column
     private String restrictions;
-    @Column
-    private String requests;
-
-    public Integer getTask_id() {
-        return id;
-    }
+    @Column(name = "start_time")
+    private Timestamp start_time;
+    @Column(name = "end_time")
+    private Timestamp end_time;
+    @Column(name = "population")
+    private int population;
+    @Column(name = "level")
+    private int level;
+    @Column(name = "time_limitation")
+    private int time_limitation;
+    @Column(name = "pay_time")
+    private int pay_time;
+    public Integer getTask_id() { return id; }
 
     public String getName() {
         return name;
@@ -86,22 +95,102 @@ public class Task {
         this.restrictions = restrictions;
     }
 
-    public String getRequests() {
-        return requests;
+    public Integer getId() {
+        return id;
     }
 
-    public void setRequests(String requests) {
-        this.requests = requests;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getRequesterid() {
+        return requesterid;
+    }
+
+    public void setRequesterid(Integer requesterid) {
+        this.requesterid = requesterid;
+    }
+
+    public Timestamp getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(Timestamp start_time) {
+        this.start_time = start_time;
+    }
+
+    public Timestamp getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(Timestamp end_time) {
+        this.end_time = end_time;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public void setPopulation(int population) {
+        this.population = population;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getTime_limitation() {
+        return time_limitation;
+    }
+
+    public void setTime_limitation(int time_limitation) {
+        this.time_limitation = time_limitation;
+    }
+
+    public int getPay_time() {
+        return pay_time;
+    }
+
+    public void setPay_time(int pay_time) {
+        this.pay_time = pay_time;
     }
 
     public Task() {
 
     }
 
-    public Task(String name, String description, int requester_id, int reward) {
+    public Task(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time) {
         this.name = name;
         this.description = description;
-        this.requesterid = requester_id;
         this.reward = reward;
+        this.status = status;
+        this.requesterid = requesterid;
+        this.type = type;
+        this.restrictions = restrictions;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.population = 0;
+        this.level = level;
+        this.time_limitation = time_limitation;
+        this.pay_time = pay_time;
+    }
+
+    public void setAll(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time) {
+        this.name = name;
+        this.description = description;
+        this.reward = reward;
+        this.status = status;
+        this.requesterid = requesterid;
+        this.type = type;
+        this.restrictions = restrictions;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.level = level;
+        this.time_limitation = time_limitation;
+        this.pay_time = pay_time;
     }
 }

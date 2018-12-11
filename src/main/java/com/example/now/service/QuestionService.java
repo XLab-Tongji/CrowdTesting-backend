@@ -1,11 +1,16 @@
 package com.example.now.service;
 import com.example.now.entity.QuestionDetail;
+import com.example.now.entity.Question;
+import com.example.now.entity.Option;
 import java.util.List;
+import com.example.now.entity.IdStore;
 public interface QuestionService {
-    String addQuestionToTask(int taskId,String content,int resourceLoading,int type);
-    String addOptionToQuestion(String content,int questionId, int openAnswerPermittion, int optionNumber);
+    String addQuestionToTask(int taskId,String content,int resourceLoading,int type,IdStore made);
+    String addOptionToQuestion(String content,Integer questionId, Integer openAnswerPermission , Integer optionNumber,IdStore made);
     List<QuestionDetail> seeAllQuestion(int taskId);
     List<QuestionDetail> seeAllQuestion(int taskId,int workerId);
+    List<QuestionDetail> seeAllAnswer(int taskId);
     String selectOne(int optionId,int workerId);
     String answerOne(int optionId,int workerId,String content);
+    int addResource(int questionId,String link,String type);
 }

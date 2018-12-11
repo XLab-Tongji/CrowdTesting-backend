@@ -1,18 +1,15 @@
 package com.example.now.config;
 
-import com.example.now.service.SecurityService;
 import com.example.now.filter.AuthenticationTokenFilter;
-import com.example.now.util.MD5Util;
+import com.example.now.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration//指定为配置类
@@ -41,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/question/see-his-answer","/question/see-all-question","/changePassword", "/worker/find-by-username", "/requester/find-by-username", "/task/find-by-name", "/task/find-by-requester-id", "/task/find-by-reward", "/taskData/find", "/personal-task/find-task-list", "/personal-task/find-worker-list", "/personal-task/delete").authenticated()       // 需携带有效 token
-                .antMatchers("/put-image","/question/add-question","/question/add-option","/requester/update", "/requester/find-myself", "/task/add", "/task/update", "/task/delete", "/task/find-my-task", "/taskData/add").hasRole("REQUESTER")
+                .antMatchers("/question/see-all-answer","/put-image","/question/add-question","/question/add-option","/requester/update", "/requester/find-myself", "/task/add", "/task/update", "/task/delete", "/task/find-my-task", "/taskData/add").hasRole("REQUESTER")
                 .antMatchers("/question/answer-one","/question/select-one","/question/see-my-answer","/worker/update", "/worker/find-myself", "/personal-task/add", "/personal-task/find-my-task").hasRole("WORKER")
                 .anyRequest().permitAll()       // 允许所有请求通过
                 .and()

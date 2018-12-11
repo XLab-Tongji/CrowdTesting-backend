@@ -17,7 +17,7 @@ public class Worker {
     private String name;
 
     @Column(name = "TELE_NUMBER")
-    private int teleNumber;
+    private String teleNumber;
 
     @Column(name = "E_MAIL")
     private String eMail;
@@ -37,15 +37,46 @@ public class Worker {
     @Column(name = "AGE")
     private int age;
 
+    @Column(name = "level")
+    private int level;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "major")
+    private String major;
+
     public Worker() {
 
     }
 
-    public Worker(String username, String name) {
+    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major) {
         this.username = username;
         this.name = name;
+        this.teleNumber = teleNumber;
+        this.eMail = eMail;
+        this.balance = 0;
+        this.withdrawnMethod = withdrawnMethod;
+        this.education = education;
+        this.workArea = workArea;
+        this.age = age;
+        this.level=0;
+        this.gender = gender;
+        this.major = major;
     }
 
+    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major) {
+        this.username = username;
+        this.name = name;
+        this.teleNumber = teleNumber;
+        this.eMail = eMail;
+        this.withdrawnMethod = withdrawnMethod;
+        this.education = education;
+        this.workArea = workArea;
+        this.age = age;
+        this.gender = gender;
+        this.major = major;
+    }
     public String getName() {
         return name;
     }
@@ -54,11 +85,11 @@ public class Worker {
         this.name = name;
     }
 
-    public int getTeleNumber() {
+    public String getTeleNumber() {
         return teleNumber;
     }
 
-    public void setTeleNumber(int teleNumber) {
+    public void setTeleNumber(String teleNumber) {
         this.teleNumber = teleNumber;
     }
 
@@ -118,4 +149,47 @@ public class Worker {
         return username;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String geteMail() {
+        return eMail;
+    }
+
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
 }

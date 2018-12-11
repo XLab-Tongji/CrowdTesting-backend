@@ -5,4 +5,5 @@ import java.util.List;
 public interface OptionSelectedRepository extends JpaRepository<OptionSelected,Integer >{
     List<OptionSelected> findByOptionId(int id);
     OptionSelected findByOptionIdAndWorkerId(int optionId,int workId);
+    int countByOptionId(int optionId);
 }

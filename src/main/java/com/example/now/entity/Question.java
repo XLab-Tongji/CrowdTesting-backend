@@ -61,7 +61,7 @@ public class Question {
 
     }
 
-    public Question(String content, Integer resource_loading, Integer type, int task_id) {
+    public Question(String content, Integer resource_loading, Integer type, Integer task_id) {
         this.content = content;
         this.resource_loading = resource_loading;
         this.type = type;

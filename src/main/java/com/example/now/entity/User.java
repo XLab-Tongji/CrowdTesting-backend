@@ -31,6 +31,18 @@ public class User implements UserDetails, TokenDetail {
 
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }

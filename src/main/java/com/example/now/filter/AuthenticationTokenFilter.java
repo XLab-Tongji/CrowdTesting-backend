@@ -1,15 +1,12 @@
 package com.example.now.filter;
 
-import com.example.now.util.TokenUtils;
-import com.example.now.entity.User;
-import org.apache.log4j.Logger;
 import com.example.now.service.SecurityService;
+import com.example.now.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
@@ -19,8 +16,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Map;
 
 public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
     @Value("${token.header}")

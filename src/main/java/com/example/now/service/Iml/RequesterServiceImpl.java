@@ -1,5 +1,6 @@
 package com.example.now.service.Iml;
 
+import com.example.now.entity.IdStore;
 import com.example.now.entity.Requester;
 import com.example.now.service.RequesterService;
 import com.example.now.util.TokenUtils;
@@ -21,21 +22,24 @@ public class RequesterServiceImpl implements RequesterService {
 
     @Override
     public Requester findRequesterByUsername(String username) {
-        return requesterRepository.findByUsername(username);
+        return requesterRepository.findByEMail(username);
     }
 
     @Override
-    public String addRequester(String username, String name) {
+    public String addRequester(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age, IdStore id) {
         if (username == "" || name == "") {
             return "username or name is empty";
         }
-        Requester worker = new Requester(username, name);
-        requesterRepository.saveAndFlush(worker);
+        Requester requester = new Requester(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age);
+        Requester temp=requesterRepository.saveAndFlush(requester);
+        id.setId(temp.getRequesterId());
         return "succeed";
     }
 
     @Override
-    public String updateRequester(Requester requester) {
+    public String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age) {
+        Requester requester=requesterRepository.findById(requesterId);
+        requester.setAll(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age);
         requesterRepository.saveAndFlush(requester);
         return "succeed";
     }

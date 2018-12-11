@@ -19,8 +19,8 @@ public class UserServiceImpl implements UserService {
     private RequesterService requesterService;
 
     @Override
-    public String register(String username, String name, String password, String role) {
-        if (username == null || name == null || password == null) {
+    public String register(String username, String password, String role) {
+        if (username == null || password == null) {
             return "inputs are not enough";
         }
         String encodePassword = MD5Util.encode(password);
@@ -29,12 +29,7 @@ public class UserServiceImpl implements UserService {
             return "user has existed";
         User user = new User(username, encodePassword, role);
         userRepository.saveAndFlush(user);
-        String message;
-        if (role.equals("ROLE_REQUESTER"))
-            message = requesterService.addRequester(username, name);
-        else
-            message = workerService.addWorker(username, name);
-        return message;
+        return "succeed";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.now.controller;
 
+import com.example.now.entity.IdStore;
 import com.example.now.entity.Task;
 import com.example.now.service.RequesterService;
 import com.example.now.service.TaskService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -66,19 +68,22 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap taskAdd(String name, String description, int reward) {
+    public ResultMap taskAdd(String name, String description, Integer reward, String status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        String message = taskService.addTask(name, description, requesterService.findRequesterByUsername(username).getRequesterId(), reward);
+        IdStore taskId=new IdStore();
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,taskId);
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
-        return new ResultMap().success("201").message(message);
+        return new ResultMap().success("201").message(message).data("taskId",taskId.getId());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap taskUpdate(Task task) {
-        String message = taskService.updateTask(task);
+    public ResultMap taskUpdate(int taskId,String name, String description, Integer reward, String status, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time) {
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        String message = taskService.updateTask(taskId,name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time);
         return new ResultMap().success("201").message(message);
     }
 

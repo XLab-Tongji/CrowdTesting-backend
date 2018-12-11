@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.example.now.repository.UserRepository;
 import javax.validation.Valid;
 
 @RestController
@@ -20,14 +20,15 @@ public class LoginController {
 
     @Value("${token.header}")
     private String tokenHeader;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
 
-    private ResultMap checkAccount(String username, String password, UserDetails loginDetail) {
-        if (loginDetail == null) {
+    private ResultMap checkAccount(String username, String password, UserDetails loginDetail,String role) {
+        if (loginDetail == null||!userRepository.findByUsername(username).getRole().equals(role)) {
             return new ResultMap().fail("404").message("账号不存在！");
         } else {
             String encodePassword = MD5Util.encode(password);
@@ -39,9 +40,9 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResultMap login(String username, String password) {
+    public ResultMap login(String username, String password,String role) {
         UserDetails loginDetail = loginService.getLoginDetail(username);
-        ResultMap ifLoginFail = checkAccount(username, password, loginDetail);
+        ResultMap ifLoginFail = checkAccount(username, password, loginDetail,role);
         if (ifLoginFail != null) {
             return ifLoginFail;
         }
