@@ -13,10 +13,10 @@ public class Worker {
     @Column(nullable = false, name = "USERNAME")
     private String username;
 
-    @Column(nullable = false, name = "NAME")
+    @Column(nullable = false, name = "name")
     private String name;
 
-    @Column(name = "TELE_NUMBER")
+    @Column(name = "tele_number")
     private String teleNumber;
 
     @Column(name = "E_MAIL")
@@ -37,14 +37,28 @@ public class Worker {
     @Column(name = "AGE")
     private int age;
 
-    @Column(name = "level")
-    private int level;
+    @Column(name = "xp")
+    private int xp;
 
     @Column(name = "gender")
     private String gender;
 
     @Column(name = "major")
     private String major;
+
+    @Transient
+    private int level;
+    @Transient
+    public int getLevel() {
+        return level;
+    }
+    @Transient
+    public void setLevel(){
+        if(xp<=16500)
+            this.level=(int)((1+Math.sqrt(1+2*xp/75))/2);
+        else
+            this.level=11+(xp-16500)/3000;
+    }
 
     public Worker() {
 
@@ -60,7 +74,7 @@ public class Worker {
         this.education = education;
         this.workArea = workArea;
         this.age = age;
-        this.level=0;
+        this.xp=0;
         this.gender = gender;
         this.major = major;
     }
@@ -77,6 +91,15 @@ public class Worker {
         this.gender = gender;
         this.major = major;
     }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
     public String getName() {
         return name;
     }
@@ -167,14 +190,6 @@ public class Worker {
 
     public void seteMail(String eMail) {
         this.eMail = eMail;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
     }
 
     public String getGender() {

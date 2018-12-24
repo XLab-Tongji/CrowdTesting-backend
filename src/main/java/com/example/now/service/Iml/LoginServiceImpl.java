@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LoginServiceImpl implements LoginService {
-    private UserRepository userRepository;
+        private UserRepository userRepository;
     private TokenUtils tokenUtils;
 
     @Autowired

@@ -17,12 +17,16 @@ public class WorkerServiceImpl implements WorkerService {
 
     @Override
     public Worker findWorkerById(int id) {
-        return workerRepository.findById(id);
+        Worker worker=workerRepository.findById(id);
+        worker.setLevel();
+        return worker;
     }
 
     @Override
     public Worker findWorkerByUsername(String username) {
-        return workerRepository.findByEMail(username);
+        Worker worker=workerRepository.findByEMail(username);
+        worker.setLevel();
+        return worker;
     }
 
     @Override

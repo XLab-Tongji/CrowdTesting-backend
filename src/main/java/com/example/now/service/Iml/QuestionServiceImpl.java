@@ -22,8 +22,8 @@ public class QuestionServiceImpl implements QuestionService{
     @Autowired
     private ResourceRepository resourceRepository;
     @Override
-    public String addQuestionToTask(int taskId,String content,int resourceLoading,int type,IdStore made){
-        Question question=new Question(content,resourceLoading,type,taskId);
+    public String addQuestionToTask(int taskId,String content,int resourceLoading,int type,int compulsory,IdStore made){
+        Question question=new Question(content,resourceLoading,type,taskId,compulsory);
         Question result=questionRepository.saveAndFlush(question);
         made.setId(result.getId());
         return "succeed";
@@ -108,14 +108,12 @@ public class QuestionServiceImpl implements QuestionService{
         return "success";
     }
     @Override
-    public int addResource(int questionId,String link,String type){
-        Resource resource=new Resource(link,type);
-        resourceRepository.saveAndFlush(resource);
+    public int addResource(int questionId,int resourceId){
         Question question=questionRepository.findById(questionId);
         question.setResource_loading(1);
         questionRepository.saveAndFlush(question);
-        QuestionResource questionResource=new QuestionResource(questionId,resource.getId());
+        QuestionResource questionResource=new QuestionResource(questionId,resourceId);
         questionResourceRepository.saveAndFlush(questionResource);
-        return resource.getId();
+        return resourceId;
     }
 }

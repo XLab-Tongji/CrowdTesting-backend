@@ -16,6 +16,36 @@ public class Question {
     private int type;
     @Column(name = "task_id")
     private int taskId;
+    @Column(name = "compulsory")
+    private int compulsory;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setResource_loading(int resource_loading) {
+        this.resource_loading = resource_loading;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
+
+    public int getCompulsory() {
+        return compulsory;
+    }
+
+    public void setCompulsory(int compulsory) {
+        this.compulsory = compulsory;
+    }
 
     public int getId() {
         return id;
@@ -61,10 +91,11 @@ public class Question {
 
     }
 
-    public Question(String content, Integer resource_loading, Integer type, Integer task_id) {
+    public Question(String content, Integer resource_loading, Integer type, Integer task_id,int compulsory) {
         this.content = content;
         this.resource_loading = resource_loading;
         this.type = type;
         this.taskId = task_id;
+        this.compulsory=compulsory;
     }
 }

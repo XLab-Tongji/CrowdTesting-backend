@@ -49,19 +49,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time, IdStore taskId) {
+    public String addTask(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time,String area,String usage,int min_age,int max_age,IdStore taskId) {
         if (name == null || description == null)
             return "inputs are not enough";
-        Task temp = new Task(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time);
+        Task temp = new Task(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age);
         Task result=taskRepository.saveAndFlush(temp);
-        taskId.setId(result.getTask_id());
+        taskId.setId(result.getId());
         return "succeed";
     }
 
     @Override
-    public String updateTask(int taskId,String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time) {
+    public String updateTask(int taskId,String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time,String area,String usage,int min_age,int max_age) {
         Task task=taskRepository.findById(taskId);
-        task.setAll(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time);
+        task.setAll(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age);
         taskRepository.saveAndFlush(task);
         return "succeed";
     }

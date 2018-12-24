@@ -8,7 +8,7 @@ public class Option {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "option_id")
     private int id;
-    @Column
+    @Column(name = "content")
     private String content;
     @Column(name = "question_id")
     private int questionId;

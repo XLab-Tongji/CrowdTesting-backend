@@ -33,14 +33,14 @@ public class QuestionController {
     @Autowired
     private RequesterService requesterService;
     @RequestMapping(value = "/add-question", method = RequestMethod.POST)
-    public ResultMap questionAdd(int taskId,String content,int resourceLoading,int type){
+    public ResultMap questionAdd(int taskId,String content,int resourceLoading,int type,int compulsory){
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         if(taskService.findTaskById(taskId).getRequesterid()!=requesterService.findRequesterByUsername(username).getRequesterId()){
             return new ResultMap().fail("403").message("你没有权限访问此内容");
         }
         IdStore question=new IdStore();
-        String message=questionService.addQuestionToTask(taskId, content, resourceLoading, type,question);
+        String message=questionService.addQuestionToTask(taskId, content, resourceLoading, type,compulsory,question);
         return new ResultMap().success().message(message).data("questionId",question.getId());
     }
     @RequestMapping(value = "/add-option", method = RequestMethod.POST)
@@ -108,5 +108,10 @@ public class QuestionController {
         }
         else
             return new ResultMap().fail("400").message(message);
+    }
+    @RequestMapping(value = "/add-resource", method = RequestMethod.POST)
+    public ResultMap addResource(int questionId,int resourceId){
+        questionService.addResource(questionId,resourceId);
+        return new ResultMap().success("201");
     }
 }

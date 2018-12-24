@@ -17,9 +17,9 @@ public interface TaskService {
 
     List<Task> findTaskByReward(int lowest, int highest);
 
-    String addTask(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time,IdStore taskId);
+    String addTask(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, int time_limitation, int pay_time,String area,String usage,int min_age,int max_age,IdStore taskId);
 
-    String updateTask(int taskId,String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time);
+    String updateTask(int taskId,String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time,String area,String usage,int min_age,int max_age);
 
     String deleteTask(int id);
 }

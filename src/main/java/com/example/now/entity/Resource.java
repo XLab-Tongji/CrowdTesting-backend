@@ -12,7 +12,8 @@ public class Resource {
     private String link;
     @Column(name = "type")
     private String type;
-
+    @Column(name = "photo_album_id")
+    private int photoAlbumId;
     public Integer getId() {
         return id;
     }
@@ -37,12 +38,21 @@ public class Resource {
         this.type = type;
     }
 
+    public int getPhotoAlbumId() {
+        return photoAlbumId;
+    }
+
+    public void setPhotoAlbumId(int photoAlbumId) {
+        this.photoAlbumId = photoAlbumId;
+    }
+
     public Resource(){
 
     }
 
-    public Resource(String link,String type){
-        this.link=link;
-        this.type=type;
+    public Resource(String link, String type, int photoAlbumId) {
+        this.link = link;
+        this.type = type;
+        this.photoAlbumId = photoAlbumId;
     }
 }

@@ -46,7 +46,9 @@ public class PersonalTaskServiceImpl implements PersonalTaskService {
             workerId.add(personalTask.getWorkerId());
         }
         for (int workerid : workerId) {
-            workers.add(workerRepository.findById(workerid));
+            Worker worker=workerRepository.findById(workerid);
+            worker.setLevel();
+            workers.add(worker);
         }
         return workers;
     }
