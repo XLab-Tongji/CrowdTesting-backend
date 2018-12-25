@@ -39,7 +39,7 @@ public class Task {
     private int pay_time;
     @Column(name = "area")
     private String area;
-    @Column(name = "use")
+    @Column(name = "application")
     private String usage;
     @Column(name = "min_age")
     private int min_age;
