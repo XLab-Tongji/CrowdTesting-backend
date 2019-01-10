@@ -16,7 +16,7 @@ public class Task {
     @Column
     private String description;
     @Column
-    private Integer reward;
+    private Float reward;
     @Column
     private String status;
     @Column(name = "requester_id")
@@ -34,9 +34,9 @@ public class Task {
     @Column(name = "level")
     private int level;
     @Column(name = "time_limitation")
-    private int time_limitation;
+    private Float time_limitation;
     @Column(name = "pay_time")
-    private int pay_time;
+    private Float pay_time;
     @Column(name = "area")
     private String area;
     @Column(name = "application")
@@ -86,11 +86,11 @@ public class Task {
         this.description = description;
     }
 
-    public Integer getReward() {
+    public Float getReward() {
         return reward;
     }
 
-    public void setReward(Integer reward) {
+    public void setReward(Float reward) {
         this.reward = reward;
     }
 
@@ -174,19 +174,19 @@ public class Task {
         this.level = level;
     }
 
-    public int getTime_limitation() {
+    public Float getTime_limitation() {
         return time_limitation;
     }
 
-    public void setTime_limitation(int time_limitation) {
+    public void setTime_limitation(Float time_limitation) {
         this.time_limitation = time_limitation;
     }
 
-    public int getPay_time() {
+    public Float getPay_time() {
         return pay_time;
     }
 
-    public void setPay_time(int pay_time) {
+    public void setPay_time(Float pay_time) {
         this.pay_time = pay_time;
     }
 
@@ -202,7 +202,7 @@ public class Task {
 
     }
 
-    public Task(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time,String area,String usage,int min_age,int max_age) {
+    public Task(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -222,7 +222,7 @@ public class Task {
         this.max_age=max_age;
     }
 
-    public void setAll(String name, String description, Integer reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, int time_limitation, int pay_time,String area,String usage,int min_age,int max_age) {
+    public void setAll(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
         this.name = name;
         this.description = description;
         this.reward = reward;

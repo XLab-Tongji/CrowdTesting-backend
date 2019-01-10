@@ -27,7 +27,7 @@ public class RequesterServiceImpl implements RequesterService {
 
     @Override
     public String addRequester(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age, IdStore id) {
-        if (username == "" || name == "") {
+        if (username == null || name == null) {
             return "username or name is empty";
         }
         Requester requester = new Requester(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age);
