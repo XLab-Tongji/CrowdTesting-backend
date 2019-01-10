@@ -1,11 +1,8 @@
 package com.example.now.controller;
 import com.example.now.entity.*;
 import com.example.now.repository.TaskRepository;
-import com.example.now.service.QuestionService;
+import com.example.now.service.*;
 import com.example.now.service.Iml.QuestionServiceImpl;
-import com.example.now.service.RequesterService;
-import com.example.now.service.TaskService;
-import com.example.now.service.WorkerService;
 import com.example.now.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +29,8 @@ public class QuestionController {
     private TaskService taskService;
     @Autowired
     private RequesterService requesterService;
+    @Autowired
+    private PersonalTaskService personalTaskService;
     @RequestMapping(value = "/add-question", method = RequestMethod.POST)
     public ResultMap questionAdd(int taskId,String content,int resourceLoading,int type,int compulsory){
         String authToken = request.getHeader(this.tokenHeader);
@@ -113,5 +112,17 @@ public class QuestionController {
     public ResultMap addResource(int questionId,int resourceId){
         questionService.addResource(questionId,resourceId);
         return new ResultMap().success("201");
+    }
+    @RequestMapping(value = "/finish", method = RequestMethod.POST)
+    public ResultMap finish(int taskId){
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        int userid=workerService.findWorkerByUsername(username).getWorkerId();
+        String message=personalTaskService.finishOne(userid,taskId);
+        if(message.equals("succeed")){
+            return new ResultMap().success("201").message(message);
+        }
+        else
+            return new ResultMap().fail("400").message(message);
     }
 }

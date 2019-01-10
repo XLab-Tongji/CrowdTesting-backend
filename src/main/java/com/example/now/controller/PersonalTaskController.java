@@ -1,11 +1,7 @@
 package com.example.now.controller;
 
-import com.example.now.entity.PersonalTask;
-import com.example.now.entity.PersonalTaskKey;
+import com.example.now.entity.*;
 import com.example.now.service.PersonalTaskService;
-import com.example.now.entity.ResultMap;
-import com.example.now.entity.Worker;
-import com.example.now.entity.Task;
 import com.example.now.util.TokenUtils;
 import com.example.now.service.WorkerService;
 import org.hibernate.jdbc.Work;
@@ -35,7 +31,7 @@ public class PersonalTaskController {
 
     @RequestMapping(value = "/find-task-list", method = RequestMethod.GET)
     public ResultMap personalTaskFindTaskList(int id) {
-        List<Task> tasks = personalTaskService.findTaskByWorkerId(id);
+        List<MyTask> tasks = personalTaskService.findTaskByWorkerId(id);
         if (tasks.isEmpty()) {
             return new ResultMap().success("204").message("this worker have no task");
         }
@@ -76,7 +72,7 @@ public class PersonalTaskController {
     public ResultMap findMyTask() {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        List<Task> tasks = personalTaskService.findTaskByWorkerId(workerService.findWorkerByUsername(username).getWorkerId());
+        List<MyTask> tasks = personalTaskService.findTaskByWorkerId(workerService.findWorkerByUsername(username).getWorkerId());
         if (tasks.isEmpty()) {
             return new ResultMap().success("204").message("you have no task");
         }

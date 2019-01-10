@@ -1,5 +1,6 @@
 package com.example.now.service.Iml;
 
+import com.example.now.entity.MyTask;
 import com.example.now.entity.PersonalTask;
 import com.example.now.entity.Worker;
 import com.example.now.entity.Task;
@@ -25,15 +26,18 @@ public class PersonalTaskServiceImpl implements PersonalTaskService {
     private PersonalTaskRepository personalTaskRepository;
 
     @Override
-    public List<Task> findTaskByWorkerId(int id) {
+    public List<MyTask> findTaskByWorkerId(int id) {
         List<Integer> taskId = new ArrayList<Integer>();
-        List<Task> tasks = new ArrayList<Task>();
+        List<Integer> finished=new ArrayList<>();
+        List<MyTask> tasks = new ArrayList<>();
         for (PersonalTask personalTask : personalTaskRepository.findByIdWorkerId(id)) {
             taskId.add(personalTask.getTaskId());
+            finished.add(personalTask.getFinished());
         }
-        for (int taskid : taskId) {
-            tasks.add(taskRepository.findById(taskid));
+        for (int i=0;i<taskId.size();i++) {
+            tasks.add(new MyTask(taskRepository.findById(taskId.get(i).intValue()),finished.get(i)));
         }
+
         Collections.reverse(tasks);
         return tasks;
     }
@@ -74,6 +78,16 @@ public class PersonalTaskServiceImpl implements PersonalTaskService {
         }
         personalTaskRepository.delete(personalTask);
         personalTaskRepository.flush();
+        return "succeed";
+    }
+    @Override
+    public String finishOne(int workerId,int taskId){
+        PersonalTask personalTask = personalTaskRepository.findByIdWorkerIdAndIdTaskId(workerId, taskId);
+        if (personalTask == null) {
+            return "wrong input";
+        }
+        personalTask.setFinished(1);
+        personalTaskRepository.saveAndFlush(personalTask);
         return "succeed";
     }
 }
