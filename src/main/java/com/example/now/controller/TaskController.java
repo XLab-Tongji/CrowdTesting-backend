@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -102,5 +104,17 @@ public class TaskController {
             return new ResultMap().success("204").message("there is no task published by you");
         }
         return new ResultMap().success().data("tasks", tasks);
+    }
+
+    @RequestMapping(value = "/add-resource", method = RequestMethod.POST)
+    public ResultMap taskResourceAdd(int taskId, String description, String options, MultipartFile file) {
+        String message = taskService.createTaskResource(taskId, description, options, file);
+        return new ResultMap().success("201").message(message);
+    }
+
+    @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
+    public ResultMap taskResourceFind(int taskId) {
+        String content = taskService.readTaskResource(taskId);
+        return new ResultMap().success().data("content", content);
     }
 }
