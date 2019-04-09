@@ -7,11 +7,14 @@ import com.example.now.service.TaskService;
 import com.example.now.entity.ResultMap;
 import com.example.now.util.TaskUtil;
 import com.example.now.util.TokenUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -104,5 +107,19 @@ public class TaskController {
             return new ResultMap().success("204").message("there is no task published by you");
         }
         return new ResultMap().success().data("tasks", tasks);
+    }
+
+    @RequestMapping(value = "/add-resource", method = RequestMethod.POST)
+    public ResultMap taskResourceAdd(int taskId, String description, String options, MultipartFile file) {
+        String message = taskService.createTaskResource(taskId, description, options, file);
+        return new ResultMap().success("201").message(message);
+    }
+
+    @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
+    public String taskResourceFind(int taskId) {
+        String content = taskService.readTaskResource(taskId);
+        JSONObject json=new JSONObject(content);
+        json.put("code",200);
+        return json.toString();
     }
 }

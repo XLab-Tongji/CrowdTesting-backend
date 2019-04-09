@@ -2,6 +2,7 @@ package com.example.now.service;
 
 import com.example.now.entity.Task;
 import com.example.now.entity.IdStore;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -22,4 +23,8 @@ public interface TaskService {
     String updateTask(int taskId,String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age);
 
     String deleteTask(int id);
+
+    String createTaskResource(int taskId, String description, String options, MultipartFile file);
+
+    String readTaskResource(int taskId);
 }

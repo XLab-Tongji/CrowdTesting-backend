@@ -45,6 +45,7 @@ public class Task {
     private int min_age;
     @Column(name = "max_age")
     private int max_age;
+
     @Column(name = "reviewed")
     private int reviewed;
 
@@ -55,6 +56,9 @@ public class Task {
     public void setReviewed(int reviewed) {
         this.reviewed = reviewed;
     }
+
+    @Column(name = "resource_link")
+    private String resource_link;
 
     public String getUsage() {
         return usage;
@@ -251,5 +255,13 @@ public class Task {
         this.min_age=min_age;
         this.max_age=max_age;
         this.reviewed=reviewed;
+    }
+
+    public String getResource_link() {
+        return resource_link;
+    }
+
+    public void setResource_link(String resource_link) {
+        this.resource_link = resource_link;
     }
 }
