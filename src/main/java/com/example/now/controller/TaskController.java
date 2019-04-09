@@ -5,6 +5,7 @@ import com.example.now.entity.Task;
 import com.example.now.service.RequesterService;
 import com.example.now.service.TaskService;
 import com.example.now.entity.ResultMap;
+import com.example.now.util.TaskUtil;
 import com.example.now.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +33,8 @@ public class TaskController {
 
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
-        return new ResultMap().success().data("tasks", taskService.findAllTask());
+        List<Task> tasks=taskService.findAllTask();
+        return new ResultMap().success().data("tasks", TaskUtil.selectReviewedTask(tasks));
     }
 
     @RequestMapping(value = "/find-by-id", method = RequestMethod.GET)

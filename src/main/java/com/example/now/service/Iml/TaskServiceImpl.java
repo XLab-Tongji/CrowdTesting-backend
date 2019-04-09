@@ -16,7 +16,8 @@ import org.springframework.stereotype.Service;
 public class TaskServiceImpl implements TaskService {
     @Autowired
     private TaskRepository taskRepository;
-
+    //任务未审核的标志
+    private int UNREVIEWED=0;
     @Override
     public List<Task> findAllTask() {
         List<Task> temp = taskRepository.findAll();
@@ -52,7 +53,7 @@ public class TaskServiceImpl implements TaskService {
     public String addTask(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,IdStore taskId) {
         if (name == null || description == null)
             return "inputs are not enough";
-        Task temp = new Task(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age);
+        Task temp = new Task(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,UNREVIEWED);
         Task result=taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
         return "succeed";
@@ -61,7 +62,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String updateTask(int taskId,String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
         Task task=taskRepository.findById(taskId);
-        task.setAll(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age);
+        task.setAll(name, description,reward,status,requesterid,type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,task.getReviewed());
         taskRepository.saveAndFlush(task);
         return "succeed";
     }

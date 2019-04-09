@@ -45,6 +45,16 @@ public class Task {
     private int min_age;
     @Column(name = "max_age")
     private int max_age;
+    @Column(name = "reviewed")
+    private int reviewed;
+
+    public int getReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(int reviewed) {
+        this.reviewed = reviewed;
+    }
 
     public String getUsage() {
         return usage;
@@ -202,7 +212,7 @@ public class Task {
 
     }
 
-    public Task(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
+    public Task(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -220,9 +230,10 @@ public class Task {
         this.usage=usage;
         this.min_age=min_age;
         this.max_age=max_age;
+        this.reviewed=reviewed;
     }
 
-    public void setAll(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
+    public void setAll(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -239,5 +250,6 @@ public class Task {
         this.usage=usage;
         this.min_age=min_age;
         this.max_age=max_age;
+        this.reviewed=reviewed;
     }
 }

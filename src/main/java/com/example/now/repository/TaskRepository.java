@@ -15,4 +15,5 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     public List<Task> findByRewardBetween(int least, int most);
 
     public void deleteById(int id);
+
 }
