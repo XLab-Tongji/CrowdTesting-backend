@@ -8,6 +8,7 @@ import com.example.now.repository.TaskRepository;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Collections;
+import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,10 @@ import java.io.RandomAccessFile;
 import java.io.FileInputStream;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
+import org.apache.commons.io.input.BOMInputStream;
 
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -91,17 +95,21 @@ public class TaskServiceImpl implements TaskService {
 
         try
         {
-
             // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
+            byte[] bytes = new byte[(int)file.getSize()];
+            BOMInputStream inputStream =  new BOMInputStream(file.getInputStream());
+            inputStream.read(bytes);
+            inputStream.close();
             String strRead = new String(bytes);
+            JSONArray urlArray=new JSONArray(strRead);
+            JSONArray optArray=new JSONArray(options);
             JSONObject obj = new JSONObject();
-            obj.put("description",description);
-            obj.put("options",options);
-            obj.put("resources",strRead);
+            obj.put("desc",description);
+            obj.put("opts",optArray);
+            obj.put("urls",urlArray);
             Task task=taskRepository.findById(taskId);
-            String filePath = "./xml/";
-            String resource_link = "http://localhost:8880/xml/" + taskId + ".txt";
+            String filePath = "C:\\Users\\Administrator\\Desktop\\xml\\";
+            String resource_link = "C:\\Users\\Administrator\\Desktop\\xml\\" + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
             // 一、检查放置文件的文件夹路径是否存在，不存在则创建
@@ -136,7 +144,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String readTaskResource(int taskId){
         Task task=taskRepository.findById(taskId);
-        String fileName = "./xml/"+taskId+".txt";
+        String fileName = "C:\\Users\\Administrator\\Desktop\\xml\\"+taskId+".txt";
         File file = new File(fileName);
         Long fileLength = file.length();
         byte[] filecontent = new byte[fileLength.intValue()];
@@ -144,6 +152,9 @@ public class TaskServiceImpl implements TaskService {
             FileInputStream in = new FileInputStream(file);
             in.read(filecontent);
             in.close();
+            String str=new String(filecontent,0,fileLength.intValue(),StandardCharsets.UTF_8);
+            JSONObject json=new JSONObject(str);
+            return json.toString();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return "false";
@@ -151,6 +162,5 @@ public class TaskServiceImpl implements TaskService {
             e.printStackTrace();
             return "false";
         }
-        return new String(filecontent);
     }
 }

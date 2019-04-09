@@ -6,6 +6,7 @@ import com.example.now.service.RequesterService;
 import com.example.now.service.TaskService;
 import com.example.now.entity.ResultMap;
 import com.example.now.util.TokenUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -113,8 +114,10 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
-    public ResultMap taskResourceFind(int taskId) {
+    public String taskResourceFind(int taskId) {
         String content = taskService.readTaskResource(taskId);
-        return new ResultMap().success().data("content", content);
+        JSONObject json=new JSONObject(content);
+        json.put("code",200);
+        return json.toString();
     }
 }

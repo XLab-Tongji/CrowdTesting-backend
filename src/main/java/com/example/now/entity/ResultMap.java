@@ -1,6 +1,7 @@
 package com.example.now.entity;
 
 import java.util.HashMap;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public class ResultMap extends HashMap<String, Object> {
 

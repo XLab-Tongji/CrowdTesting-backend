@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "PERSONAL_TASK")
-public class PersonalTask {
+public class  PersonalTask {
     @EmbeddedId
     private PersonalTaskKey id;
     @Column(name = "finished")
