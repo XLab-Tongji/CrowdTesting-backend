@@ -8,6 +8,8 @@ import com.example.now.repository.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class WorkerServiceImpl implements WorkerService {
     @Autowired
@@ -15,6 +17,11 @@ public class WorkerServiceImpl implements WorkerService {
     @Autowired
     private TokenUtils tokenUtils;
 
+    @Override
+    public List<Worker> findAllWorker(){
+        List<Worker> workers=workerRepository.findAll();
+        return workers;
+    }
     @Override
     public Worker findWorkerById(int id) {
         Worker worker=workerRepository.findById(id);
