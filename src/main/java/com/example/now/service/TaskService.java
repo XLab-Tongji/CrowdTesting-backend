@@ -26,5 +26,11 @@ public interface TaskService {
 
     String createTaskResource(int taskId, String description, String options, MultipartFile file);
 
+    String createTaskResource(int taskId, String description, MultipartFile file);
+
+    String createTaskResource(int taskId, String description, String options);
+
+    String createTaskResource(int taskId, String url);
+
     String readTaskResource(int taskId);
 }

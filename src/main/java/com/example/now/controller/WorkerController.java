@@ -47,17 +47,17 @@ public class WorkerController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap workerAdd(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major) {                      //创建一个worker
+    public ResultMap workerAdd(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {                      //创建一个worker
         IdStore idStore=new IdStore();
-        String message = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore);
+        String message = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,school);
         return new ResultMap().success("201").message(message).data("workerId",idStore.getId());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap workerUpdate(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major) {                      //修改worker
+    public ResultMap workerUpdate(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {                      //修改worker
         String authToken = request.getHeader(this.tokenHeader);
         String temp = this.tokenUtils.getUsernameFromToken(authToken);
-        String message = workerService.updateWorker(workerService.findWorkerByUsername(temp).getWorkerId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major);
+        String message = workerService.updateWorker(workerService.findWorkerByUsername(temp).getWorkerId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school);
         return new ResultMap().success("201").message(message);
     }
 

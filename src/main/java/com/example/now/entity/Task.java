@@ -49,6 +49,12 @@ public class Task {
     @Column(name = "reviewed")
     private int reviewed;
 
+    @Column(name = "resource_link")
+    private String resource_link;
+
+    @Transient
+    private String institution_name;
+
     public int getReviewed() {
         return reviewed;
     }
@@ -56,9 +62,6 @@ public class Task {
     public void setReviewed(int reviewed) {
         this.reviewed = reviewed;
     }
-
-    @Column(name = "resource_link")
-    private String resource_link;
 
     public String getUsage() {
         return usage;
@@ -263,5 +266,13 @@ public class Task {
 
     public void setResource_link(String resource_link) {
         this.resource_link = resource_link;
+    }
+
+    public String getInstitution_name() {
+        return institution_name;
+    }
+
+    public void setInstitution_name(String institution_name) {
+        this.institution_name = institution_name;
     }
 }

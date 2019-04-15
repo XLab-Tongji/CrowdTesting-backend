@@ -115,6 +115,24 @@ public class TaskController {
         return new ResultMap().success("201").message(message);
     }
 
+    @RequestMapping(value = "/add-resource-no-file", method = RequestMethod.POST)
+    public ResultMap taskResourceAdd(int taskId, String description, String options) {
+        String message = taskService.createTaskResource(taskId, description, options);
+        return new ResultMap().success("201").message(message);
+    }
+
+    @RequestMapping(value = "/add-resource-no-options", method = RequestMethod.POST)
+    public ResultMap taskResourceAdd(int taskId, String description, MultipartFile file) {
+        String message = taskService.createTaskResource(taskId, description, file);
+        return new ResultMap().success("201").message(message);
+    }
+
+    @RequestMapping(value = "/add-resource-from-url", method = RequestMethod.POST)
+    public ResultMap taskResourceAdd(int taskId, String url) {
+        String message = taskService.createTaskResource(taskId, url);
+        return new ResultMap().success("201").message(message);
+    }
+
     @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
     public String taskResourceFind(int taskId) {
         String content = taskService.readTaskResource(taskId);

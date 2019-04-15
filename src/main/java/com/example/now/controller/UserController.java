@@ -54,13 +54,13 @@ public class UserController {
         return new ResultMap().success("201").message(message2).data("requesterId",idStore.getId());
     }
     @RequestMapping(value = "/register-as-worker", method = RequestMethod.POST)
-    public ResultMap registerAsWorker(String eMail,String password, String username, String name, String teleNumber, String withdrawnMethod, String education, String workArea, int age, String gender, String major) {
+    public ResultMap registerAsWorker(String eMail,String password, String username, String name, String teleNumber, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {
         String message1 = userService.register(eMail, password, "ROLE_WORKER");
         if (message1 != "succeed") {
             return new ResultMap().fail("400").message(message1);
         }
         IdStore idStore=new IdStore();
-        String message2 = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore);
+        String message2 = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,school);
         return new ResultMap().success("201").message(message2).data("workerId",idStore.getId());
     }
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)

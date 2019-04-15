@@ -37,20 +37,20 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    public String addWorker(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id) {
+    public String addWorker(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id, String school) {
         if (username == null || name == null) {
             return "username or name is empty";
         }
-        Worker worker = new Worker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major);
+        Worker worker = new Worker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school);
         Worker temp=workerRepository.saveAndFlush(worker);
         id.setId(temp.getId());
         return "succeed";
     }
 
     @Override
-    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major) {
+    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school) {
         Worker worker=workerRepository.findById(workerId);
-        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major);
+        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school);
         workerRepository.saveAndFlush(worker);
         return "succeed";
     }
