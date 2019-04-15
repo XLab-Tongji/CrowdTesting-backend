@@ -46,6 +46,9 @@ public class Worker {
     @Column(name = "major")
     private String major;
 
+    @Column(name = "school")
+    private String school;
+
     @Transient
     private int level;
     @Transient
@@ -64,7 +67,7 @@ public class Worker {
 
     }
 
-    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major) {
+    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -77,9 +80,10 @@ public class Worker {
         this.xp=0;
         this.gender = gender;
         this.major = major;
+        this.school = school;
     }
 
-    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major) {
+    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -90,6 +94,7 @@ public class Worker {
         this.age = age;
         this.gender = gender;
         this.major = major;
+        this.school = school;
     }
 
     public int getXp() {
@@ -206,5 +211,13 @@ public class Worker {
 
     public void setMajor(String major) {
         this.major = major;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 }

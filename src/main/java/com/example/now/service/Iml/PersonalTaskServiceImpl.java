@@ -6,6 +6,7 @@ import com.example.now.entity.Worker;
 import com.example.now.entity.Task;
 import com.example.now.repository.PersonalTaskRepository;
 import com.example.now.service.PersonalTaskService;
+import com.example.now.service.RequesterService;
 import com.example.now.repository.TaskRepository;
 import com.example.now.repository.WorkerRepository;
 
@@ -24,6 +25,8 @@ public class PersonalTaskServiceImpl implements PersonalTaskService {
     private WorkerRepository workerRepository;
     @Autowired
     private PersonalTaskRepository personalTaskRepository;
+    @Autowired
+    private RequesterService requesterService;
 
     @Override
     public List<MyTask> findTaskByWorkerId(int id) {
@@ -37,7 +40,9 @@ public class PersonalTaskServiceImpl implements PersonalTaskService {
         for (int i=0;i<taskId.size();i++) {
             tasks.add(new MyTask(taskRepository.findById(taskId.get(i).intValue()),finished.get(i)));
         }
-
+        for(MyTask aTask : tasks) {
+            aTask.getTask().setInstitution_name(requesterService.findRequesterById(aTask.getTask().getRequesterid()).getInstitutionName());
+        }
         Collections.reverse(tasks);
         return tasks;
     }
