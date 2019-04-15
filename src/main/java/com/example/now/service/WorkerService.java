@@ -3,7 +3,12 @@ package com.example.now.service;
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Worker;
 
+import java.util.List;
+
 public interface WorkerService {
+
+    List<Worker> findAllWorker();
+
     Worker findWorkerById(int id);
 
     Worker findWorkerByUsername(String username);
