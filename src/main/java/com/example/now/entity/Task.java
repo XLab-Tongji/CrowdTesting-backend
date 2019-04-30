@@ -1,12 +1,17 @@
 package com.example.now.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import org.hibernate.annotations.TypeDef;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 @Entity
+@TypeDef(name = "json", typeClass = JsonStringType.class)
 @Table(name = "task")
-public class Task {
+public class Task implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
@@ -54,6 +59,92 @@ public class Task {
 
     @Transient
     private String institution_name;
+
+    //题型，0 为单选题（填A、B、C、D那种），1 为图形标记题
+    @Column(name = "type_of_question")
+    private Integer typeOfQuestion;
+
+    //表示该任务是否被分配完成，0 为未完成，1 为普通任务分配完成，2 为所有（普通与审核）任务分配完成
+    //默认为 0
+    @Column(name= "is_distributed")
+    private Integer isDistributed;
+
+    //表示该任务是否完成，-1 为过期，0 为未完成，1 为普通任务已完成，2 为所有（普通与审核）任务已完成
+    //默认为0
+    @Column(name = "is_finished")
+    private Integer isFinished;
+
+    //该任务的问题数量（有多少道题），默认为 0
+    @Column(name = "number_of_questions")
+    private Integer numberOfQuestions;
+
+    //该任务已被分发的数量
+    @Column(name = "distributed_number")
+    private Integer distributedNumber;
+
+    //该任务需要分发的总数量
+    @Column(name = "all_number")
+    private Integer allNumber;
+    //存放该任务最后整合好的答案
+
+    @Column(name = "answer")
+    private String answer;
+
+    public Integer getTypeOfQuestion() {
+        return typeOfQuestion;
+    }
+
+    public void setTypeOfQuestion(Integer typeOfQuestion) {
+        this.typeOfQuestion = typeOfQuestion;
+    }
+
+    public Integer getIsDistributed() {
+        return isDistributed;
+    }
+
+    public void setIsDistributed(Integer isDistributed) {
+        this.isDistributed = isDistributed;
+    }
+
+    public Integer getIsFinished() {
+        return isFinished;
+    }
+
+    public void setIsFinished(Integer isFinished) {
+        this.isFinished = isFinished;
+    }
+
+    public Integer getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
+
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
+        this.numberOfQuestions = numberOfQuestions;
+    }
+
+    public Integer getDistributedNumber() {
+        return distributedNumber;
+    }
+
+    public void setDistributedNumber(Integer distributedNumber) {
+        this.distributedNumber = distributedNumber;
+    }
+
+    public Integer getAllNumber() {
+        return allNumber;
+    }
+
+    public void setAllNumber(Integer allNumber) {
+        this.allNumber = allNumber;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 
     public int getReviewed() {
         return reviewed;

@@ -73,11 +73,11 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap taskAdd(String name, String description, Float reward, String status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
+    public ResultMap taskAdd(String name, String description, Float reward, String status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,Integer typeOfQuestion,Integer numberOfQuestions,Integer allNumber) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId);
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId,typeOfQuestion,numberOfQuestions,allNumber);
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
