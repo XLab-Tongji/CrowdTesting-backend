@@ -3,6 +3,7 @@ package com.example.now.controller;
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Task;
 import com.example.now.service.RequesterService;
+import com.example.now.service.WorkerService;
 import com.example.now.service.TaskService;
 import com.example.now.entity.ResultMap;
 import com.example.now.util.TaskUtil;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,11 +34,19 @@ public class TaskController {
     @Autowired
     private RequesterService requesterService;
     @Autowired
+    private WorkerService workerService;
+    @Autowired
     private HttpServletRequest request;
 
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
-        List<Task> tasks=taskService.findAllTask();
+        List<Task> usable_task=taskService.findAllTask();
+        List<Task> tasks=new ArrayList<Task>();
+        for(Task task : usable_task){
+            if(task.getStatus() != task.getPopulation() + 1){
+                tasks.add(task);
+            }
+        }
         return new ResultMap().success().data("tasks", TaskUtil.selectReviewedTask(tasks));
     }
 
@@ -73,11 +83,11 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap taskAdd(String name, String description, Float reward, String status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
+    public ResultMap taskAdd(String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId);
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId,typeOfQuestion,numberOfQuestions,allNumber);
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
@@ -85,7 +95,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap taskUpdate(int taskId,String name, String description, Float reward, String status, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
+    public ResultMap taskUpdate(int taskId,String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         String message = taskService.updateTask(taskId,name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age);
@@ -135,7 +145,10 @@ public class TaskController {
 
     @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
     public String taskResourceFind(int taskId) {
-        String content = taskService.readTaskResource(taskId);
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+
+        String content = taskService.readTaskResource(taskId, workerService.findWorkerByUsername(username).getWorkerId());
         JSONObject json=new JSONObject(content);
         json.put("code",200);
         return json.toString();

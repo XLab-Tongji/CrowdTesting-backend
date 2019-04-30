@@ -17,10 +17,10 @@ public interface TaskService {
     List<Task> findTaskByRequesterId(int id);
 
     List<Task> findTaskByReward(int lowest, int highest);
+  
+    String addTask(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,IdStore taskId,Integer typeOfQuestion,Integer numberOfQuestions,Integer allNumber);
 
-    String addTask(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,IdStore taskId);
-
-    String updateTask(int taskId,String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age);
+    String updateTask(int taskId,String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age);
 
     String deleteTask(int id);
 
@@ -31,6 +31,16 @@ public interface TaskService {
     String createTaskResource(int taskId, String description, String options);
 
     String createTaskResource(int taskId, String url);
+  
+    String readTaskResource(int taskId, int workerId);
 
-    String readTaskResource(int taskId);
+    //更新 distributedNumber 字段
+    //并检测该 task 是否分配完成并修改 isDistributed 字段
+    String updateDistributedNumber(int taskId,Integer beginAt,Integer endAt);
+
+    //将完成的所有子任务（普通类型）合并为两份答案，存放于 answer 字段中
+    String mergeOrdinarySubtask();
+
+    //将审核子任务的答案添加在 answer 字段中
+    String mergeAllSubtask();
 }
