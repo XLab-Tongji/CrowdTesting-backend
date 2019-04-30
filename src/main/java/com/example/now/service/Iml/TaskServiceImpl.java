@@ -2,11 +2,12 @@ package com.example.now.service.Iml;
 
 import com.example.now.entity.Answer;
 import com.example.now.entity.IdStore;
-import com.example.now.entity.Subtask;
+import com.example.now.entity.SubTask;
 import com.example.now.entity.Task;
 import com.example.now.repository.AnswerRepository;
 import com.example.now.repository.SubtaskRepository;
 import com.example.now.service.TaskService;
+import com.example.now.repository.SubTaskRepository;
 import com.example.now.repository.TaskRepository;
 import com.example.now.service.RequesterService;
 
@@ -101,7 +102,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String updateTask(int taskId, String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
+    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
         Task task = taskRepository.findById(taskId);
         task.setAll(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, level, time_limitation, pay_time, area, usage, min_age, max_age, task.getReviewed());
         taskRepository.saveAndFlush(task);
@@ -125,14 +126,15 @@ public class TaskServiceImpl implements TaskService {
             inputStream.close();
             String strRead = new String(bytes);
             JSONArray urlArray = new JSONArray(strRead);
+            int number_of_questions = urlArray.length();
             JSONArray optArray = new JSONArray(options);
             JSONObject obj = new JSONObject();
             obj.put("desc", description);
             obj.put("opts", optArray);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
-            String filePath = "C:\\Users\\Administrator\\Desktop\\xml\\";
-            String resource_link = "C:\\Users\\Administrator\\Desktop\\xml\\" + taskId + ".txt";
+            String filePath = "C:/Users/Administrator/Desktop/xml/";
+            String resource_link = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
             // 一、检查放置文件的文件夹路径是否存在，不存在则创建
@@ -153,6 +155,17 @@ public class TaskServiceImpl implements TaskService {
                 writer.append(content);
                 writer.flush();
                 task.setResource_link(resource_link);
+                task.setNumber_of_questions(number_of_questions);
+                JSONObject rest_of_questions = new JSONObject();
+                JSONArray rest_of_question_list = new JSONArray();
+                JSONObject rest_of_question = new JSONObject();
+                rest_of_question.put("begin","1");
+                rest_of_question.put("end",String.valueOf(number_of_questions));
+                rest_of_question_list.put(rest_of_question);
+                for(int i = 0; i < task.getPopulation()+1;i++){
+                    rest_of_questions.put(String.valueOf(i), rest_of_question_list);
+                }
+                task.setRest_of_question(rest_of_questions.toString());
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -179,8 +192,8 @@ public class TaskServiceImpl implements TaskService {
             obj.put("desc", description);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
-            String filePath = "C:\\Users\\Administrator\\Desktop\\xml\\";
-            String resource_link = "C:\\Users\\Administrator\\Desktop\\xml\\" + taskId + ".txt";
+            String filePath = "C:/Users/Administrator/Desktop/xml/";
+            String resource_link = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
             // 一、检查放置文件的文件夹路径是否存在，不存在则创建
@@ -220,8 +233,8 @@ public class TaskServiceImpl implements TaskService {
         obj.put("desc", description);
         obj.put("opts", optArray);
         Task task = taskRepository.findById(taskId);
-        String filePath = "C:\\Users\\Administrator\\Desktop\\xml\\";
-        String resource_link = "C:\\Users\\Administrator\\Desktop\\xml\\" + taskId + ".txt";
+        String filePath = "C:/Users/Administrator/Desktop/xml/";
+        String resource_link = filePath + taskId + ".txt";
         String content = obj.toString();
         File dir = new File(filePath);
         // 一、检查放置文件的文件夹路径是否存在，不存在则创建
@@ -259,9 +272,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String readTaskResource(int taskId) {
+    public String readTaskResource(int taskId, int workerId) {
         Task task = taskRepository.findById(taskId);
-        String fileName = "C:\\Users\\Administrator\\Desktop\\xml\\" + taskId + ".txt";
+        String fileName = task.getResource_link();
+        List<SubTask> subTask = subTaskRepository.findByTaskId(taskId);
+        SubTask theSubTask = new SubTask();
+        for(int i=0;i<subTask.size();i++){
+            if(subTask.get(i).getWorkerId() == workerId){
+                theSubTask = subTask.get(i);
+                break;
+            }
+        }
+        int begin = theSubTask.getBegin() - 1;
+        int end = theSubTask.getEnd();
         File file = new File(fileName);
         Long fileLength = file.length();
         byte[] filecontent = new byte[fileLength.intValue()];
@@ -271,7 +294,18 @@ public class TaskServiceImpl implements TaskService {
             in.close();
             String str = new String(filecontent, 0, fileLength.intValue(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(str);
-            return json.toString();
+            JSONObject new_json = new JSONObject();
+            String desc = json.getString("desc");
+            JSONArray opts = json.getJSONArray("opts");
+            new_json.put("desc",desc);
+            new_json.put("opts",opts);
+            JSONArray new_urls = new JSONArray();
+            JSONArray urls_list = json.getJSONArray("urls");
+            for(int i=begin;i<end;i++){
+                new_urls.put(urls_list.getJSONObject(i));
+            }
+            new_json.put("urls",new_urls);
+            return new_json.toString();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return "false";

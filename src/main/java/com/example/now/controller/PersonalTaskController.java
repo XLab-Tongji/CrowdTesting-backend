@@ -4,6 +4,7 @@ import com.example.now.entity.*;
 import com.example.now.service.PersonalTaskService;
 import com.example.now.util.TokenUtils;
 import com.example.now.service.WorkerService;
+import com.example.now.service.TaskService;
 import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,8 @@ public class PersonalTaskController {
     private TokenUtils tokenUtils;
     @Autowired
     private PersonalTaskService personalTaskService;
+    @Autowired
+    private TaskService TaskService;
     @Autowired
     private WorkerService workerService;
     @Autowired
@@ -56,6 +59,20 @@ public class PersonalTaskController {
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
+        Task a_task = TaskService.findTaskById(taskId);
+//        if(a_task.getStatus().equals("0"))
+//        {
+//            a_task.setStatus("1");
+//        }
+//        else if(a_task.getStatus().equals("1"))
+//        {
+//            a_task.setStatus("2");
+//        }
+//        else if(a_task.getStatus().equals("2"))
+//        {
+//            a_task.setStatus("3");
+//        }
+        message = TaskService.updateTask(taskId, a_task.getName(),a_task.getDescription(),a_task.getReward(),a_task.getStatus(),a_task.getRequesterid(),a_task.getType(),a_task.getRestrictions(),a_task.getStart_time(),a_task.getEnd_time(),a_task.getLevel(),a_task.getTime_limitation(),a_task.getPay_time(),a_task.getArea(),a_task.getUsage(),a_task.getMin_age(),a_task.getMax_age());
         return new ResultMap().success("201").message(message);
     }
 

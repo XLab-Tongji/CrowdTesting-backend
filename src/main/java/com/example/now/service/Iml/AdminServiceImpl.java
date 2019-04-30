@@ -17,7 +17,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean reviewTask(int id){
         Task task=taskRepository.findById(id);
-        task.setAll(task.getName(),task.getDescription(),task.getReward(),task.getStatus(),task.getId(),task.getType(),task.getRestrictions(),task.getStart_time(),task.getEnd_time(),task.getLevel(),task.getTime_limitation(),task.getPay_time(),task.getArea(),task.getUsage(),task.getMin_age(),task.getMax_age(),REVIEWED);
+        task.setAll(task.getName(),task.getDescription(),task.getReward(),task.getStatus(),task.getRequesterid(),task.getType(),task.getRestrictions(),task.getStart_time(),task.getEnd_time(),task.getLevel(),task.getTime_limitation(),task.getPay_time(),task.getArea(),task.getUsage(),task.getMin_age(),task.getMax_age(),REVIEWED);
         taskRepository.saveAndFlush(task);
         return true;
     }
