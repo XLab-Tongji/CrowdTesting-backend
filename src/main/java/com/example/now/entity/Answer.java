@@ -51,4 +51,61 @@ public class Answer implements Serializable {
 
     @Column (name="ANSWER")
     private String answer;
+
+    //答案对应的子任务的id
+    @Column(name = "subtask_id")
+    private Integer subtaskId;
+    //答案的开始题数
+    @Column (name = "begin_at")
+    private Integer beginAt;
+    //答案目前的末尾题数
+    @Column (name = "end_at")
+    private Integer endAt;
+    //该子任务应做题数
+    @Column (name="number")
+    private Integer number;
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getSubtaskId() {
+        return subtaskId;
+    }
+
+    public void setSubtaskId(Integer subtaskId) {
+        this.subtaskId = subtaskId;
+    }
+
+    public Integer getBeginAt() {
+        return beginAt;
+    }
+
+    public void setBeginAt(Integer beginAt) {
+        this.beginAt = beginAt;
+    }
+
+    public Integer getEndAt() {
+        return endAt;
+    }
+
+    public void setEndAt(Integer endAt) {
+        this.endAt = endAt;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
 }

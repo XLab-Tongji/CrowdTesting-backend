@@ -40,8 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/answer/delete","/task/read-resource","/answer/find-all","/answer/find-by-answer-id","/answer/find-by-task-id","/answer/find-by-worker-id","/changePassword", "/worker/find-by-username", "/requester/find-by-username", "/task/find-by-name", "/task/find-by-requester-id", "/task/find-by-reward", "/taskData/find", "/personal-task/find-task-list", "/personal-task/find-worker-list", "/personal-task/delete").authenticated()       // 需携带有效 token
                 .antMatchers("/task/add-resource","/task/add-resource-no-options","/task/add-resource-no-file","/requester/update", "/requester/find-myself", "/task/add", "/task/update", "/task/delete", "/task/find-my-task", "/taskData/add").hasRole("REQUESTER")
                 .antMatchers("/answer/find-my-answer","/answer/add","/answer/update","/worker/update", "/worker/find-myself", "/personal-task/add", "/personal-task/find-my-task","/question/finish").hasRole("WORKER")
-                .antMatchers("/admin","/task/delete","/worker/delete","/requester/delete").hasRole("ADMIN")
-                .anyRequest().permitAll()       // 允许所有请求通过
+        				.antMatchers("/admin","/task/delete","/worker/delete","/requester/delete").hasRole("ADMIN")
                 .anyRequest().permitAll()       // 允许所有请求通过
                 .and()
                 // 配置被拦截时的处理

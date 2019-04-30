@@ -14,6 +14,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     public List<Task> findByRewardBetween(int least, int most);
 
+    public List<Task> findByIsDistributedAndIsFinished(int isDistributed,int isFinished);
+
     public void deleteById(int id);
 
 }

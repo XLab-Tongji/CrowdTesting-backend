@@ -87,7 +87,7 @@ public class TaskController {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId);
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId,typeOfQuestion,numberOfQuestions,allNumber);
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
         }
