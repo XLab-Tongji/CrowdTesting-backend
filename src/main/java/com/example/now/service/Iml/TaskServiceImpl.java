@@ -2,12 +2,12 @@ package com.example.now.service.Iml;
 
 import com.example.now.entity.Answer;
 import com.example.now.entity.IdStore;
-import com.example.now.entity.SubTask;
+import com.example.now.entity.Subtask;
 import com.example.now.entity.Task;
 import com.example.now.repository.AnswerRepository;
 import com.example.now.repository.SubtaskRepository;
 import com.example.now.service.TaskService;
-import com.example.now.repository.SubTaskRepository;
+import com.example.now.repository.SubtaskRepository;
 import com.example.now.repository.TaskRepository;
 import com.example.now.service.RequesterService;
 
@@ -33,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private TaskRepository taskRepository;
     @Autowired
-    private SubtaskRepository subtaskRepository;
+    private SubtaskRepository subTaskRepository;
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
@@ -89,22 +89,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId,Integer typeOfQuestion,Integer numberOfQuestions,Integer allNumber) {
+    public String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId,Integer allNumber) {
         if (name == null || description == null)
             return "inputs are not enough";
-        Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED);
-        temp.setAllNumber(allNumber);
-        temp.setTypeOfQuestion(typeOfQuestion);
-        temp.setNumberOfQuestions(numberOfQuestions);
+        Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
         Task result = taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
         return "succeed";
     }
 
     @Override
-    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
+    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
         Task task = taskRepository.findById(taskId);
-        task.setAll(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, level, time_limitation, pay_time, area, usage, min_age, max_age, task.getReviewed());
+        task.setAll(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, task.getReviewed(), task.getAllNumber());
         taskRepository.saveAndFlush(task);
         return "succeed";
     }
@@ -155,7 +152,7 @@ public class TaskServiceImpl implements TaskService {
                 writer.append(content);
                 writer.flush();
                 task.setResource_link(resource_link);
-                task.setNumber_of_questions(number_of_questions);
+                task.setNumberOfQuestions(number_of_questions);
                 JSONObject rest_of_questions = new JSONObject();
                 JSONArray rest_of_question_list = new JSONArray();
                 JSONObject rest_of_question = new JSONObject();
@@ -275,8 +272,8 @@ public class TaskServiceImpl implements TaskService {
     public String readTaskResource(int taskId, int workerId) {
         Task task = taskRepository.findById(taskId);
         String fileName = task.getResource_link();
-        List<SubTask> subTask = subTaskRepository.findByTaskId(taskId);
-        SubTask theSubTask = new SubTask();
+        List<Subtask> subTask = subTaskRepository.findByTaskId(taskId);
+        Subtask theSubTask = new Subtask();
         for(int i=0;i<subTask.size();i++){
             if(subTask.get(i).getWorkerId() == workerId){
                 theSubTask = subTask.get(i);
@@ -346,10 +343,10 @@ public class TaskServiceImpl implements TaskService {
             // 2. 查找所有子任务 isFinished 字段为 1 的任务
             Task task=it.next();
             int numberOfQuestions=task.getNumberOfQuestions();
-            List<Subtask> subtasks=subtaskRepository.findByTaskId(task.getId());
+            List<Subtask> subtasks=subTaskRepository.findByTaskId(task.getId());
             int flag=0;
             for(Subtask subtask : subtasks){
-                if(subtask.getIsFinished()==0){
+                if(subtask.getIs_finished()==0){
                     flag=1;
                     break;
                 }
@@ -375,17 +372,17 @@ public class TaskServiceImpl implements TaskService {
             // 2. 查找所有子任务 isFinished 字段为 1 且 typeOfSubtask 字段为1（审核任务) 的任务
             Task task =it.next();
             int numberOfQuestions=task.getNumberOfQuestions();
-            List<Subtask> subtasks=subtaskRepository.findByTaskId(task.getId());
+            List<Subtask> subtasks=subTaskRepository.findByTaskId(task.getId());
             int flag=0;
             for(Subtask subtask: subtasks){
-                if(subtask.getIsFinished()==0){
+                if(subtask.getIs_finished()==0){
                     flag=1;
                     break;
                 }
             }
             if (flag == 1) { continue; }
             for(Subtask subtask:subtasks){
-                if(subtask.getTypeOfSubtask()==0){
+                if(subtask.getType_of_subtask()==0){
                     flag=1;
                     break;
                 }

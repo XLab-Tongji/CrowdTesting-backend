@@ -67,7 +67,7 @@ public class AnswerServiceImpl implements AnswerService {
                 System.out.println("SubtaskId is null");
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
             Subtask subtask=subtaskRepository.findById(subtaskId);
-            subtask.setIsFinished(1);
+            subtask.setIs_finished(1);
             subtaskRepository.saveAndFlush(subtask);
         }
         return "succeed";
@@ -91,7 +91,7 @@ public class AnswerServiceImpl implements AnswerService {
                 System.out.println("SubtaskId is null");
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
             Subtask subtask=subtaskRepository.findById(subtaskId);
-            subtask.setIsFinished(1);
+            subtask.setIs_finished(1);
             subtaskRepository.saveAndFlush(subtask);
         }
         return "succeed";

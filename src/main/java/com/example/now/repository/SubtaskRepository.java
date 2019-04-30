@@ -5,8 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SubtaskRepository extends JpaRepository<Subtask,Integer> {
+public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
     public Subtask findById(int id);
 
-    public List<Subtask> findByTaskId(int taskId);
+    public List<Subtask> findByWorkerId(int id);
+
+    public List<Subtask> findByTaskId(int id);
+
+    public void deleteById(int id);
 }
