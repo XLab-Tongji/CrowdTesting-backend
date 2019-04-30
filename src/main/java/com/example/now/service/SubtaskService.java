@@ -1,8 +1,10 @@
 package com.example.now.service;
 
-import com.example.now.entity.IdStore;
 import com.example.now.entity.Subtask;
+import com.example.now.entity.IdStore;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface SubtaskService {
@@ -10,10 +12,13 @@ public interface SubtaskService {
 
     Subtask findSubtaskById(int id);
 
-    String addSubtask(Integer taskId, Integer workerId, Integer beginAt, Integer endAt, Integer typeOfSubtask, IdStore Id);
-    //用于更新子任务的完成状态
-    String updateSubtask(int subtaskId,Integer isFinished);
+    List<Subtask> findSubtaskByWorkerId(int id);
 
-    String deleteSubtask(Integer subtaskId);
+    List<Subtask> findSubtaskByTaskId(int id);
 
+    String addSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, IdStore id, int type_of_subtask);
+
+    String updateSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int id);
+
+    String deleteSubtask(int id);
 }

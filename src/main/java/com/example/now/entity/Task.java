@@ -88,16 +88,13 @@ public class Task implements Serializable {
     private String answer;
   
     @Column(name = "number_of_questions")
-    private int number_of_questions;
-
-    @Transient
-    private String institution_name;
+    private int numberOfQuestions;
 
     public Task() {
 
     }
 
-    public Task(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
+    public Task(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age,int reviewd, Integer allNumber) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -107,18 +104,18 @@ public class Task implements Serializable {
         this.restrictions = restrictions;
         this.start_time = start_time;
         this.end_time = end_time;
-        this.population = 0;
+        this.population = population;
         this.level = level;
         this.time_limitation = time_limitation;
         this.pay_time = pay_time;
-        this.area=area;
-        this.usage=usage;
-        this.min_age=min_age;
-        this.max_age=max_age;
-        this.reviewed=reviewed;
+        this.area = area;
+        this.usage = usage;
+        this.min_age = min_age;
+        this.max_age = max_age;
+        this.allNumber = allNumber;
     }
 
-    public void setAll(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
+    public void setAll(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age,int reviewd, Integer allNumber) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -128,13 +125,14 @@ public class Task implements Serializable {
         this.restrictions = restrictions;
         this.start_time = start_time;
         this.end_time = end_time;
+        this.population = population;
         this.level = level;
         this.time_limitation = time_limitation;
         this.pay_time = pay_time;
-        this.area=area;
-        this.usage=usage;
-        this.min_age=min_age;
-        this.max_age=max_age;
-        this.reviewed=reviewed;
+        this.area = area;
+        this.usage = usage;
+        this.min_age = min_age;
+        this.max_age = max_age;
+        this.allNumber = allNumber;
     }
 }

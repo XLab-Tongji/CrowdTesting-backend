@@ -72,7 +72,7 @@ public class PersonalTaskController {
 //        {
 //            a_task.setStatus("3");
 //        }
-        message = TaskService.updateTask(taskId, a_task.getName(),a_task.getDescription(),a_task.getReward(),a_task.getStatus(),a_task.getRequesterid(),a_task.getType(),a_task.getRestrictions(),a_task.getStart_time(),a_task.getEnd_time(),a_task.getLevel(),a_task.getTime_limitation(),a_task.getPay_time(),a_task.getArea(),a_task.getUsage(),a_task.getMin_age(),a_task.getMax_age());
+       // message = TaskService.updateTask(taskId, a_task.getName(),a_task.getDescription(),a_task.getReward(),a_task.getStatus(),a_task.getRequesterid(),a_task.getType(),a_task.getRestrictions(),a_task.getStart_time(),a_task.getEnd_time(),a_task.getLevel(),a_task.getTime_limitation(),a_task.getPay_time(),a_task.getArea(),a_task.getUsage(),a_task.getMin_age(),a_task.getMax_age());
         return new ResultMap().success("201").message(message);
     }
 
