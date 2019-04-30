@@ -17,5 +17,15 @@ public class TaskUtil {
         }
         return tasks;
     }
+    //挑选出未被审核的任务
+    public static List<Task> selectUnreviewedTask(List<Task> tasks){
+        for (Iterator<Task> it = tasks.iterator(); it.hasNext(); ) {
+            Task task = it.next();
+            if(task.getReviewed()==1) {
+                it.remove();
+            }
+        }
+        return tasks;
+    }
 }
 

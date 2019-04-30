@@ -4,7 +4,9 @@ import javax.persistence.*;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
+import lombok.Data;
 @Entity
+@Data
 @Table(name = "task")
 public class Task {
     @Id
@@ -18,7 +20,7 @@ public class Task {
     @Column
     private Float reward;
     @Column
-    private String status;
+    private int status;
     @Column(name = "requester_id")
     private Integer requesterid;
     @Column
@@ -52,174 +54,20 @@ public class Task {
     @Column(name = "resource_link")
     private String resource_link;
 
+    @Column(name = "rest_of_question")
+    private String rest_of_question;
+
+    @Column(name = "number_of_questions")
+    private int number_of_questions;
+
     @Transient
     private String institution_name;
-
-    public int getReviewed() {
-        return reviewed;
-    }
-
-    public void setReviewed(int reviewed) {
-        this.reviewed = reviewed;
-    }
-
-    public String getUsage() {
-        return usage;
-    }
-
-    public void setUsage(String usage) {
-        this.usage = usage;
-    }
-
-    public int getMin_age() {
-        return min_age;
-    }
-
-    public void setMin_age(int min_age) {
-        this.min_age = min_age;
-    }
-
-    public int getMax_age() {
-        return max_age;
-    }
-
-    public void setMax_age(int max_age) {
-        this.max_age = max_age;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Float getReward() {
-        return reward;
-    }
-
-    public void setReward(Float reward) {
-        this.reward = reward;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Integer getRequester_id() {
-        return requesterid;
-    }
-
-    public void setRequester_id(Integer requester_id) {
-        this.requesterid = requester_id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getRestrictions() {
-        return restrictions;
-    }
-
-    public void setRestrictions(String restrictions) {
-        this.restrictions = restrictions;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getRequesterid() {
-        return requesterid;
-    }
-
-    public void setRequesterid(Integer requesterid) {
-        this.requesterid = requesterid;
-    }
-
-    public Timestamp getStart_time() {
-        return start_time;
-    }
-
-    public void setStart_time(Timestamp start_time) {
-        this.start_time = start_time;
-    }
-
-    public Timestamp getEnd_time() {
-        return end_time;
-    }
-
-    public void setEnd_time(Timestamp end_time) {
-        this.end_time = end_time;
-    }
-
-    public int getPopulation() {
-        return population;
-    }
-
-    public void setPopulation(int population) {
-        this.population = population;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public Float getTime_limitation() {
-        return time_limitation;
-    }
-
-    public void setTime_limitation(Float time_limitation) {
-        this.time_limitation = time_limitation;
-    }
-
-    public Float getPay_time() {
-        return pay_time;
-    }
-
-    public void setPay_time(Float pay_time) {
-        this.pay_time = pay_time;
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
 
     public Task() {
 
     }
 
-    public Task(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
+    public Task(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -240,7 +88,7 @@ public class Task {
         this.reviewed=reviewed;
     }
 
-    public void setAll(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
+    public void setAll(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,int reviewed) {
         this.name = name;
         this.description = description;
         this.reward = reward;

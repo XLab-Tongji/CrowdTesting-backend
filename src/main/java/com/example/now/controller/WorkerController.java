@@ -25,6 +25,13 @@ public class WorkerController {
     private WorkerService workerService;
     @Autowired
     private HttpServletRequest request;
+
+    //查找所有worker，具有管理员权限可以调用
+    @RequestMapping(value = "/find-all",method = RequestMethod.GET)
+    public ResultMap workerFindAll(){
+        return new ResultMap().success().data("workers",workerService.findAllWorker());
+    }
+
     @RequestMapping(value = "/find-by-id", method = RequestMethod.GET)
     public ResultMap workerFindById(int id) {
         return new ResultMap().success().data("worker", workerService.findWorkerById(id));

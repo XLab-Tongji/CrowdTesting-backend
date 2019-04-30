@@ -18,9 +18,9 @@ public interface TaskService {
 
     List<Task> findTaskByReward(int lowest, int highest);
 
-    String addTask(String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,IdStore taskId);
+    String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time,int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age,IdStore taskId);
 
-    String updateTask(int taskId,String name, String description, Float reward, String status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age);
+    String updateTask(int taskId,String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int level, Float time_limitation, Float pay_time,String area,String usage,int min_age,int max_age);
 
     String deleteTask(int id);
 
@@ -32,5 +32,5 @@ public interface TaskService {
 
     String createTaskResource(int taskId, String url);
 
-    String readTaskResource(int taskId);
+    String readTaskResource(int taskId, int workerId);
 }
