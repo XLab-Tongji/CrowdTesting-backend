@@ -1,8 +1,10 @@
 package com.example.now.entity;
 
 import javax.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "WORKER")
 public class Worker {
     @Id
@@ -49,6 +51,15 @@ public class Worker {
     @Column(name = "school")
     private String school;
 
+    @Column(name = "correct_number_answered")
+    private int correct_number_answered;
+
+    @Column(name = "overtime_number")
+    private int overtime_number;
+
+    @Column(name = "all_number_answered")
+    private int all_number_answered;
+
     @Transient
     private int level;
     @Transient
@@ -67,7 +78,7 @@ public class Worker {
 
     }
 
-    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school) {
+    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -81,9 +92,12 @@ public class Worker {
         this.gender = gender;
         this.major = major;
         this.school = school;
+        this.all_number_answered = all_number_answered;
+        this.correct_number_answered = correct_number_answered;
+        this.overtime_number = overtime_number;
     }
 
-    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {
+    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -95,129 +109,8 @@ public class Worker {
         this.gender = gender;
         this.major = major;
         this.school = school;
-    }
-
-    public int getXp() {
-        return xp;
-    }
-
-    public void setXp(int xp) {
-        this.xp = xp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getTeleNumber() {
-        return teleNumber;
-    }
-
-    public void setTeleNumber(String teleNumber) {
-        this.teleNumber = teleNumber;
-    }
-
-    public String getEMail() {
-        return eMail;
-    }
-
-    public void setEMail(String eMail) {
-        this.eMail = eMail;
-    }
-
-    public int getBalance() {
-        return balance;
-    }
-
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
-
-    public String getWithdrawnMethod() {
-        return withdrawnMethod;
-    }
-
-    public void setWithdrawnMethod(String withdrawnMethod) {
-        this.withdrawnMethod = withdrawnMethod;
-    }
-
-    public String getEducation() {
-        return education;
-    }
-
-    public void setEducation(String education) {
-        this.education = education;
-    }
-
-    public String getWorkArea() {
-        return workArea;
-    }
-
-    public void setWorkArea(String workArea) {
-        this.workArea = workArea;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getWorkerId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String geteMail() {
-        return eMail;
-    }
-
-    public void seteMail(String eMail) {
-        this.eMail = eMail;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getMajor() {
-        return major;
-    }
-
-    public void setMajor(String major) {
-        this.major = major;
-    }
-
-    public String getSchool() {
-        return school;
-    }
-
-    public void setSchool(String school) {
-        this.school = school;
+        this.all_number_answered = all_number_answered;
+        this.correct_number_answered = correct_number_answered;
+        this.overtime_number = overtime_number;
     }
 }

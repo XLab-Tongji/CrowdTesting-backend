@@ -185,6 +185,7 @@ public class TaskServiceImpl implements TaskService {
             inputStream.close();
             String strRead = new String(bytes);
             JSONArray urlArray = new JSONArray(strRead);
+            int number_of_questions = urlArray.length();
             JSONObject obj = new JSONObject();
             obj.put("desc", description);
             obj.put("urls", urlArray);
@@ -211,6 +212,17 @@ public class TaskServiceImpl implements TaskService {
                 writer.append(content);
                 writer.flush();
                 task.setResource_link(resource_link);
+                task.setNumberOfQuestions(number_of_questions);
+                JSONObject rest_of_questions = new JSONObject();
+                JSONArray rest_of_question_list = new JSONArray();
+                JSONObject rest_of_question = new JSONObject();
+                rest_of_question.put("begin","1");
+                rest_of_question.put("end",String.valueOf(number_of_questions));
+                rest_of_question_list.put(rest_of_question);
+                for(int i = 0; i < task.getPopulation()+1;i++){
+                    rest_of_questions.put(String.valueOf(i), rest_of_question_list);
+                }
+                task.setRest_of_question(rest_of_questions.toString());
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -382,7 +394,7 @@ public class TaskServiceImpl implements TaskService {
             }
             if (flag == 1) { continue; }
             for(Subtask subtask:subtasks){
-                if(subtask.getType_of_subtask()==0){
+                if(subtask.getType()==0){
                     flag=1;
                     break;
                 }

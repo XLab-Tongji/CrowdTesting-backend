@@ -72,7 +72,7 @@ public class AnswerController {
     public ResultMap answerFindMyAnswer() {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        int workerId = workerService.findWorkerByUsername(username).getWorkerId();
+        int workerId = workerService.findWorkerByUsername(username).getId();
         List<Answer> result = answerService.findAnswerByWorkerId(workerId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no Answer.");
@@ -86,7 +86,7 @@ public class AnswerController {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore answerId=new IdStore();
-        String message = answerService.addAnswer(workerService.findWorkerByUsername(username).getWorkerId(), task_id,answer,answer_time,answerId,subtaskId,beginAt,endAt);
+        String message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), task_id,answer,answer_time,answerId,subtaskId,beginAt,endAt);
         if (!message.equals("succeed")) {
             return new ResultMap().fail("400").message(message);
         }
@@ -98,7 +98,7 @@ public class AnswerController {
     public ResultMap answerUpdate(int task_id, String answer, Timestamp answer_time, int id,int subtaskId,Integer beginAt,Integer endAt) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        String message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getWorkerId(),task_id, answer,answer_time,id,subtaskId,beginAt,endAt);
+        String message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getId(),task_id, answer,answer_time,id,subtaskId,beginAt,endAt);
         if(!message.equals("succeed")){
             return new ResultMap().fail("400").message("update failed");
         }

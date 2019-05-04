@@ -49,13 +49,16 @@ public class Subtask implements Serializable {
     private int taskId;
 
     @Column(nullable = false, name = "number_of_task")
-    private int type_of_subtask;
+    private int number_of_task;
+
+    @Column(nullable = false, name = "now_begin")
+    private int now_begin;
 
     public Subtask(){
 
     }
 
-    public Subtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int type_of_subtask) {
+    public Subtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, int now_begin) {
         this.begin = begin;
         this.end = end;
         this.created_time = created_time;
@@ -65,10 +68,11 @@ public class Subtask implements Serializable {
         this.type = type;
         this.workerId = workerId;
         this.taskId = taskId;
-        this.type_of_subtask = type_of_subtask;
+        this.number_of_task = number_of_task;
+        this.now_begin = now_begin;
     }
 
-    public void setAll(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int type_of_subtask) {
+    public void setAll(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, int now_begin) {
         this.begin = begin;
         this.end = end;
         this.created_time = created_time;
@@ -78,6 +82,7 @@ public class Subtask implements Serializable {
         this.type = type;
         this.workerId = workerId;
         this.taskId = taskId;
-        this.type_of_subtask = type_of_subtask;
+        this.number_of_task = number_of_task;
+        this.now_begin = now_begin;
     }
 }

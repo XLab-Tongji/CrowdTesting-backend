@@ -41,16 +41,16 @@ public class WorkerServiceImpl implements WorkerService {
         if (username == null || name == null) {
             return "username or name is empty";
         }
-        Worker worker = new Worker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school);
+        Worker worker = new Worker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,0,0,0);
         Worker temp=workerRepository.saveAndFlush(worker);
         id.setId(temp.getId());
         return "succeed";
     }
 
     @Override
-    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school) {
+    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number) {
         Worker worker=workerRepository.findById(workerId);
-        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school);
+        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school, correct_number_answered, all_number_answered, overtime_number);
         workerRepository.saveAndFlush(worker);
         return "succeed";
     }

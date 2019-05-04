@@ -54,7 +54,7 @@ public class PersonalTaskController {
     public ResultMap personalTaskAdd(Integer taskId) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        int workerId = workerService.findWorkerByUsername(username).getWorkerId();
+        int workerId = workerService.findWorkerByUsername(username).getId();
         String message = personalTaskService.addPersonalTask(workerId, taskId);
         if (message != "succeed") {
             return new ResultMap().fail("400").message(message);
@@ -89,7 +89,7 @@ public class PersonalTaskController {
     public ResultMap findMyTask() {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        List<MyTask> tasks = personalTaskService.findTaskByWorkerId(workerService.findWorkerByUsername(username).getWorkerId());
+        List<MyTask> tasks = personalTaskService.findTaskByWorkerId(workerService.findWorkerByUsername(username).getId());
         if (tasks.isEmpty()) {
             return new ResultMap().success("204").message("you have no task");
         }
