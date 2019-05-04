@@ -54,8 +54,6 @@ public class Subtask implements Serializable {
     @Column(nullable = false, name = "now_begin")
     private int now_begin;
 
-    public Subtask(){
-
     }
 
     public Subtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, int now_begin) {
