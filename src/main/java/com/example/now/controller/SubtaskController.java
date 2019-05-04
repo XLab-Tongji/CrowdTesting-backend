@@ -77,7 +77,7 @@ public class SubtaskController {
     public ResultMap SubtaskFindMySubtask() {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        int workerId = workerService.findWorkerByUsername(username).getWorkerId();
+        int workerId = workerService.findWorkerByUsername(username).getId();
         List<Subtask> result = subtaskService.findSubtaskByWorkerId(workerId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no Subtask.");
@@ -86,7 +86,7 @@ public class SubtaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap SubtaskAdd(int number_wanted, int task_id, Timestamp created_time, Timestamp deadline, int type) {
+    public ResultMap SubtaskAdd(int number_wanted, int task_id, Timestamp created_time, Timestamp deadline) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore SubtaskId=new IdStore();
@@ -96,28 +96,43 @@ public class SubtaskController {
         int begin = 0;
         int end = 0;
         int number_of_task = -1;
-        for(int i=0;i<population;i++)
-        {
-            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(i));
-            number_of_task = i;
-            if(rest_of_questions_list.length() > 0)
-            {
+        int type = 0;
+        if(the_task.getStatus() == 0) {
+            for (int i = 0; i < population; i++) {
+                JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(i));
+                number_of_task = i;
+                if (rest_of_questions_list.length() > 0) {
+                    begin = Integer.parseInt(rest_of_questions_list.getJSONObject(0).getString("begin"));
+                    int the_end = Integer.parseInt(rest_of_questions_list.getJSONObject(0).getString("end"));
+                    if (the_end - begin >= number_wanted) {
+                        end = begin + number_wanted - 1;
+                        rest_of_questions_list.getJSONObject(0).put("begin", String.valueOf(end+1));
+                    } else {
+                        end = the_end;
+                        rest_of_questions_list.remove(0);
+                    }
+                    break;
+                } else
+                    continue;
+            }
+        }
+        else {
+            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population));
+            number_of_task = population;
+            type = 1;
+            if (rest_of_questions_list.length() > 0) {
                 begin = Integer.parseInt(rest_of_questions_list.getJSONObject(0).getString("begin"));
                 int the_end = Integer.parseInt(rest_of_questions_list.getJSONObject(0).getString("end"));
-                if(the_end - begin >= number_wanted) {
+                if (the_end - begin >= number_wanted) {
                     end = begin + number_wanted - 1;
-                    rest_of_questions_list.getJSONObject(0).put("begin",String.valueOf(end));
-                }
-                else{
+                    rest_of_questions_list.getJSONObject(0).put("begin", String.valueOf(end));
+                } else {
                     end = the_end;
                     rest_of_questions_list.remove(0);
                 }
-                break;
             }
-            else
-                continue;
         }
-        String message = subtaskService.addSubtask(begin, end, created_time, deadline, created_time, 0, type, workerService.findWorkerByUsername(username).getWorkerId(), task_id, SubtaskId, 0);
+        String message = subtaskService.addSubtask(begin, end, created_time, deadline, created_time, 0, type, workerService.findWorkerByUsername(username).getId(), task_id, number_of_task, SubtaskId, begin);
         if (!message.equals("succeed")) {
             return new ResultMap().fail("400").message(message);
         }
@@ -129,7 +144,7 @@ public class SubtaskController {
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public ResultMap SubtaskUpdate(Timestamp updated_time, Timestamp deadline, int id) {
         Subtask the_Subtask = subtaskService.findSubtaskById(id);
-        String message = subtaskService.updateSubtask(the_Subtask.getBegin(), the_Subtask.getEnd(), the_Subtask.getCreated_time(), deadline, updated_time, the_Subtask.getIs_finished(), the_Subtask.getType(), the_Subtask.getWorkerId(), the_Subtask.getTaskId(), id);
+        String message = subtaskService.updateSubtask(the_Subtask.getBegin(), the_Subtask.getEnd(), the_Subtask.getCreated_time(), deadline, updated_time, the_Subtask.getIs_finished(), the_Subtask.getType(), the_Subtask.getWorkerId(), the_Subtask.getTaskId(),the_Subtask.getNumber_of_task(), the_Subtask.getNow_begin(), id);
         return new ResultMap().success("201").message(message);
     }
 

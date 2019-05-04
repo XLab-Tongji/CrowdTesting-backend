@@ -148,7 +148,7 @@ public class TaskController {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
 
-        String content = taskService.readTaskResource(taskId, workerService.findWorkerByUsername(username).getWorkerId());
+        String content = taskService.readTaskResource(taskId, workerService.findWorkerByUsername(username).getId());
         JSONObject json=new JSONObject(content);
         json.put("code",200);
         return json.toString();

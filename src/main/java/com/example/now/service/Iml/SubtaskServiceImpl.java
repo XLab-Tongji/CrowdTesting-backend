@@ -46,17 +46,17 @@ public class SubtaskServiceImpl implements SubtaskService{
     }
 
     @Override
-    public String addSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, IdStore id, int type_of_subtask) {
-        Subtask temp = new Subtask(begin, end, created_time, deadline, updated_time, is_finished, type, workerId, taskId, type_of_subtask);
+    public String addSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, IdStore id, int now_begin) {
+        Subtask temp = new Subtask(begin, end, created_time, deadline, updated_time, is_finished, type, workerId, taskId, number_of_task, now_begin);
         Subtask result=subtaskRepository.saveAndFlush(temp);
         id.setId(result.getId());
         return "succeed";
     }
 
     @Override
-    public String updateSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int id) {
+    public String updateSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, int now_begin, int id) {
         Subtask new_Subtask=subtaskRepository.findById(id);
-        new_Subtask.setAll(begin, end, created_time, deadline, updated_time, is_finished, type, workerId, taskId, new_Subtask.getType_of_subtask());
+        new_Subtask.setAll(begin, end, created_time, deadline, updated_time, is_finished, type, workerId, taskId, number_of_task,now_begin);
         subtaskRepository.saveAndFlush(new_Subtask);
         return "succeed";
     }
