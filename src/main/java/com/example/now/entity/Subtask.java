@@ -36,9 +36,11 @@ public class Subtask implements Serializable {
     @Column(nullable = false, name = "updated_time")
     private Timestamp updated_time;
 
+    //判断子任务是否完成，0 为未完成，1 为已完成
     @Column(nullable = false, name = "is_finished")
     private int is_finished;
 
+    //子任务的类型，0 为普通任务，1 为审核任务
     @Column(nullable = false, name = "type")
     private int type;
 
@@ -48,9 +50,11 @@ public class Subtask implements Serializable {
     @Column(nullable = false, name = "task_id")
     private int taskId;
 
+    //标志这个子任务属于第几份答案，便于答案合并
     @Column(nullable = false, name = "number_of_task")
     private int number_of_task;
 
+    //标志这个子任务应从哪道题开始做，now_begin=end+1，end 为已回答的最后一道题数
     @Column(nullable = false, name = "now_begin")
     private int now_begin;
 
