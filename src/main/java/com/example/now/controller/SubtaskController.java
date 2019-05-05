@@ -118,7 +118,7 @@ public class SubtaskController {
         }
         else {
             JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population));
-            number_of_task = population;
+            number_of_task = population-1;
             type = 1;
             if (rest_of_questions_list.length() > 0) {
                 begin = Integer.parseInt(rest_of_questions_list.getJSONObject(0).getString("begin"));

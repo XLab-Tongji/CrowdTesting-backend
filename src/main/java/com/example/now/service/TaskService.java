@@ -38,9 +38,25 @@ public interface TaskService {
     //并检测该 task 是否分配完成并修改 isDistributed 字段
     String updateDistributedNumber(int taskId,Integer beginAt,Integer endAt);
 
-    //将完成的所有子任务（普通类型）合并为两份答案，存放于 answer 字段中
+    //（已弃用）将完成的所有子任务（普通类型）合并为两份答案，存放于 answer 字段中
     String mergeOrdinarySubtask();
 
-    //将审核子任务的答案添加在 answer 字段中
+    //（已弃用）将审核子任务的答案添加在 answer 字段中
     String mergeAllSubtask();
+
+    //更新 answer 字段（每次提交答案都会执行）
+    Boolean updateAnswer(int taskId,String answer,int numberOfTask);
+
+    //检测 task 所有普通任务是否完成
+    Boolean isFinishedForSimpleSubtasks(int taskId);
+
+    //检测 task 所有任务（普通和审核）是否完成
+    Boolean isFinishedForAllSubtasks(int taskId);
+
+    //遍历 task 表的 answer 字段，更新 isFinished 字段
+    //若已完成，则计算 worker 的正确题数和做题总数并更新
+    void updateStatus();
+
+    //计算 worker 的正确题数和做题总数并更新
+    void calculateCorrectNumber(int taskId);
 }

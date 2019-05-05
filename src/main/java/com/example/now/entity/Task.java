@@ -36,6 +36,7 @@ public class Task implements Serializable {
     private Timestamp start_time;
     @Column(name = "end_time")
     private Timestamp end_time;
+    //需要完整答案的套数
     @Column(name = "population")
     private int population;
     @Column(name = "level")
@@ -83,10 +84,10 @@ public class Task implements Serializable {
     @Column(name = "all_number")
     private Integer allNumber;
     //存放该任务最后整合好的答案
-
+    //在生成 Task 的同时生成空答案
     @Column(name = "answer")
     private String answer;
-  
+    //该任务的题目总数
     @Column(name = "number_of_questions")
     private int numberOfQuestions;
 

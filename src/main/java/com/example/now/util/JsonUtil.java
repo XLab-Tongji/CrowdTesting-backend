@@ -5,6 +5,7 @@ import com.example.now.entity.Answer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +31,8 @@ public class JsonUtil {
         return oldAnswerJson.toString();
     }
 
-    //合并一套答案的N个Json
+
+    //（已弃用）合并一套答案的N个Json
     public static String mergeJson(List<Answer> answers,String oldAnswer, Integer oldAnswerEndAt, Integer numberOfQuestions){
         if(numberOfQuestions==null)
             return "failed";
@@ -47,4 +49,47 @@ public class JsonUtil {
         }
         return "failed";
     }
+
+    //初始化 task 中的 answer 字段
+    //格式（以 population=3 为例）
+    //[[{"content":{"ans":0,"index":0},"isFinished":false}],[],[]]   单选题
+    //[[{"content":{"ans":[],"index":0},"isFinished":false}],[],[]]   图像题
+    public static String initializeAnswer(int population,int allNumber,String type){
+        int numberOfQuestions=allNumber/population;
+        JSONArray answers=new JSONArray();
+        JSONArray answer=new JSONArray();
+       /* JSONObject content=new JSONObject();//用来存放答案
+        if(type.equals("单选")){
+            content.put("ans",0);
+        }
+        else{
+            JSONArray ans=new JSONArray();
+            content.put("ans",ans);
+        }*/
+        /*content.put("index",0);
+        singleAnswer.put("content",content);
+        singleAnswer.put("isFinished",false);//代表该答案是否做过*/
+        //初始化一份完整答案
+        for(int i=0;i<numberOfQuestions;i++){
+            JSONObject singleAnswer=new JSONObject();
+            JSONObject content=new JSONObject();//用来存放答案
+            if(type.equals("单选")){
+                content.put("ans",0);
+            }
+            else{
+                JSONArray ans=new JSONArray();
+                content.put("ans",ans);
+            }
+            content.put("index",i+1);//从第一题开始
+            singleAnswer.put("content",content);
+            singleAnswer.put("isFinished",false);//代表该答案是否做过
+            answer.put(singleAnswer);
+        }
+        //初始化 n 份完整答案
+        for(int i=0;i<population;i++){
+            answers.put(answer);
+        }
+        return answers.toString();
+    }
+
 }
