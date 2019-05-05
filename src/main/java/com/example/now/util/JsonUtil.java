@@ -52,7 +52,7 @@ public class JsonUtil {
 
     //初始化 task 中的 answer 字段
     //格式（以 population=3 为例）
-    //[[{"content":{"ans":{},"index":0},"isFinished":false}],[],[]]   单选题
+    //[[{"content":{"ans":0,"index":0},"isFinished":false}],[],[]]   单选题
     //[[{"content":{"ans":[],"index":0},"isFinished":false}],[],[]]   图像题
     public static String initializeAnswer(int population,int allNumber,String type){
         int numberOfQuestions=allNumber/population;
@@ -61,8 +61,7 @@ public class JsonUtil {
         JSONObject singleAnswer=new JSONObject();
         JSONObject content=new JSONObject();//用来存放答案
         if(type.equals("单选")){
-            JSONObject ans=new JSONObject();
-            content.append("ans",ans);
+            content.append("ans",0);
         }
         else{
             JSONArray ans=new JSONArray();

@@ -1,14 +1,9 @@
 package com.example.now.service.Iml;
 
-import com.example.now.entity.Answer;
-import com.example.now.entity.IdStore;
-import com.example.now.entity.Subtask;
-import com.example.now.entity.Task;
-import com.example.now.repository.AnswerRepository;
-import com.example.now.repository.SubtaskRepository;
+import com.example.now.entity.*;
+import com.example.now.repository.*;
 import com.example.now.service.TaskService;
 import com.example.now.repository.SubtaskRepository;
-import com.example.now.repository.TaskRepository;
 import com.example.now.service.RequesterService;
 
 import java.io.*;
@@ -38,6 +33,8 @@ public class TaskServiceImpl implements TaskService {
     private AnswerRepository answerRepository;
     @Autowired
     private RequesterService requesterService;
+    @Autowired
+    private WorkerRepository workerRepository;
     //任务未审核的标志
     private int UNREVIEWED = 0;
 
@@ -470,8 +467,8 @@ public class TaskServiceImpl implements TaskService {
         int number=2;//TODO : 改为由 population 生成
         for(int i=0;i<number;i++){
             JSONArray answer=answers.getJSONArray(i);
-            for(int i=0;i<answer.length();i++){
-                if(!answer.getJSONObject(i).getBoolean("isFinished"))
+            for(int j=0;j<answer.length();j++){
+                if(!answer.getJSONObject(j).getBoolean("isFinished"))
                     return false;
             }
         }
@@ -485,8 +482,8 @@ public class TaskServiceImpl implements TaskService {
         int number=task.getPopulation();
         for(int i=0;i<number;i++){
             JSONArray answer=answers.getJSONArray(i);
-            for(int i=0;i<answer.length();i++){
-                if(!answer.getJSONObject(i).getBoolean("isFinished"))
+            for(int j=0;j<answer.length();j++){
+                if(!answer.getJSONObject(j).getBoolean("isFinished"))
                     return false;
             }
         }
@@ -496,26 +493,61 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updateStatus(){
         //获得 isFinished 字段为 0 或 1 的任务
-        List<Task> tasks0=taskRepository.findByIsFinished(0);
-        List<Task> tasks1=taskRepository.findByIsFinished(1);
+        List<Task> tasks0=taskRepository.findByStatus(0);
+        List<Task> tasks1=taskRepository.findByStatus(1);
         //处理 isFinished 字段为 0 的任务
         for(int i=0;i<tasks0.size();i++){
             if(isFinishedForSimpleSubtasks(tasks0.get(i).getId())){
-                tasks0.get(i).setIsFinished(1);
+                tasks0.get(i).setStatus(1);
             }
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
-                tasks0.get(i).setIsFinished(2);
-                //TODO: 计算正确率
+                tasks0.get(i).setStatus(2);
+                //更新 worker 的正确题数和做题总数
+                if(tasks0.get(i).getType().equals("单选")){
+                    calculateCorrectNumber(tasks0.get(i).getId());
+                }
             }
             taskRepository.saveAndFlush(tasks0.get(i));//存回
         }
         //处理 isFinished 字段为 1 的任务;
         for(int i=0;i<tasks1.size();i++){
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
-                tasks1.get(i).setIsFinished(2);
-                //TODO： 计算正确率
+                tasks1.get(i).setStatus(2);
+                //更新 worker 的正确题数和做题总数
+                if(tasks0.get(i).getType().equals("单选")){
+                    calculateCorrectNumber(tasks0.get(i).getId());
+                }
             }
             taskRepository.saveAndFlush(tasks1.get(i));//存回
+        }
+    }
+
+    @Override
+    public void calculateCorrectNumber(int taskId){
+        //更新 correct_number_answered 字段和 all_number_answered 字段
+        //1. 取出正确答案
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray correctAnswer=answers.getJSONArray(task.getPopulation()-1);
+        //2. 获取 task 对应的所有 subtask
+        List<Subtask> subtasks=subTaskRepository.findByTaskId(taskId);
+        for(int i=0;i<subtasks.size();i++){
+            Answer answer=answerRepository.findBySubtaskId(subtasks.get(i).getId());
+            JSONArray currentAnswer=new JSONArray(answer.getAnswer());
+            int correctNumber=0;
+            //3. 比较 correctAnswer 和 currentAnswer
+            for(int j=0;j<currentAnswer.length();j++){
+                int index=currentAnswer.getJSONObject(j).getInt("index");
+                if(currentAnswer.getJSONObject(j).getInt("ans")==correctAnswer.getJSONObject(index-1).getJSONObject("content").getInt("ans")){
+                    correctNumber++;
+                }
+            }
+            //4. 将correctNumber 写回对应 worker 的 correct_number_answered 字段
+            //   并更新对应 worker 的 all_number_answered 字段
+            Worker worker=workerRepository.findById(answer.getWorkerId());
+            worker.setCorrect_number_answered(worker.getCorrect_number_answered()+correctNumber);
+            worker.setAll_number_answered(worker.getAll_number_answered()+answer.getNumber());
+            workerRepository.saveAndFlush(worker);
         }
     }
 }
