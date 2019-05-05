@@ -98,7 +98,7 @@ public class SubtaskController {
         int number_of_task = -1;
         int type = 0;
         if(the_task.getStatus() == 0) {
-            for (int i = 0; i < population; i++) {
+            for (int i = 0; i < population-1; i++) {
                 JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(i));
                 number_of_task = i;
                 if (rest_of_questions_list.length() > 0) {
