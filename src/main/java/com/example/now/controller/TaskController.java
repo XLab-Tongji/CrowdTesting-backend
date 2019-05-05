@@ -2,6 +2,7 @@ package com.example.now.controller;
 
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Task;
+import com.example.now.entity.Worker;
 import com.example.now.service.RequesterService;
 import com.example.now.service.WorkerService;
 import com.example.now.service.TaskService;
@@ -21,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.now.util.DESUtil;
 
 @RestController
 @RequestMapping("/task")
@@ -94,6 +97,23 @@ public class TaskController {
         return new ResultMap().success("201").message(message).data("taskId",taskId.getId());
     }
 
+    @RequestMapping(value = "/add-questionaire", method = RequestMethod.POST)
+    public ResultMap taskAdd(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, Integer allNumber,String url) {
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        IdStore taskId=new IdStore();
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,population,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId,allNumber);
+        if (!message.equals("succeed")) {
+            return new ResultMap().fail("400").message(message);
+        }
+        Task the_task = taskService.findTaskById(taskId.getId());
+        String message1 = taskService.createTaskResource(taskId.getId(), url);
+        if (!message1.equals("succeed")) {
+            return new ResultMap().fail("400").message(message);
+        }
+        return new ResultMap().success("201").message(message).data("taskId",taskId.getId());
+    }
+
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public ResultMap taskUpdate(int taskId, String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
         String authToken = request.getHeader(this.tokenHeader);
@@ -153,6 +173,22 @@ public class TaskController {
         json.put("code",200);
         return json.toString();
     }
+
+    @RequestMapping(value = "/submitResponseCallback", method = RequestMethod.POST)
+    public ResultMap submitResponseCallback(String userId, String taskId, int status) {
+        int realUserId = Integer.parseInt(DESUtil.decode("monetware",userId));
+        int realTaskId = Integer.parseInt(DESUtil.decode("monetware",taskId));
+        Worker the_worker = workerService.findWorkerById(realUserId);
+        Task the_task = taskService.findTaskById(realTaskId);
+        if(status == 1) {
+            try {
+                the_worker.setBalance(the_worker.getBalance() + the_task.getReward());
+                workerService.updateWorker(the_worker.getId(),the_worker.getUsername(),the_worker.getName(),the_worker.getTeleNumber(),the_worker.getEMail(),the_worker.getWithdrawnMethod(),the_worker.getEducation(),the_worker.getWorkArea(),the_worker.getAge(),the_worker.getGender(),the_worker.getMajor(),the_worker.getSchool(),the_worker.getCorrect_number_answered(),the_worker.getAll_number_answered(),the_worker.getOvertime_number(),the_worker.getBalance());
+            } catch (Exception e) {
+                return new ResultMap().fail("503");
+            }
+        }
+        return new ResultMap().success();
 
     @RequestMapping(value = "/update-status",method = RequestMethod.PUT)
     public ResultMap taskUpdateStatus(){

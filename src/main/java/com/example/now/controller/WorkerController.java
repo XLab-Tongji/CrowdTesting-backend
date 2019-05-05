@@ -58,7 +58,7 @@ public class WorkerController {
         String authToken = request.getHeader(this.tokenHeader);
         String temp = this.tokenUtils.getUsernameFromToken(authToken);
         Worker the_worker = workerService.findWorkerByUsername(temp);
-        String message = workerService.updateWorker(the_worker.getId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,the_worker.getCorrect_number_answered(),the_worker.getAll_number_answered(), the_worker.getOvertime_number());
+        String message = workerService.updateWorker(the_worker.getId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,the_worker.getCorrect_number_answered(),the_worker.getAll_number_answered(), the_worker.getOvertime_number(),the_worker.getBalance());
         return new ResultMap().success("201").message(message);
     }
 
