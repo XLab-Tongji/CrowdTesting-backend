@@ -131,7 +131,7 @@ public class TaskServiceImpl implements TaskService {
             obj.put("opts", optArray);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
-            String filePath = "C:\\Users\\lenovo\\Desktop\\xml\\";
+            String filePath = "C:/Users/Administrator/Desktop/xml/";
             String resource_link = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
@@ -220,6 +220,7 @@ public class TaskServiceImpl implements TaskService {
                 rest_of_question.put("begin","1");
                 rest_of_question.put("end",String.valueOf(number_of_questions));
                 rest_of_question_list.put(rest_of_question);
+                //TODO: 待改
                 for(int i = 0; i < task.getPopulation()+1;i++){
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
