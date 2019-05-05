@@ -46,4 +46,14 @@ public interface TaskService {
 
     //更新 answer 字段（每次提交答案都会执行）
     Boolean updateAnswer(int taskId,String answer,int numberOfTask);
+
+    //TODO：检测 task 所有普通任务是否完成
+    Boolean isFinishedForSimpleSubtasks(int taskId);
+
+    //TODO: 检测 task 所有任务（普通和审核）是否完成
+    Boolean isFinishedForAllSubtasks(int taskId);
+
+    //TODO: 遍历 task 表的 answer 字段，更新 isFinished 字段
+    //若已完成，则执行计算正确率函数
+    void updateStatus();
 }

@@ -16,6 +16,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
     public List<Task> findByIsDistributedAndIsFinished(int isDistributed,int isFinished);
 
+    public List<Task> findByIsFinished(int isFinished);
+
     public void deleteById(int id);
 
 }

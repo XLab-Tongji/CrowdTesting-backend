@@ -462,4 +462,60 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.saveAndFlush(task);
         return true;
     }
+
+    @Override
+    public Boolean isFinishedForSimpleSubtasks(int taskId){
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        int number=2;//TODO : 改为由 population 生成
+        for(int i=0;i<number;i++){
+            JSONArray answer=answers.getJSONArray(i);
+            for(int i=0;i<answer.length();i++){
+                if(!answer.getJSONObject(i).getBoolean("isFinished"))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean isFinishedForAllSubtasks(int taskId){
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        int number=task.getPopulation();
+        for(int i=0;i<number;i++){
+            JSONArray answer=answers.getJSONArray(i);
+            for(int i=0;i<answer.length();i++){
+                if(!answer.getJSONObject(i).getBoolean("isFinished"))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void updateStatus(){
+        //获得 isFinished 字段为 0 或 1 的任务
+        List<Task> tasks0=taskRepository.findByIsFinished(0);
+        List<Task> tasks1=taskRepository.findByIsFinished(1);
+        //处理 isFinished 字段为 0 的任务
+        for(int i=0;i<tasks0.size();i++){
+            if(isFinishedForSimpleSubtasks(tasks0.get(i).getId())){
+                tasks0.get(i).setIsFinished(1);
+            }
+            if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
+                tasks0.get(i).setIsFinished(2);
+                //TODO: 计算正确率
+            }
+            taskRepository.saveAndFlush(tasks0.get(i));//存回
+        }
+        //处理 isFinished 字段为 1 的任务;
+        for(int i=0;i<tasks1.size();i++){
+            if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
+                tasks1.get(i).setIsFinished(2);
+                //TODO： 计算正确率
+            }
+            taskRepository.saveAndFlush(tasks1.get(i));//存回
+        }
+    }
 }

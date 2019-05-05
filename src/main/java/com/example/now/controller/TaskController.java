@@ -153,4 +153,10 @@ public class TaskController {
         json.put("code",200);
         return json.toString();
     }
+
+    @RequestMapping(value = "/update-status",method = RequestMethod.PUT)
+    public ResultMap taskUpdateStatus(){
+        taskService.updateStatus();
+        return new ResultMap().success("201").message("success");
+    }
 }
