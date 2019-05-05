@@ -25,7 +25,7 @@ public class Worker {
     private String eMail;
 
     @Column(name = "BALANCE")
-    private int balance;
+    private float balance;
 
     @Column(name = "WITHDRAWN_METHOD")
     private String withdrawnMethod;
@@ -74,6 +74,23 @@ public class Worker {
             this.level=11+(xp-16500)/3000;
     }
 
+    @Transient
+    private int credit;
+    @Transient
+    public int getCredit() {
+        return credit;
+    }
+    @Transient
+    public void setCredit(){
+        float accuracy_rate = this.correct_number_answered / this.all_number_answered;
+        if(accuracy_rate <= 0.6){
+            this.credit = 0;
+        }
+        else{
+            this.credit = (int)(3 + (accuracy_rate - 0.8) * 5 + 2 / (Math.exp(-this.all_number_answered/100)+1) - 2/(Math.exp(-this.overtime_number/10)+1));
+        }
+    }
+
     public Worker() {
 
     }
@@ -97,7 +114,7 @@ public class Worker {
         this.overtime_number = overtime_number;
     }
 
-    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number) {
+    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number, float balance) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -112,5 +129,6 @@ public class Worker {
         this.all_number_answered = all_number_answered;
         this.correct_number_answered = correct_number_answered;
         this.overtime_number = overtime_number;
+        this.balance = balance;
     }
 }

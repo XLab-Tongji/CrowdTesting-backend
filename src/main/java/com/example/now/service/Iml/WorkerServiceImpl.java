@@ -26,6 +26,7 @@ public class WorkerServiceImpl implements WorkerService {
     public Worker findWorkerById(int id) {
         Worker worker=workerRepository.findById(id);
         worker.setLevel();
+        worker.setCredit();
         return worker;
     }
 
@@ -33,6 +34,7 @@ public class WorkerServiceImpl implements WorkerService {
     public Worker findWorkerByUsername(String username) {
         Worker worker=workerRepository.findByEMail(username);
         worker.setLevel();
+        worker.setCredit();
         return worker;
     }
 
@@ -48,9 +50,9 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number) {
+    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number, float balance) {
         Worker worker=workerRepository.findById(workerId);
-        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school, correct_number_answered, all_number_answered, overtime_number);
+        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school, correct_number_answered, all_number_answered, overtime_number,balance);
         workerRepository.saveAndFlush(worker);
         return "succeed";
     }
