@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.io.InputStream;
 
 import com.example.now.util.JsonUtil;
+import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,15 +62,19 @@ public class AnswerServiceImpl implements AnswerService {
         temp.setNumber(endAt-beginAt);
         Answer result=answerRepository.saveAndFlush(temp);
         id.setId(result.getId());
+        //更新对应 subtask 中的 updated_time,now_begin
+        Subtask subtask=subtaskRepository.findById(subtaskId);
+        subtask.setNow_begin(endAt);
+        subtask.setUpdated_time(new Timestamp(System.currentTimeMillis()));
         //若该子任务已完成，则修改对应子任务字段
         if(isFinished(result)){
             if(result.getSubtaskId()==null)
                 System.out.println("SubtaskId is null");
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
-            Subtask subtask=subtaskRepository.findById(subtaskId);
             subtask.setIs_finished(1);
-            subtaskRepository.saveAndFlush(subtask);
+            //TODO : 将答案写入 task 中的 answer 字段
         }
+        subtaskRepository.saveAndFlush(subtask);
         return "succeed";
     }
 
@@ -80,20 +85,25 @@ public class AnswerServiceImpl implements AnswerService {
         if(new_answer.getEndAt()==beginAt-1){
             //答案 json 合并，并更新字段
             new_answer.setAll(worker_id, task_id, answer_time, JsonUtil.appendJson(new_answer.getAnswer(),answer));
+            new_answer.setEndAt(endAt);
         }
         else{
             return "failed";
         }
         answerRepository.saveAndFlush(new_answer);
+        //更新对应 subtask 中的 updated_time,now_begin
+        Subtask subtask=subtaskRepository.findById(subtaskId);
+        subtask.setNow_begin(endAt);
+        subtask.setUpdated_time(new Timestamp(System.currentTimeMillis()));
         //若该子任务已完成，则修改对应子任务字段
         if(isFinished(new_answer)){
             if(new_answer.getSubtaskId()==null)
                 System.out.println("SubtaskId is null");
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
-            Subtask subtask=subtaskRepository.findById(subtaskId);
             subtask.setIs_finished(1);
-            subtaskRepository.saveAndFlush(subtask);
+            //TODO : 将答案写入对应 task 中的 answer 字段
         }
+        subtaskRepository.saveAndFlush(subtask);
         return "succeed";
     }
 

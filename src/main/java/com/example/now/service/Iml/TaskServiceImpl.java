@@ -93,6 +93,10 @@ public class TaskServiceImpl implements TaskService {
         if (name == null || description == null)
             return "inputs are not enough";
         Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
+        //初始化 answer
+        String answer=JsonUtil.initializeAnswer(population,allNumber,type);
+        temp.setAnswer(answer);
+        temp.setNumberOfQuestions(allNumber/population);
         Task result = taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
         return "succeed";
