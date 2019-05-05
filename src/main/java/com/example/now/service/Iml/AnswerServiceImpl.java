@@ -59,12 +59,12 @@ public class AnswerServiceImpl implements AnswerService {
         temp.setSubtaskId(subtaskId);
         temp.setBeginAt(beginAt);
         temp.setEndAt(endAt);
-        temp.setNumber(endAt-beginAt);
+        Subtask subtask=subtaskRepository.findById(subtaskId);
+        temp.setNumber(subtask.getEnd()-subtask.getBegin()+1);
         Answer result=answerRepository.saveAndFlush(temp);
         id.setId(result.getId());
         //更新对应 subtask 中的 updated_time,now_begin
-        Subtask subtask=subtaskRepository.findById(subtaskId);
-        subtask.setNow_begin(endAt);
+        subtask.setNow_begin(endAt+1);
         subtask.setUpdated_time(new Timestamp(System.currentTimeMillis()));
         //若该子任务已完成，则修改对应子任务字段
         if(isFinished(result)){
@@ -94,7 +94,7 @@ public class AnswerServiceImpl implements AnswerService {
         answerRepository.saveAndFlush(new_answer);
         //更新对应 subtask 中的 updated_time,now_begin
         Subtask subtask=subtaskRepository.findById(subtaskId);
-        subtask.setNow_begin(endAt);
+        subtask.setNow_begin(endAt+1);
         subtask.setUpdated_time(new Timestamp(System.currentTimeMillis()));
         //若该子任务已完成，则修改对应子任务字段
         if(isFinished(new_answer)){
@@ -130,7 +130,7 @@ public class AnswerServiceImpl implements AnswerService {
         if(answer.getBeginAt()==null || answer.getEndAt()==null)
             return false;
         else{
-            return answer.getEndAt()-answer.getBeginAt()==answer.getNumber();
+            return answer.getEndAt()-answer.getBeginAt()==answer.getNumber()-1;
         }
     }
 }

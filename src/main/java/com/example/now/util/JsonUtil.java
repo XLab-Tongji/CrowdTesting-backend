@@ -58,21 +58,31 @@ public class JsonUtil {
         int numberOfQuestions=allNumber/population;
         JSONArray answers=new JSONArray();
         JSONArray answer=new JSONArray();
-        JSONObject singleAnswer=new JSONObject();
-        JSONObject content=new JSONObject();//用来存放答案
+       /* JSONObject content=new JSONObject();//用来存放答案
         if(type.equals("单选")){
-            content.append("ans",0);
+            content.put("ans",0);
         }
         else{
             JSONArray ans=new JSONArray();
-            content.append("ans",ans);
-        }
-        content.append("index",0);
-        singleAnswer.append("content",content);
-        singleAnswer.append("isFinished",false);//代表该答案是否做过
+            content.put("ans",ans);
+        }*/
+        /*content.put("index",0);
+        singleAnswer.put("content",content);
+        singleAnswer.put("isFinished",false);//代表该答案是否做过*/
         //初始化一份完整答案
         for(int i=0;i<numberOfQuestions;i++){
+            JSONObject singleAnswer=new JSONObject();
+            JSONObject content=new JSONObject();//用来存放答案
+            if(type.equals("单选")){
+                content.put("ans",0);
+            }
+            else{
+                JSONArray ans=new JSONArray();
+                content.put("ans",ans);
+            }
             content.put("index",i+1);//从第一题开始
+            singleAnswer.put("content",content);
+            singleAnswer.put("isFinished",false);//代表该答案是否做过
             answer.put(singleAnswer);
         }
         //初始化 n 份完整答案

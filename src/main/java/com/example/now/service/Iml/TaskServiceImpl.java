@@ -131,7 +131,7 @@ public class TaskServiceImpl implements TaskService {
             obj.put("opts", optArray);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
-            String filePath = "C:/Users/Administrator/Desktop/xml/";
+            String filePath = "C:\\Users\\lenovo\\Desktop\\xml\\";
             String resource_link = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
@@ -446,7 +446,7 @@ public class TaskServiceImpl implements TaskService {
             JSONObject updatedAnswer = answer.getJSONObject(index - 1);       //被更新的答案
             updatedAnswer.put("isFinished", true);
             if(type.equals("单选")) {
-                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONObject("ans"));
+                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getInt("ans"));
             }
             else {
                 updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONArray("ans"));
@@ -463,6 +463,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Boolean isFinishedForSimpleSubtasks(int taskId){
         Task task=taskRepository.findById(taskId);
+        if(task.getAnswer().equals("[]"))
+            return false;
         JSONArray answers=new JSONArray(task.getAnswer());
         int number=2;//TODO : 改为由 population 生成
         for(int i=0;i<number;i++){
@@ -478,6 +480,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Boolean isFinishedForAllSubtasks(int taskId){
         Task task=taskRepository.findById(taskId);
+        if(task.getAnswer().equals("[]"))
+            return false;
         JSONArray answers=new JSONArray(task.getAnswer());
         int number=task.getPopulation();
         for(int i=0;i<number;i++){
@@ -514,8 +518,8 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数
-                if(tasks0.get(i).getType().equals("单选")){
-                    calculateCorrectNumber(tasks0.get(i).getId());
+                if(tasks1.get(i).getType().equals("单选")){
+                    calculateCorrectNumber(tasks1.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks1.get(i));//存回
@@ -529,8 +533,8 @@ public class TaskServiceImpl implements TaskService {
         Task task=taskRepository.findById(taskId);
         JSONArray answers=new JSONArray(task.getAnswer());
         JSONArray correctAnswer=answers.getJSONArray(task.getPopulation()-1);
-        //2. 获取 task 对应的所有 subtask
-        List<Subtask> subtasks=subTaskRepository.findByTaskId(taskId);
+        //2. 获取 task 对应的所有 type=0 的 subtask(普通类型的子任务)
+        List<Subtask> subtasks=subTaskRepository.findByTaskIdAndType(taskId,0);
         for(int i=0;i<subtasks.size();i++){
             Answer answer=answerRepository.findBySubtaskId(subtasks.get(i).getId());
             JSONArray currentAnswer=new JSONArray(answer.getAnswer());
