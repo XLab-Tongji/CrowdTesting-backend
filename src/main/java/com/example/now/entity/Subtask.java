@@ -50,7 +50,7 @@ public class Subtask implements Serializable {
     @Column(nullable = false, name = "task_id")
     private int taskId;
 
-    //标志这个子任务属于第几份答案，便于答案合并
+    //标志这个子任务属于第几份答案，便于答案合并,从 0 开始
     @Column(nullable = false, name = "number_of_task")
     private int number_of_task;
 

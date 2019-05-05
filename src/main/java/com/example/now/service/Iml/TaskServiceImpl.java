@@ -436,4 +436,30 @@ public class TaskServiceImpl implements TaskService {
         }
         return true;
     }
+
+    @Override
+    public Boolean updateAnswer(int taskId,String partialAnswer,int numberOfTask){
+        Task task=taskRepository.findById(taskId);
+        String type=task.getType();
+        JSONArray answers = new JSONArray(task.getAnswer());
+        JSONArray answer = answers.getJSONArray(numberOfTask);
+        JSONArray partialAnswerJson = new JSONArray(partialAnswer);
+        for (int i = 0; i < partialAnswerJson.length(); i++) {
+            int index = partialAnswerJson.getJSONObject(i).getInt("index");    //获取当前题号
+            JSONObject updatedAnswer = answer.getJSONObject(index - 1);       //被更新的答案
+            updatedAnswer.put("isFinished", true);
+            if(type.equals("单选")) {
+                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONObject("ans"));
+            }
+            else {
+                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONArray("ans"));
+            }
+            updatedAnswer.getJSONObject("content").put("index", index);
+            answer.put(index - 1, updatedAnswer);                          //存回
+            }
+        answers.put(numberOfTask,answer);//存回
+        task.setAnswer(answers.toString());
+        taskRepository.saveAndFlush(task);
+        return true;
+    }
 }
