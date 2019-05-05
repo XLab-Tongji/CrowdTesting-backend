@@ -160,7 +160,7 @@ public class TaskServiceImpl implements TaskService {
                 rest_of_question.put("begin","1");
                 rest_of_question.put("end",String.valueOf(number_of_questions));
                 rest_of_question_list.put(rest_of_question);
-                for(int i = 0; i < task.getPopulation()+1;i++){
+                for(int i = 0; i < task.getPopulation();i++){
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
@@ -220,7 +220,7 @@ public class TaskServiceImpl implements TaskService {
                 rest_of_question.put("begin","1");
                 rest_of_question.put("end",String.valueOf(number_of_questions));
                 rest_of_question_list.put(rest_of_question);
-                for(int i = 0; i < task.getPopulation()+1;i++){
+                for(int i = 0; i < task.getPopulation();i++){
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
