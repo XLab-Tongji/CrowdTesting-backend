@@ -1,14 +1,9 @@
 package com.example.now.service.Iml;
 
-import com.example.now.entity.Answer;
-import com.example.now.entity.IdStore;
-import com.example.now.entity.Subtask;
-import com.example.now.entity.Task;
-import com.example.now.repository.AnswerRepository;
-import com.example.now.repository.SubtaskRepository;
+import com.example.now.entity.*;
+import com.example.now.repository.*;
 import com.example.now.service.TaskService;
 import com.example.now.repository.SubtaskRepository;
-import com.example.now.repository.TaskRepository;
 import com.example.now.service.RequesterService;
 
 import java.io.*;
@@ -38,6 +33,8 @@ public class TaskServiceImpl implements TaskService {
     private AnswerRepository answerRepository;
     @Autowired
     private RequesterService requesterService;
+    @Autowired
+    private WorkerRepository workerRepository;
     //任务未审核的标志
     private int UNREVIEWED = 0;
 
@@ -93,6 +90,10 @@ public class TaskServiceImpl implements TaskService {
         if (name == null || description == null)
             return "inputs are not enough";
         Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
+        //初始化 answer
+        String answer=JsonUtil.initializeAnswer(population,allNumber,type);
+        temp.setAnswer(answer);
+        temp.setNumberOfQuestions(allNumber/population);
         Task result = taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
         return "succeed";
@@ -130,7 +131,7 @@ public class TaskServiceImpl implements TaskService {
             obj.put("opts", optArray);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
-            String filePath = "C:/Users/Administrator/Desktop/xml/";
+            String filePath = "C:\\Users\\lenovo\\Desktop\\xml\\";
             String resource_link = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
@@ -431,5 +432,126 @@ public class TaskServiceImpl implements TaskService {
             }
         }
         return true;
+    }
+
+    @Override
+    public Boolean updateAnswer(int taskId,String partialAnswer,int numberOfTask){
+        Task task=taskRepository.findById(taskId);
+        String type=task.getType();
+        JSONArray answers = new JSONArray(task.getAnswer());
+        JSONArray answer = answers.getJSONArray(numberOfTask);
+        JSONArray partialAnswerJson = new JSONArray(partialAnswer);
+        for (int i = 0; i < partialAnswerJson.length(); i++) {
+            int index = partialAnswerJson.getJSONObject(i).getInt("index");    //获取当前题号
+            JSONObject updatedAnswer = answer.getJSONObject(index - 1);       //被更新的答案
+            updatedAnswer.put("isFinished", true);
+            if(type.equals("单选")) {
+                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getInt("ans"));
+            }
+            else {
+                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONArray("ans"));
+            }
+            updatedAnswer.getJSONObject("content").put("index", index);
+            answer.put(index - 1, updatedAnswer);                          //存回
+            }
+        answers.put(numberOfTask,answer);//存回
+        task.setAnswer(answers.toString());
+        taskRepository.saveAndFlush(task);
+        return true;
+    }
+
+    @Override
+    public Boolean isFinishedForSimpleSubtasks(int taskId){
+        Task task=taskRepository.findById(taskId);
+        if(task.getAnswer().equals("[]"))
+            return false;
+        JSONArray answers=new JSONArray(task.getAnswer());
+        int number=2;//TODO : 改为由 population 生成
+        for(int i=0;i<number;i++){
+            JSONArray answer=answers.getJSONArray(i);
+            for(int j=0;j<answer.length();j++){
+                if(!answer.getJSONObject(j).getBoolean("isFinished"))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Boolean isFinishedForAllSubtasks(int taskId){
+        Task task=taskRepository.findById(taskId);
+        if(task.getAnswer().equals("[]"))
+            return false;
+        JSONArray answers=new JSONArray(task.getAnswer());
+        int number=task.getPopulation();
+        for(int i=0;i<number;i++){
+            JSONArray answer=answers.getJSONArray(i);
+            for(int j=0;j<answer.length();j++){
+                if(!answer.getJSONObject(j).getBoolean("isFinished"))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void updateStatus(){
+        //获得 isFinished 字段为 0 或 1 的任务
+        List<Task> tasks0=taskRepository.findByStatus(0);
+        List<Task> tasks1=taskRepository.findByStatus(1);
+        //处理 isFinished 字段为 0 的任务
+        for(int i=0;i<tasks0.size();i++){
+            if(isFinishedForSimpleSubtasks(tasks0.get(i).getId())){
+                tasks0.get(i).setStatus(1);
+            }
+            if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
+                tasks0.get(i).setStatus(2);
+                //更新 worker 的正确题数和做题总数
+                if(tasks0.get(i).getType().equals("单选")){
+                    calculateCorrectNumber(tasks0.get(i).getId());
+                }
+            }
+            taskRepository.saveAndFlush(tasks0.get(i));//存回
+        }
+        //处理 isFinished 字段为 1 的任务;
+        for(int i=0;i<tasks1.size();i++){
+            if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
+                tasks1.get(i).setStatus(2);
+                //更新 worker 的正确题数和做题总数
+                if(tasks1.get(i).getType().equals("单选")){
+                    calculateCorrectNumber(tasks1.get(i).getId());
+                }
+            }
+            taskRepository.saveAndFlush(tasks1.get(i));//存回
+        }
+    }
+
+    @Override
+    public void calculateCorrectNumber(int taskId){
+        //更新 correct_number_answered 字段和 all_number_answered 字段
+        //1. 取出正确答案
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray correctAnswer=answers.getJSONArray(task.getPopulation()-1);
+        //2. 获取 task 对应的所有 type=0 的 subtask(普通类型的子任务)
+        List<Subtask> subtasks=subTaskRepository.findByTaskIdAndType(taskId,0);
+        for(int i=0;i<subtasks.size();i++){
+            Answer answer=answerRepository.findBySubtaskId(subtasks.get(i).getId());
+            JSONArray currentAnswer=new JSONArray(answer.getAnswer());
+            int correctNumber=0;
+            //3. 比较 correctAnswer 和 currentAnswer
+            for(int j=0;j<currentAnswer.length();j++){
+                int index=currentAnswer.getJSONObject(j).getInt("index");
+                if(currentAnswer.getJSONObject(j).getInt("ans")==correctAnswer.getJSONObject(index-1).getJSONObject("content").getInt("ans")){
+                    correctNumber++;
+                }
+            }
+            //4. 将correctNumber 写回对应 worker 的 correct_number_answered 字段
+            //   并更新对应 worker 的 all_number_answered 字段
+            Worker worker=workerRepository.findById(answer.getWorkerId());
+            worker.setCorrect_number_answered(worker.getCorrect_number_answered()+correctNumber);
+            worker.setAll_number_answered(worker.getAll_number_answered()+answer.getNumber());
+            workerRepository.saveAndFlush(worker);
+        }
     }
 }

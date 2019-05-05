@@ -8,6 +8,10 @@ import java.util.List;
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
     public Answer findById(int id);
 
+    public Answer findBySubtaskId(int id);
+
+    public boolean existsBySubtaskId(int id);
+
     public List<Answer> findByWorkerId(int id);
 
     public List<Answer> findByTaskId(int id);
