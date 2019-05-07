@@ -71,6 +71,13 @@ public class AnswerController {
         return new ResultMap().success().data("Answers", result);
     }
 
+    //根据 subtaskId 获取答案信息，用于 checker 获取对应的前 population-1 组答案
+    @RequestMapping(value = "/find-by-subtask-id",method = RequestMethod.GET)
+    public ResultMap answerFindBySubtaskId(int subtaskId,int taskId){
+        String answers=answerService.findAnswerBySubtaskId(subtaskId,taskId);
+        return new ResultMap().success().data("answers",answers);
+    }
+
     @RequestMapping(value = "/find-my-answer", method = RequestMethod.GET)
     public ResultMap answerFindMyAnswer() {
         String authToken = request.getHeader(this.tokenHeader);

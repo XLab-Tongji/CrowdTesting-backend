@@ -2,6 +2,7 @@ package com.example.now.service.Iml;
 
 import com.example.now.entity.*;
 import com.example.now.repository.SubtaskRepository;
+import com.example.now.repository.TaskRepository;
 import com.example.now.service.AnswerService;
 import com.example.now.repository.AnswerRepository;
 
@@ -13,6 +14,8 @@ import java.io.InputStream;
 import com.example.now.service.TaskService;
 import com.example.now.util.JsonUtil;
 import org.apache.tomcat.jni.Time;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,8 @@ public class AnswerServiceImpl implements AnswerService {
     private SubtaskRepository subtaskRepository;
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Override
     public List<Answer> findAllAnswer() {
@@ -132,5 +137,29 @@ public class AnswerServiceImpl implements AnswerService {
         else{
             return answer.getEndAt()-answer.getBeginAt()==answer.getNumber()-1;
         }
+    }
+
+    @Override
+    public String findAnswerBySubtaskId(int subtaskId,int taskId){
+        Task task=taskRepository.findById(taskId);
+        Subtask subtask=subtaskRepository.findById(subtaskId);
+        JSONArray currentAnswers=new JSONArray(task.getAnswer());
+        int begin=subtask.getNow_begin();//得到当前的开始题号
+        int end=subtask.getEnd();
+        int population=task.getPopulation();
+        JSONArray ultimateAnswers=new JSONArray();
+        //获取对应的答案，并放入 answers 中
+        //遍历前 population-1 套答案，前提是只有最后一份为审核任务的答案
+        for(int i=0;i<population-1;i++){
+            JSONArray currentAnswer=currentAnswers.getJSONArray(i);
+            JSONArray answer=new JSONArray();
+            for(int j=begin-1;j<end;j++){
+                //将对应答案放入 answer 中
+                JSONObject singleAnswer=currentAnswer.getJSONObject(j).getJSONObject("content");
+                answer.put(singleAnswer);
+            }
+            ultimateAnswers.put(answer);
+        }
+        return ultimateAnswers.toString();
     }
 }

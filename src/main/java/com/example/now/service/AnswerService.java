@@ -25,4 +25,6 @@ public interface AnswerService {
 
     Boolean isFinished(int id);//检测该子任务是否完成，参数为 answerId
     Boolean isFinished(Answer answer);//检测该子任务是否完成，参数为 answer
+
+    String findAnswerBySubtaskId(int subtaskId,int taskId);//checker 获取答案
 }

@@ -120,12 +120,13 @@ public class SubtaskController {
                         rest_of_questions_list.remove(0);
                     }
                     break;
-                } else
-                    continue;
+                } else{
+                    return new ResultMap().fail("400").message("no questions available");
+                }
             }
         }
         else {
-            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population));
+            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population-1));
             number_of_task = population-1;
             type = 1;
             if (rest_of_questions_list.length() > 0) {
