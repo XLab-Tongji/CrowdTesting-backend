@@ -82,12 +82,18 @@ public class Worker {
     }
     @Transient
     public void setCredit(){
-        float accuracy_rate = this.correct_number_answered / this.all_number_answered;
+        float correct_number_answered = this.correct_number_answered;
+        float all_number_answered = this.all_number_answered;
+        float overtime_number = this.overtime_number;
+        float accuracy_rate = correct_number_answered / all_number_answered;
         if(accuracy_rate <= 0.6){
             this.credit = 0;
         }
         else{
-            this.credit = (int)(3 + (accuracy_rate - 0.8) * 5 + 2 / (Math.exp(-this.all_number_answered/100)+1) - 2/(Math.exp(-this.overtime_number/10)+1));
+            double a = 3 + (accuracy_rate - 0.8) * 5;
+            double b = 2 / (Math.exp(-all_number_answered/100)+1);
+            double c = 2 /(Math.exp(-overtime_number/10)+1);
+            this.credit = (int)(4 + (accuracy_rate - 0.8) * 5 + 2 / (Math.exp(-all_number_answered/100)+1) - 2/(Math.exp(-overtime_number/10)+1));
         }
     }
 

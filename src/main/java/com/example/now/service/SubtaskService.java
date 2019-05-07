@@ -18,6 +18,8 @@ public interface SubtaskService {
 
     String addSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, IdStore id, int now_begin);
 
+    String readSubtaskResource(int subtaskId);
+
     String updateSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, int now_begin, int id);
 
     String deleteSubtask(int id);

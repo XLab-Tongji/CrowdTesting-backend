@@ -85,6 +85,14 @@ public class SubtaskController {
         return new ResultMap().success().data("Subtasks", result);
     }
 
+    @RequestMapping(value = "/read-subtask-resource", method = RequestMethod.GET)
+    public String subtaskResourceFind(int subtaskId){
+        String content = subtaskService.readSubtaskResource(subtaskId);
+        JSONObject json=new JSONObject(content);
+        json.put("code",200);
+        return json.toString();
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResultMap SubtaskAdd(int number_wanted, int task_id, Timestamp created_time, Timestamp deadline) {
         String authToken = request.getHeader(this.tokenHeader);

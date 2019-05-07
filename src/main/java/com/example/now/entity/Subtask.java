@@ -58,6 +58,15 @@ public class Subtask implements Serializable {
     @Column(nullable = false, name = "now_begin")
     private int now_begin;
 
+    @Transient
+    private String username;
+
+    @Transient
+    private String title;
+
+    @Transient
+    private String task_type;
+
     public Subtask(){
 
     }

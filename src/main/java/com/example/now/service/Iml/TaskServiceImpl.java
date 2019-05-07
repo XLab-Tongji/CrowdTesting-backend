@@ -131,7 +131,7 @@ public class TaskServiceImpl implements TaskService {
             obj.put("opts", optArray);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
-            String filePath = "C:\\Users\\lenovo\\Desktop\\xml\\";
+            String filePath = "C:/Users/Administrator/Desktop/xml/";
             String resource_link = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
@@ -282,19 +282,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String readTaskResource(int taskId, int workerId) {
+    public String readTaskResource(int taskId) {
         Task task = taskRepository.findById(taskId);
         String fileName = task.getResource_link();
-        List<Subtask> subTask = subTaskRepository.findByTaskId(taskId);
-        Subtask theSubTask = new Subtask();
-        for(int i=0;i<subTask.size();i++){
-            if(subTask.get(i).getWorkerId() == workerId){
-                theSubTask = subTask.get(i);
-                break;
-            }
-        }
-        int begin = theSubTask.getBegin() - 1;
-        int end = theSubTask.getEnd();
         File file = new File(fileName);
         Long fileLength = file.length();
         byte[] filecontent = new byte[fileLength.intValue()];
@@ -304,18 +294,7 @@ public class TaskServiceImpl implements TaskService {
             in.close();
             String str = new String(filecontent, 0, fileLength.intValue(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(str);
-            JSONObject new_json = new JSONObject();
-            String desc = json.getString("desc");
-            JSONArray opts = json.getJSONArray("opts");
-            new_json.put("desc",desc);
-            new_json.put("opts",opts);
-            JSONArray new_urls = new JSONArray();
-            JSONArray urls_list = json.getJSONArray("urls");
-            for(int i=begin;i<end;i++){
-                new_urls.put(urls_list.getJSONObject(i));
-            }
-            new_json.put("urls",new_urls);
-            return new_json.toString();
+            return json.toString();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return "false";
