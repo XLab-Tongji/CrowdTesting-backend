@@ -73,13 +73,14 @@ public class JsonUtil {
         for(int i=0;i<numberOfQuestions;i++){
             JSONObject singleAnswer=new JSONObject();
             JSONObject content=new JSONObject();//用来存放答案
-            if(type.equals("单选")){
+            content.put("ans",0);
+            /*if(type.equals("单选")){
                 content.put("ans",0);
             }
             else{
                 JSONArray ans=new JSONArray();
                 content.put("ans",ans);
-            }
+            }*/
             content.put("index",i+1);//从第一题开始
             singleAnswer.put("content",content);
             singleAnswer.put("isFinished",false);//代表该答案是否做过
