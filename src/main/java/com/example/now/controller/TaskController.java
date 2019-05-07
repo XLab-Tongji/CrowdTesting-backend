@@ -98,7 +98,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add-questionaire", method = RequestMethod.POST)
-    public ResultMap taskAdd(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, Integer allNumber,String url) {
+    public ResultMap questionaireAdd(String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, Integer allNumber,String url) {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
@@ -165,10 +165,7 @@ public class TaskController {
 
     @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
     public String taskResourceFind(int taskId) {
-        String authToken = request.getHeader(this.tokenHeader);
-        String username = this.tokenUtils.getUsernameFromToken(authToken);
-
-        String content = taskService.readTaskResource(taskId, workerService.findWorkerByUsername(username).getId());
+        String content = taskService.readTaskResource(taskId);
         JSONObject json=new JSONObject(content);
         json.put("code",200);
         return json.toString();
@@ -176,20 +173,29 @@ public class TaskController {
 
     @RequestMapping(value = "/submitResponseCallback", method = RequestMethod.POST)
     public ResultMap submitResponseCallback(String userId, String taskId, int status) {
-        int realUserId = Integer.parseInt(DESUtil.decode("monetware",userId));
-        int realTaskId = Integer.parseInt(DESUtil.decode("monetware",taskId));
+        int realUserId = Integer.parseInt(DESUtil.decode("monetware", userId));
+        int realTaskId = Integer.parseInt(DESUtil.decode("monetware", taskId));
         Worker the_worker = workerService.findWorkerById(realUserId);
         Task the_task = taskService.findTaskById(realTaskId);
-        if(status == 1) {
+        if (status == 1) {
             try {
                 the_worker.setBalance(the_worker.getBalance() + the_task.getReward());
-                workerService.updateWorker(the_worker.getId(),the_worker.getUsername(),the_worker.getName(),the_worker.getTeleNumber(),the_worker.getEMail(),the_worker.getWithdrawnMethod(),the_worker.getEducation(),the_worker.getWorkArea(),the_worker.getAge(),the_worker.getGender(),the_worker.getMajor(),the_worker.getSchool(),the_worker.getCorrect_number_answered(),the_worker.getAll_number_answered(),the_worker.getOvertime_number(),the_worker.getBalance());
+                workerService.updateWorker(the_worker.getId(), the_worker.getUsername(), the_worker.getName(), the_worker.getTeleNumber(), the_worker.getEMail(), the_worker.getWithdrawnMethod(), the_worker.getEducation(), the_worker.getWorkArea(), the_worker.getAge(), the_worker.getGender(), the_worker.getMajor(), the_worker.getSchool(), the_worker.getCorrect_number_answered(), the_worker.getAll_number_answered(), the_worker.getOvertime_number(), the_worker.getBalance());
             } catch (Exception e) {
                 return new ResultMap().fail("503");
             }
         }
         return new ResultMap().success();
-
+    }
+    @RequestMapping(value = "/getDES", method = RequestMethod.POST)
+    public String submit(String userId, String taskId) {
+        String realUserId = DESUtil.encode("monetware", userId);
+        String realTaskId = DESUtil.encode("monetware", taskId);
+        JSONObject json=new JSONObject();
+        json.put("userId",realUserId);
+        json.put("taskId",realTaskId);
+        return json.toString();
+    }
     @RequestMapping(value = "/update-status",method = RequestMethod.PUT)
     public ResultMap taskUpdateStatus(){
         taskService.updateStatus();
