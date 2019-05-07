@@ -445,12 +445,7 @@ public class TaskServiceImpl implements TaskService {
             int index = partialAnswerJson.getJSONObject(i).getInt("index");    //获取当前题号
             JSONObject updatedAnswer = answer.getJSONObject(index - 1);       //被更新的答案
             updatedAnswer.put("isFinished", true);
-            if(type.equals("单选")) {
-                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getInt("ans"));
-            }
-            else {
-                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONArray("ans"));
-            }
+            updatedAnswer.put("content",partialAnswerJson.getJSONObject(i));
             updatedAnswer.getJSONObject("content").put("index", index);
             answer.put(index - 1, updatedAnswer);                          //存回
             }
@@ -507,7 +502,7 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数
-                if(tasks0.get(i).getType().equals("单选")){
+                if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
                     calculateCorrectNumber(tasks0.get(i).getId());
                 }
             }
@@ -518,7 +513,7 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数
-                if(tasks1.get(i).getType().equals("单选")){
+                if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
                     calculateCorrectNumber(tasks1.get(i).getId());
                 }
             }
