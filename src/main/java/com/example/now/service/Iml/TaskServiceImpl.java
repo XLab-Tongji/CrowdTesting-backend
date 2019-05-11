@@ -160,7 +160,7 @@ public class TaskServiceImpl implements TaskService {
                 rest_of_question.put("begin","1");
                 rest_of_question.put("end",String.valueOf(number_of_questions));
                 rest_of_question_list.put(rest_of_question);
-                for(int i = 0; i < task.getPopulation()+1;i++){
+                for(int i = 0; i < task.getPopulation();i++){
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
@@ -220,8 +220,7 @@ public class TaskServiceImpl implements TaskService {
                 rest_of_question.put("begin","1");
                 rest_of_question.put("end",String.valueOf(number_of_questions));
                 rest_of_question_list.put(rest_of_question);
-                //TODO: 待改
-                for(int i = 0; i < task.getPopulation()+1;i++){
+                for(int i = 0; i < task.getPopulation();i++){
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
@@ -283,19 +282,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String readTaskResource(int taskId, int workerId) {
+    public String readTaskResource(int taskId) {
         Task task = taskRepository.findById(taskId);
         String fileName = task.getResource_link();
-        List<Subtask> subTask = subTaskRepository.findByTaskId(taskId);
-        Subtask theSubTask = new Subtask();
-        for(int i=0;i<subTask.size();i++){
-            if(subTask.get(i).getWorkerId() == workerId){
-                theSubTask = subTask.get(i);
-                break;
-            }
-        }
-        int begin = theSubTask.getBegin() - 1;
-        int end = theSubTask.getEnd();
         File file = new File(fileName);
         Long fileLength = file.length();
         byte[] filecontent = new byte[fileLength.intValue()];
@@ -305,18 +294,7 @@ public class TaskServiceImpl implements TaskService {
             in.close();
             String str = new String(filecontent, 0, fileLength.intValue(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(str);
-            JSONObject new_json = new JSONObject();
-            String desc = json.getString("desc");
-            JSONArray opts = json.getJSONArray("opts");
-            new_json.put("desc",desc);
-            new_json.put("opts",opts);
-            JSONArray new_urls = new JSONArray();
-            JSONArray urls_list = json.getJSONArray("urls");
-            for(int i=begin;i<end;i++){
-                new_urls.put(urls_list.getJSONObject(i));
-            }
-            new_json.put("urls",new_urls);
-            return new_json.toString();
+            return json.toString();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return "false";
@@ -446,12 +424,7 @@ public class TaskServiceImpl implements TaskService {
             int index = partialAnswerJson.getJSONObject(i).getInt("index");    //获取当前题号
             JSONObject updatedAnswer = answer.getJSONObject(index - 1);       //被更新的答案
             updatedAnswer.put("isFinished", true);
-            if(type.equals("单选")) {
-                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getInt("ans"));
-            }
-            else {
-                updatedAnswer.getJSONObject("content").put("ans", partialAnswerJson.getJSONObject(i).getJSONArray("ans"));
-            }
+            updatedAnswer.put("content",partialAnswerJson.getJSONObject(i));
             updatedAnswer.getJSONObject("content").put("index", index);
             answer.put(index - 1, updatedAnswer);                          //存回
             }
@@ -508,7 +481,7 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数
-                if(tasks0.get(i).getType().equals("单选")){
+                if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
                     calculateCorrectNumber(tasks0.get(i).getId());
                 }
             }
@@ -519,7 +492,7 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数
-                if(tasks1.get(i).getType().equals("单选")){
+                if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
                     calculateCorrectNumber(tasks1.get(i).getId());
                 }
             }

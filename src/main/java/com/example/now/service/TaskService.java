@@ -32,7 +32,7 @@ public interface TaskService {
 
     String createTaskResource(int taskId, String url);
   
-    String readTaskResource(int taskId, int workerId);
+    String readTaskResource(int taskId);
 
     //更新 distributedNumber 字段
     //并检测该 task 是否分配完成并修改 isDistributed 字段

@@ -85,6 +85,14 @@ public class SubtaskController {
         return new ResultMap().success().data("Subtasks", result);
     }
 
+    @RequestMapping(value = "/read-subtask-resource", method = RequestMethod.GET)
+    public String subtaskResourceFind(int subtaskId){
+        String content = subtaskService.readSubtaskResource(subtaskId);
+        JSONObject json=new JSONObject(content);
+        json.put("code",200);
+        return json.toString();
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResultMap SubtaskAdd(int number_wanted, int task_id, Timestamp created_time, Timestamp deadline) {
         String authToken = request.getHeader(this.tokenHeader);
@@ -98,7 +106,8 @@ public class SubtaskController {
         int number_of_task = -1;
         int type = 0;
         if(the_task.getStatus() == 0) {
-            for (int i = 0; i < population; i++) {
+            boolean flag=false;
+            for (int i = 0; i < population-1; i++) {
                 JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(i));
                 number_of_task = i;
                 if (rest_of_questions_list.length() > 0) {
@@ -111,13 +120,17 @@ public class SubtaskController {
                         end = the_end;
                         rest_of_questions_list.remove(0);
                     }
+                    flag=true;
                     break;
-                } else
-                    continue;
+                }
             }
+            if(!flag){
+                return new ResultMap().fail("400").message("no questions available");
+            }
+
         }
         else {
-            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population));
+            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population-1));
             number_of_task = population-1;
             type = 1;
             if (rest_of_questions_list.length() > 0) {
