@@ -22,6 +22,7 @@ public interface AnswerService {
     String updateAnswer(int worker_id, int task_id, String answer, Timestamp answer_time, int id,int subtaskId,Integer beginAt,Integer endAt);
 
     String deleteAnswer(int id);
+    String deleteAnswerBySubtaskId(int subtaskId);
 
     Boolean isFinished(int id);//检测该子任务是否完成，参数为 answerId
     Boolean isFinished(Answer answer);//检测该子任务是否完成，参数为 answer

@@ -473,27 +473,27 @@ public class TaskServiceImpl implements TaskService {
         //获得 isFinished 字段为 0 或 1 的任务
         List<Task> tasks0=taskRepository.findByStatus(0);
         List<Task> tasks1=taskRepository.findByStatus(1);
-        //处理 isFinished 字段为 0 的任务
+        //处理 isFinished 字段为 0 的任务(普通任务已完成)
         for(int i=0;i<tasks0.size();i++){
             if(isFinishedForSimpleSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(1);
             }
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(2);
-                //更新 worker 的正确题数和做题总数
+                //更新 worker 的正确题数、做题总数、余额
                 if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
-                    calculateCorrectNumber(tasks0.get(i).getId());
+                    calculateCorrectNumberAndBalance(tasks0.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks0.get(i));//存回
         }
-        //处理 isFinished 字段为 1 的任务;
+        //处理 isFinished 字段为 1 的任务(所有任务都已完成)
         for(int i=0;i<tasks1.size();i++){
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
-                //更新 worker 的正确题数和做题总数
+                //更新 worker 的正确题数和做题总数、余额
                 if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
-                    calculateCorrectNumber(tasks1.get(i).getId());
+                    calculateCorrectNumberAndBalance(tasks1.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks1.get(i));//存回
@@ -501,7 +501,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void calculateCorrectNumber(int taskId){
+    public void calculateCorrectNumberAndBalance(int taskId){
         //更新 correct_number_answered 字段和 all_number_answered 字段
         //1. 取出正确答案
         Task task=taskRepository.findById(taskId);
@@ -522,10 +522,28 @@ public class TaskServiceImpl implements TaskService {
             }
             //4. 将correctNumber 写回对应 worker 的 correct_number_answered 字段
             //   并更新对应 worker 的 all_number_answered 字段
+            //   并更新 worker 的 balance 字段
             Worker worker=workerRepository.findById(answer.getWorkerId());
             worker.setCorrect_number_answered(worker.getCorrect_number_answered()+correctNumber);
             worker.setAll_number_answered(worker.getAll_number_answered()+answer.getNumber());
+            worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());//TODO : 记录收支情况
             workerRepository.saveAndFlush(worker);
         }
+    }
+
+    @Override
+    public Boolean deleteExpiredAnswer(int taskId,int number_of_task,int beginAt,int endAt){
+        if(beginAt>endAt||number_of_task<0)
+            return false;
+        //1. 获取对应 answer
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray answer=answers.getJSONArray(number_of_task);
+        //2. 将已过期答案的 isFinished 字段设为 false
+        for(int i=beginAt-1;i<endAt;i++){
+            JSONObject expiredAnswer=answer.getJSONObject(i);
+            expiredAnswer.put("isFinished",false);
+        }
+        return true;
     }
 }

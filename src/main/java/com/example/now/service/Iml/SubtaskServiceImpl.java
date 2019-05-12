@@ -1,20 +1,22 @@
 package com.example.now.service.Iml;
 
-import com.example.now.entity.IdStore;
-import com.example.now.entity.Subtask;
-import com.example.now.entity.Task;
-import com.example.now.entity.Requester;
+import com.example.now.entity.*;
 import com.example.now.repository.TaskRepository;
 import com.example.now.repository.RequesterRepository;
+import com.example.now.repository.WorkerRepository;
+import com.example.now.service.AnswerService;
 import com.example.now.service.SubtaskService;
 import com.example.now.repository.SubtaskRepository;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Collections;
 
+import com.example.now.service.TaskService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,12 @@ public class SubtaskServiceImpl implements SubtaskService{
     private TaskRepository taskRepository;
     @Autowired
     private RequesterRepository requesterRepository;
+    @Autowired
+    private TaskService taskService;
+    @Autowired
+    private AnswerService answerService;
+    @Autowired
+    private WorkerRepository workerRepository;
 
     @Override
     public List<Subtask> findAllSubtask() {
@@ -140,5 +148,32 @@ public class SubtaskServiceImpl implements SubtaskService{
     public String deleteSubtask(int id) {
         subtaskRepository.deleteById(id);
         return "succeed";
+    }
+
+    @Override
+    public void updateIsFinished(){
+        //1. 获取所有未完成的子任务
+        List<Subtask> subtasks=subtaskRepository.findByIs_finished(0);
+        List<Subtask> expiredSubtasks=new ArrayList<Subtask>();
+        //2. 获取其中过期的子任务，并执行相关操作
+        for(Subtask subtask:subtasks){
+            Timestamp currentTime=new Timestamp(System.currentTimeMillis());
+            //比较当前时间与 deadline
+            if(currentTime.after(subtask.getDeadline())){
+                expiredSubtasks.add(subtask);
+                //设置 is_finished 字段为 -1
+                subtask.setIs_finished(-1);
+                //写回
+                subtaskRepository.saveAndFlush(subtask);
+                //更改对应 task 的 answer 字段
+                taskService.deleteExpiredAnswer(subtask.getTaskId(),subtask.getNumber_of_task(),subtask.getBegin(),subtask.getEnd());
+                //删除 answer 表中对应的数据
+                answerService.deleteAnswerBySubtaskId(subtask.getId());
+                //更新对应 worker 的过期子任务数
+                Worker worker=workerRepository.findById(subtask.getWorkerId());
+                worker.setOvertime_number(worker.getOvertime_number()+1);
+                workerRepository.saveAndFlush(worker);
+            }
+        }
     }
 }

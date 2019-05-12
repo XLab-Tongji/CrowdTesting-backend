@@ -47,16 +47,21 @@ public interface TaskService {
     //更新 answer 字段（每次提交答案都会执行）
     Boolean updateAnswer(int taskId,String answer,int numberOfTask);
 
-    //检测 task 所有普通任务是否完成
+    //检测 task 所有普通任务是否完成，通过 task 的 answer 字段来判断
     Boolean isFinishedForSimpleSubtasks(int taskId);
 
-    //检测 task 所有任务（普通和审核）是否完成
+    //检测 task 所有任务（普通和审核）是否完成，通过 task 的 answer 字段来判断
     Boolean isFinishedForAllSubtasks(int taskId);
+
+    //删除已经过期子任务的答案
+    Boolean deleteExpiredAnswer(int taskId,int number_of_task,int beginAt,int endAt);
 
     //遍历 task 表的 answer 字段，更新 isFinished 字段
     //若已完成，则计算 worker 的正确题数和做题总数并更新
+    //TODO ：给用户加钱
     void updateStatus();
 
-    //计算 worker 的正确题数和做题总数并更新
-    void calculateCorrectNumber(int taskId);
+    //计算 worker 的正确题数、做题总数和余额并更新
+    void calculateCorrectNumberAndBalance(int taskId);
+
 }
