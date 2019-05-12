@@ -73,7 +73,7 @@ public class Task implements Serializable {
 
     //表示该任务是否完成，-1 为过期，0 为未完成，1 为普通任务已完成，2 为所有（普通与审核）任务已完成
     //默认为0
-    @Column(name = "is_finished")
+    @Column(name = "isFinished")
     private Integer isFinished;
 
     //该任务已被分发的数量

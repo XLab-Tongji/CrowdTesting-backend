@@ -16,5 +16,5 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
 
     public void deleteById(int id);
 
-    List<Subtask> findByIs_finished(int is_finished);
+    List<Subtask> findByIsFinished(int is_finished);
 }

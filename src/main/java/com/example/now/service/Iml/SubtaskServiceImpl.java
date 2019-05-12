@@ -12,7 +12,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Collections;
 
@@ -21,7 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class SubtaskServiceImpl implements SubtaskService{
@@ -153,7 +151,7 @@ public class SubtaskServiceImpl implements SubtaskService{
     @Override
     public void updateIsFinished(){
         //1. 获取所有未完成的子任务
-        List<Subtask> subtasks=subtaskRepository.findByIs_finished(0);
+        List<Subtask> subtasks=subtaskRepository.findByIsFinished(0);
         List<Subtask> expiredSubtasks=new ArrayList<Subtask>();
         //2. 获取其中过期的子任务，并执行相关操作
         for(Subtask subtask:subtasks){
@@ -161,8 +159,8 @@ public class SubtaskServiceImpl implements SubtaskService{
             //比较当前时间与 deadline
             if(currentTime.after(subtask.getDeadline())){
                 expiredSubtasks.add(subtask);
-                //设置 is_finished 字段为 -1
-                subtask.setIs_finished(-1);
+                //设置 isFinished 字段为 -1
+                subtask.setIsFinished(-1);
                 //写回
                 subtaskRepository.saveAndFlush(subtask);
                 //更改对应 task 的 answer 字段
@@ -173,6 +171,14 @@ public class SubtaskServiceImpl implements SubtaskService{
                 Worker worker=workerRepository.findById(subtask.getWorkerId());
                 worker.setOvertime_number(worker.getOvertime_number()+1);
                 workerRepository.saveAndFlush(worker);
+                Task task = taskRepository.findById(subtask.getTaskId());
+                JSONObject rest_of_question = new JSONObject(task.getRest_of_question());
+                JSONObject backQuestions = new JSONObject();
+                backQuestions.put("begin", subtask.getNow_begin());
+                backQuestions.put("end", subtask.getEnd());
+                rest_of_question.getJSONArray(String.valueOf(subtask.getNumber_of_task())).put(backQuestions);
+                task.setRest_of_question(rest_of_question.toString());
+                String message = updateSubtask(subtask.getBegin(), subtask.getNow_begin() - 1, subtask.getCreated_time(), subtask.getDeadline(), subtask.getUpdated_time(), subtask.getIsFinished(), subtask.getType(), subtask.getWorkerId(), subtask.getTaskId(), subtask.getNumber_of_task(), subtask.getNow_begin(),subtask.getId());
             }
         }
     }

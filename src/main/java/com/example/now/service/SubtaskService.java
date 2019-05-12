@@ -25,6 +25,6 @@ public interface SubtaskService {
     String deleteSubtask(int id);
 
     //检测子任务是否过期
-    //遍历 is_finished 字段为 0 的子任务，若当前时间超过 deadline 则置 isFinished 为 -1，同时更新此 worker 的过期任务数
+    //遍历 isFinished 字段为 0 的子任务，若当前时间超过 deadline 则置 isFinished 为 -1，同时更新此 worker 的过期任务数
     void updateIsFinished();
 }
