@@ -17,5 +17,7 @@ public interface WorkerService {
 
     String updateWorker(int workerId,String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number, float balance);
 
+    String updateWorkerDirectly(Worker worker);
+
     String deleteWorker(int id);
 }

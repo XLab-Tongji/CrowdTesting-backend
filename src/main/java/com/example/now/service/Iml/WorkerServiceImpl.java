@@ -58,6 +58,12 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
+    public String updateWorkerDirectly(Worker worker) {
+        workerRepository.saveAndFlush(worker);
+        return "succeed";
+    }
+
+    @Override
     public String deleteWorker(int id) {
         workerRepository.deleteById(id);
         workerRepository.flush();

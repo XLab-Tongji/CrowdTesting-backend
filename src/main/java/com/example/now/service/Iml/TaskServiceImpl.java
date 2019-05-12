@@ -86,9 +86,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId,Integer allNumber) {
+    public String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId) {
         if (name == null || description == null)
             return "inputs are not enough";
+        int allNumber = 0;
         Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
         //初始化 answer
         String answer=JsonUtil.initializeAnswer(population,allNumber,type);
@@ -103,6 +104,12 @@ public class TaskServiceImpl implements TaskService {
     public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
         Task task = taskRepository.findById(taskId);
         task.setAll(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, task.getReviewed(), task.getAllNumber());
+        taskRepository.saveAndFlush(task);
+        return "succeed";
+    }
+
+    @Override
+    public String updateTaskDirectly(Task task){
         taskRepository.saveAndFlush(task);
         return "succeed";
     }
@@ -164,6 +171,7 @@ public class TaskServiceImpl implements TaskService {
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
+                task.setNumberOfQuestions(number_of_questions);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -224,6 +232,7 @@ public class TaskServiceImpl implements TaskService {
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
+                task.setNumberOfQuestions(number_of_questions);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
