@@ -1,12 +1,9 @@
 package com.example.now.controller;
 
-import com.example.now.entity.IdStore;
-import com.example.now.entity.Subtask;
-import com.example.now.entity.Task;
+import com.example.now.entity.*;
 import com.example.now.service.RequesterService;
 import com.example.now.service.SubtaskService;
 import com.example.now.service.TaskService;
-import com.example.now.entity.ResultMap;
 import com.example.now.service.WorkerService;
 import com.example.now.repository.TaskRepository;
 import com.example.now.util.TokenUtils;
@@ -14,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.lang.Integer;
 
@@ -107,7 +107,7 @@ public class SubtaskController {
         int type = 0;
         if(the_task.getStatus() == 0) {
             boolean flag=false;
-            for (int i = 0; i < population-1; i++) {
+            for (int i = 0; i < population - 1; i++) {
                 JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(i));
                 number_of_task = i;
                 if (rest_of_questions_list.length() > 0) {
@@ -130,8 +130,8 @@ public class SubtaskController {
 
         }
         else {
-            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population-1));
-            number_of_task = population-1;
+            JSONArray rest_of_questions_list = the_rest_of_questions.getJSONArray(String.valueOf(population));
+            number_of_task = population;
             type = 1;
             if (rest_of_questions_list.length() > 0) {
                 begin = Integer.parseInt(rest_of_questions_list.getJSONObject(0).getString("begin"));
@@ -165,5 +165,29 @@ public class SubtaskController {
     public ResultMap SubtaskDelete(int id) {
         String message = subtaskService.deleteSubtask(id);
         return new ResultMap().success("201").message(message);
+    }
+
+    @Scheduled(cron = "0 0 0,12 * * ?")
+    public void revokeOverdueSubtask(){
+        List<Subtask> allSubtask = subtaskService.findAllSubtask();
+        Long currentTime =System.currentTimeMillis(); ;
+        for(int i=0;i<allSubtask.size();i++){
+            Subtask temp = allSubtask.get(i);
+            if(temp.getDeadline().getTime() < currentTime && temp.getNow_begin() <= temp.getEnd()){
+                Task task = taskRepository.findById(temp.getTaskId());
+                JSONObject rest_of_question = new JSONObject(task.getRest_of_question());
+                JSONObject backQuestions = new JSONObject();
+                backQuestions.put("begin", temp.getNow_begin());
+                backQuestions.put("end", temp.getEnd());
+                rest_of_question.getJSONArray(String.valueOf(temp.getNumber_of_task())).put(backQuestions);
+                task.setRest_of_question(rest_of_question.toString());
+                String message = subtaskService.updateSubtask(temp.getBegin(), temp.getNow_begin() - 1, temp.getCreated_time(), temp.getDeadline(), temp.getUpdated_time(), temp.getIs_finished(), temp.getType(), temp.getWorkerId(), temp.getTaskId(), temp.getNumber_of_task(), temp.getNow_begin(),temp.getId());
+                if(message.equals("succeed")){
+                    Worker the_worker = workerService.findWorkerById(temp.getWorkerId());
+                    the_worker.setOvertime_number(the_worker.getOvertime_number() + 1);
+                    String message1 = workerService.updateWorkerDirectly(the_worker);
+                }
+            }
+        }
     }
 }
