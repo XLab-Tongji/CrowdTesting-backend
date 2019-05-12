@@ -19,4 +19,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
     public List<Answer> findByTaskIdOrderByBeginAt(int id);
 
     public void deleteById(int id);
+
+    boolean deleteBySubtaskId(int id);
 }

@@ -86,9 +86,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId,Integer allNumber) {
+    public String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId) {
         if (name == null || description == null)
             return "inputs are not enough";
+        int allNumber = 0;
         Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
         //初始化 answer
         String answer=JsonUtil.initializeAnswer(population,allNumber,type);
@@ -103,6 +104,12 @@ public class TaskServiceImpl implements TaskService {
     public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
         Task task = taskRepository.findById(taskId);
         task.setAll(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, task.getReviewed(), task.getAllNumber());
+        taskRepository.saveAndFlush(task);
+        return "succeed";
+    }
+
+    @Override
+    public String updateTaskDirectly(Task task){
         taskRepository.saveAndFlush(task);
         return "succeed";
     }
@@ -164,6 +171,7 @@ public class TaskServiceImpl implements TaskService {
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
+                task.setNumberOfQuestions(number_of_questions);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -224,6 +232,7 @@ public class TaskServiceImpl implements TaskService {
                     rest_of_questions.put(String.valueOf(i), rest_of_question_list);
                 }
                 task.setRest_of_question(rest_of_questions.toString());
+                task.setNumberOfQuestions(number_of_questions);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -473,27 +482,27 @@ public class TaskServiceImpl implements TaskService {
         //获得 isFinished 字段为 0 或 1 的任务
         List<Task> tasks0=taskRepository.findByStatus(0);
         List<Task> tasks1=taskRepository.findByStatus(1);
-        //处理 isFinished 字段为 0 的任务
+        //处理 isFinished 字段为 0 的任务(普通任务已完成)
         for(int i=0;i<tasks0.size();i++){
             if(isFinishedForSimpleSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(1);
             }
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(2);
-                //更新 worker 的正确题数和做题总数
+                //更新 worker 的正确题数、做题总数、余额
                 if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
-                    calculateCorrectNumber(tasks0.get(i).getId());
+                    calculateCorrectNumberAndBalanceForChoice(tasks0.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks0.get(i));//存回
         }
-        //处理 isFinished 字段为 1 的任务;
+        //处理 isFinished 字段为 1 的任务(所有任务都已完成)
         for(int i=0;i<tasks1.size();i++){
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
-                //更新 worker 的正确题数和做题总数
+                //更新 worker 的正确题数和做题总数、余额
                 if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
-                    calculateCorrectNumber(tasks1.get(i).getId());
+                    calculateCorrectNumberAndBalanceForChoice(tasks1.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks1.get(i));//存回
@@ -501,7 +510,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void calculateCorrectNumber(int taskId){
+    public void calculateCorrectNumberAndBalanceForChoice(int taskId){
         //更新 correct_number_answered 字段和 all_number_answered 字段
         //1. 取出正确答案
         Task task=taskRepository.findById(taskId);
@@ -522,9 +531,119 @@ public class TaskServiceImpl implements TaskService {
             }
             //4. 将correctNumber 写回对应 worker 的 correct_number_answered 字段
             //   并更新对应 worker 的 all_number_answered 字段
+            //   并更新 worker 的 balance 字段
             Worker worker=workerRepository.findById(answer.getWorkerId());
             worker.setCorrect_number_answered(worker.getCorrect_number_answered()+correctNumber);
             worker.setAll_number_answered(worker.getAll_number_answered()+answer.getNumber());
+            worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());//TODO : 记录收支情况
+            workerRepository.saveAndFlush(worker);
+        }
+    }
+
+    @Override
+    public Boolean deleteExpiredAnswer(int taskId,int number_of_task,int beginAt,int endAt){
+        if(beginAt>endAt||number_of_task<0)
+            return false;
+        //1. 获取对应 answer
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray answer=answers.getJSONArray(number_of_task);
+        //2. 将已过期答案的 isFinished 字段设为 false
+        for(int i=beginAt-1;i<endAt;i++){
+            JSONObject expiredAnswer=answer.getJSONObject(i);
+            expiredAnswer.put("isFinished",false);
+        }
+        return true;
+    }
+
+    @Override
+    public String getJudgedAnswer(int taskId,int number){
+        //判断任务类型
+        Task task=taskRepository.findById(taskId);
+        if(!("ver2".equals(task.getType()))&&!("ver3".equals(task.getType())))
+            return "failed";
+        //判断是否有足够多需要被判断的题
+        if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getAllNumber())
+            return "failed";
+        //获取答案
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray outputAnswers=new JSONArray();
+        for(int i=0;i<task.getPopulation();i++){
+            JSONArray answer=answers.getJSONArray(i);
+            JSONArray outputAnswer=new JSONArray();
+            int count=0;//计数器
+            for(int j=0;j<answer.length();j++){
+                JSONObject singleAnswer=answer.getJSONObject(j);
+                if(singleAnswer.getJSONObject("content").isNull("isCorrect")){
+                    //将 isCorrect 放入 content 中
+                    singleAnswer.getJSONObject("content").put("isCorrect",-1);
+                    outputAnswer.put(singleAnswer);
+                    count++;
+                    if(count==number){
+                        break;
+                    }
+                }
+            }
+            outputAnswers.put(outputAnswer);
+        }
+        //更新 judgedNumber 与 answer
+        task.setJudgedNumber(task.getJudgedNumber()+number);
+        task.setAnswer(outputAnswers.toString());
+        //存回
+        taskRepository.saveAndFlush(task);
+        return outputAnswers.toString();
+    }
+
+    @Override
+    public String judgeAnswer(int taskId,String answer){
+        //判断任务类型
+        Task task=taskRepository.findById(taskId);
+        if(!("ver2".equals(task.getType()))&&!("ver3".equals(task.getType())))
+            return "failed";
+        //更新 answer 字段
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray inputAnswers=new JSONArray(answer);
+        for(int i=0;i<task.getPopulation();i++){
+            JSONArray singleAnswer=answers.getJSONArray(i);
+            JSONArray inputAnswer=inputAnswers.getJSONArray(i);
+            for(int j=0;j<inputAnswer.length();j++){
+                int index=inputAnswer.getJSONObject(j).getInt("index");
+                singleAnswer.put(index-1,inputAnswer);
+            }
+            answers.put(i,answer);
+        }
+        //存回
+        task.setAnswer(answers.toString());
+        //此任务的所有答案是否已经判断完成,若完成，则更新对应 worker 的正确题数，做题总数
+        if(task.getJudgedNumber()*task.getPopulation()==task.getAllNumber()){
+            calculateCorrectNumberAndBalanceForImage(taskId);
+        }
+        return "success";
+    }
+
+    @Override
+    public void calculateCorrectNumberAndBalanceForImage(int taskId){
+        //1. 获取所有答案
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        //2. 获取 task 对应的所有 subtask
+        List<Subtask> subtasks=subTaskRepository.findByTaskId(taskId);
+        for(int i=0;i<subtasks.size();i++){
+            int workerId=subtasks.get(i).getWorkerId();
+            int numberOfTask=subtasks.get(i).getNumber_of_task();
+            int begin=subtasks.get(i).getBegin();
+            int end=subtasks.get(i).getEnd();
+            Worker worker=workerRepository.findById(workerId);
+            //3. 根据以上信息检验相对应的 isCorrect 字段,并修改对应 worker 的正确题数，做题总数
+            JSONArray answer=answers.getJSONArray(numberOfTask);
+            for(int j=begin-1;j<end;j++){
+                int isCorrect=answer.getJSONObject(j).getJSONObject("content").getInt("isCorrect");
+                if(isCorrect==1){
+                    worker.setCorrect_number_answered(worker.getCorrect_number_answered()+1);
+                }
+                worker.setAll_number_answered(worker.getAll_number_answered()+1);
+            }
+            //4. 存回
             workerRepository.saveAndFlush(worker);
         }
     }

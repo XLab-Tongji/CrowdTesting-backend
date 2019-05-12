@@ -121,6 +121,14 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
+    public String deleteAnswerBySubtaskId(int subtaskId){
+        if(answerRepository.deleteBySubtaskId(subtaskId)){
+            return "succeed";
+        }
+        return "failed";
+    }
+
+    @Override
     public Boolean isFinished(int id){
         Answer answer=answerRepository.findById(id);
         if(answer.getBeginAt()==null || answer.getEndAt()==null)

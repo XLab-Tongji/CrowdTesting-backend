@@ -90,6 +90,9 @@ public class Task implements Serializable {
     //该任务的题目总数
     @Column(name = "number_of_questions")
     private int numberOfQuestions;
+    //已被判断正误的题数（只针对图像标记类任务），当 judgedNumber*population=allNumber 时，判断正误完成
+    @Column(name = "judged_number")
+    private Integer judgedNumber;
 
     public Task() {
 
