@@ -61,7 +61,16 @@ public interface TaskService {
     //TODO ：给用户加钱
     void updateStatus();
 
-    //计算 worker 的正确题数、做题总数和余额并更新
-    void calculateCorrectNumberAndBalance(int taskId);
+    //计算 worker 的正确题数、做题总数和余额并更新（针对 ver1,ver4 类型题）
+    void calculateCorrectNumberAndBalanceForChoice(int taskId);
+
+    //计算 worker 的正确题数、做题总数和余额并更新（针对 ver2,ver3 类型题）
+    void calculateCorrectNumberAndBalanceForImage(int taskId);
+
+    //requester 获取图形标记类型（ver2,ver3）题目的答案，用于判断正误。number 为获取的题数
+    String getJudgedAnswer(int taskId,int number);
+
+    //更新对应 task（类型为ver2,ver3) 的 answer,若判断正误任务已完成，则更新对应 worker 的正确数，答题总数
+    String judgeAnswer(int taskId,String answer);
 
 }

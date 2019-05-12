@@ -482,7 +482,7 @@ public class TaskServiceImpl implements TaskService {
                 tasks0.get(i).setStatus(2);
                 //更新 worker 的正确题数、做题总数、余额
                 if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
-                    calculateCorrectNumberAndBalance(tasks0.get(i).getId());
+                    calculateCorrectNumberAndBalanceForChoice(tasks0.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks0.get(i));//存回
@@ -493,7 +493,7 @@ public class TaskServiceImpl implements TaskService {
                 tasks1.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数、余额
                 if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
-                    calculateCorrectNumberAndBalance(tasks1.get(i).getId());
+                    calculateCorrectNumberAndBalanceForChoice(tasks1.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks1.get(i));//存回
@@ -501,7 +501,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void calculateCorrectNumberAndBalance(int taskId){
+    public void calculateCorrectNumberAndBalanceForChoice(int taskId){
         //更新 correct_number_answered 字段和 all_number_answered 字段
         //1. 取出正确答案
         Task task=taskRepository.findById(taskId);
@@ -545,5 +545,97 @@ public class TaskServiceImpl implements TaskService {
             expiredAnswer.put("isFinished",false);
         }
         return true;
+    }
+
+    @Override
+    public String getJudgedAnswer(int taskId,int number){
+        //判断任务类型
+        Task task=taskRepository.findById(taskId);
+        if(!("ver2".equals(task.getType()))&&!("ver3".equals(task.getType())))
+            return "failed";
+        //判断是否有足够多需要被判断的题
+        if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getAllNumber())
+            return "failed";
+        //获取答案
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray outputAnswers=new JSONArray();
+        for(int i=0;i<task.getPopulation();i++){
+            JSONArray answer=answers.getJSONArray(i);
+            JSONArray outputAnswer=new JSONArray();
+            int count=0;//计数器
+            for(int j=0;j<answer.length();j++){
+                JSONObject singleAnswer=answer.getJSONObject(j);
+                if(singleAnswer.getJSONObject("content").isNull("isCorrect")){
+                    //将 isCorrect 放入 content 中
+                    singleAnswer.getJSONObject("content").put("isCorrect",-1);
+                    outputAnswer.put(singleAnswer);
+                    count++;
+                    if(count==number){
+                        break;
+                    }
+                }
+            }
+            outputAnswers.put(outputAnswer);
+        }
+        //更新 judgedNumber 与 answer
+        task.setJudgedNumber(task.getJudgedNumber()+number);
+        task.setAnswer(outputAnswers.toString());
+        //存回
+        taskRepository.saveAndFlush(task);
+        return outputAnswers.toString();
+    }
+
+    @Override
+    public String judgeAnswer(int taskId,String answer){
+        //判断任务类型
+        Task task=taskRepository.findById(taskId);
+        if(!("ver2".equals(task.getType()))&&!("ver3".equals(task.getType())))
+            return "failed";
+        //更新 answer 字段
+        JSONArray answers=new JSONArray(task.getAnswer());
+        JSONArray inputAnswers=new JSONArray(answer);
+        for(int i=0;i<task.getPopulation();i++){
+            JSONArray singleAnswer=answers.getJSONArray(i);
+            JSONArray inputAnswer=inputAnswers.getJSONArray(i);
+            for(int j=0;j<inputAnswer.length();j++){
+                int index=inputAnswer.getJSONObject(j).getInt("index");
+                singleAnswer.put(index-1,inputAnswer);
+            }
+            answers.put(i,answer);
+        }
+        //存回
+        task.setAnswer(answers.toString());
+        //此任务的所有答案是否已经判断完成,若完成，则更新对应 worker 的正确题数，做题总数
+        if(task.getJudgedNumber()*task.getPopulation()==task.getAllNumber()){
+            calculateCorrectNumberAndBalanceForImage(taskId);
+        }
+        return "success";
+    }
+
+    @Override
+    public void calculateCorrectNumberAndBalanceForImage(int taskId){
+        //1. 获取所有答案
+        Task task=taskRepository.findById(taskId);
+        JSONArray answers=new JSONArray(task.getAnswer());
+        //2. 获取 task 对应的所有 subtask
+        List<Subtask> subtasks=subTaskRepository.findByTaskId(taskId);
+        for(int i=0;i<subtasks.size();i++){
+            int workerId=subtasks.get(i).getWorkerId();
+            int numberOfTask=subtasks.get(i).getNumber_of_task();
+            int begin=subtasks.get(i).getBegin();
+            int end=subtasks.get(i).getEnd();
+            Worker worker=workerRepository.findById(workerId);
+            //3. 根据以上信息检验相对应的 isCorrect 字段,并修改对应 worker 的正确题数，做题总数
+            JSONArray answer=answers.getJSONArray(numberOfTask);
+            for(int j=begin-1;j<end;j++){
+                int isCorrect=answer.getJSONObject(j).getJSONObject("content").getInt("isCorrect");
+                if(isCorrect==1){
+                    worker.setCorrect_number_answered(worker.getCorrect_number_answered()+1);
+                }
+                worker.setAll_number_answered(worker.getAll_number_answered()+1);
+            }
+            //4. 存回
+            workerRepository.saveAndFlush(worker);
+        }
     }
 }
