@@ -9,11 +9,9 @@ import com.example.now.repository.AnswerRepository;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Collections;
-import java.io.InputStream;
 
 import com.example.now.service.TaskService;
 import com.example.now.util.JsonUtil;
-import org.apache.tomcat.jni.Time;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +74,7 @@ public class AnswerServiceImpl implements AnswerService {
             if(result.getSubtaskId()==null)
                 System.out.println("SubtaskId is null");
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
-            subtask.setIs_finished(1);
+            subtask.setIsFinished(1);
         }
         subtaskRepository.saveAndFlush(subtask);
         //将答案写入 task 中的 answer 字段
@@ -106,7 +104,7 @@ public class AnswerServiceImpl implements AnswerService {
             if(new_answer.getSubtaskId()==null)
                 System.out.println("SubtaskId is null");
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
-            subtask.setIs_finished(1);
+            subtask.setIsFinished(1);
         }
         subtaskRepository.saveAndFlush(subtask);
         //将答案写入对应 task 中的 answer 字段

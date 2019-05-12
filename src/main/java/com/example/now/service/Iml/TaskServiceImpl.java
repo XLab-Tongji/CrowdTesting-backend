@@ -347,7 +347,7 @@ public class TaskServiceImpl implements TaskService {
             List<Subtask> subtasks=subTaskRepository.findByTaskId(task.getId());
             int flag=0;
             for(Subtask subtask : subtasks){
-                if(subtask.getIs_finished()==0){
+                if(subtask.getIsFinished()==0){
                     flag=1;
                     break;
                 }
@@ -376,7 +376,7 @@ public class TaskServiceImpl implements TaskService {
             List<Subtask> subtasks=subTaskRepository.findByTaskId(task.getId());
             int flag=0;
             for(Subtask subtask: subtasks){
-                if(subtask.getIs_finished()==0){
+                if(subtask.getIsFinished()==0){
                     flag=1;
                     break;
                 }

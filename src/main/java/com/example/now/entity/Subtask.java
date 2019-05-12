@@ -3,14 +3,8 @@ package com.example.now.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
 
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.Data;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.json.JSONObject;
-import org.json.JSONString;
 
 @Entity
 @Data
@@ -37,8 +31,8 @@ public class Subtask implements Serializable {
     private Timestamp updated_time;
 
     //判断子任务是否完成，0 为未完成，1 为已完成
-    @Column(nullable = false, name = "is_finished")
-    private int is_finished;
+    @Column(nullable = false, name = "isFinished")
+    private int isFinished;
 
     //子任务的类型，0 为普通任务，1 为审核任务
     @Column(nullable = false, name = "type")
@@ -77,7 +71,7 @@ public class Subtask implements Serializable {
         this.created_time = created_time;
         this.deadline = deadline;
         this.updated_time = updated_time;
-        this.is_finished = is_finished;
+        this.isFinished = is_finished;
         this.type = type;
         this.workerId = workerId;
         this.taskId = taskId;
@@ -91,7 +85,7 @@ public class Subtask implements Serializable {
         this.created_time = created_time;
         this.deadline = deadline;
         this.updated_time = updated_time;
-        this.is_finished = is_finished;
+        this.isFinished = is_finished;
         this.type = type;
         this.workerId = workerId;
         this.taskId = taskId;

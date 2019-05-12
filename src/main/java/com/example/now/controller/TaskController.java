@@ -181,6 +181,10 @@ public class TaskController {
             try {
                 the_worker.setBalance(the_worker.getBalance() + the_task.getReward());
                 workerService.updateWorker(the_worker.getId(), the_worker.getUsername(), the_worker.getName(), the_worker.getTeleNumber(), the_worker.getEMail(), the_worker.getWithdrawnMethod(), the_worker.getEducation(), the_worker.getWorkArea(), the_worker.getAge(), the_worker.getGender(), the_worker.getMajor(), the_worker.getSchool(), the_worker.getCorrect_number_answered(), the_worker.getAll_number_answered(), the_worker.getOvertime_number(), the_worker.getBalance());
+                the_task.setStatus(the_task.getStatus() + 1);
+                if(the_task.getPopulation() == the_task.getStatus()){
+                    the_task.setIsFinished(1);
+                }
             } catch (Exception e) {
                 return new ResultMap().fail("503");
             }
