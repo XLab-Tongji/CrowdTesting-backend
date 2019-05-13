@@ -95,6 +95,7 @@ public class TaskServiceImpl implements TaskService {
         String answer=JsonUtil.initializeAnswer(population,allNumber,type);
         temp.setAnswer(answer);
         temp.setNumberOfQuestions(allNumber/population);
+        temp.setJudgedNumber(0);
         Task result = taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
         return "succeed";
