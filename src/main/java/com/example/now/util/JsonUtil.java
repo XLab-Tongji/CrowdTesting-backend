@@ -2,8 +2,6 @@ package com.example.now.util;
 
 
 import com.example.now.entity.Answer;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,8 +52,7 @@ public class JsonUtil {
     //格式（以 population=3 为例）
     //[[{"content":{"ans":0,"index":0},"isFinished":false}],[],[]]   单选题
     //[[{"content":{"ans":[],"index":0},"isFinished":false}],[],[]]   图像题
-    public static String initializeAnswer(int population,int allNumber,String type){
-        int numberOfQuestions=allNumber/population;
+    public static String initializeAnswer(int population,int numberOfQuestions,String type){
         JSONArray answers=new JSONArray();
         JSONArray answer=new JSONArray();
        /* JSONObject content=new JSONObject();//用来存放答案

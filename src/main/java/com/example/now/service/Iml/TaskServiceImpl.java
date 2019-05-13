@@ -91,10 +91,7 @@ public class TaskServiceImpl implements TaskService {
             return "inputs are not enough";
         int allNumber = 0;
         Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
-        //初始化 answer
-        String answer=JsonUtil.initializeAnswer(population,allNumber,type);
-        temp.setAnswer(answer);
-        temp.setNumberOfQuestions(allNumber/population);
+        //初始化 answer 放在 createTaskResource() 中
         temp.setJudgedNumber(0);
         Task result = taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
@@ -173,6 +170,9 @@ public class TaskServiceImpl implements TaskService {
                 }
                 task.setRest_of_question(rest_of_questions.toString());
                 task.setNumberOfQuestions(number_of_questions);
+                //初始化 task 中的 answer 字段
+                String answer=JsonUtil.initializeAnswer(task.getPopulation(),number_of_questions,task.getType());
+                task.setAnswer(answer);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -234,6 +234,9 @@ public class TaskServiceImpl implements TaskService {
                 }
                 task.setRest_of_question(rest_of_questions.toString());
                 task.setNumberOfQuestions(number_of_questions);
+                //初始化 task 中的 answer 字段
+                String answer=JsonUtil.initializeAnswer(task.getPopulation(),number_of_questions,task.getType());
+                task.setAnswer(answer);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
                 e.printStackTrace();
