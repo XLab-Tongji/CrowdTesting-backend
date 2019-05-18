@@ -2,6 +2,7 @@ package com.example.now.controller;
 
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Answer;
+import com.example.now.repository.AnswerRepository;
 import com.example.now.service.RequesterService;
 import com.example.now.service.AnswerService;
 import com.example.now.entity.ResultMap;
@@ -24,6 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.List;
 
+
+/**
+ * Answer controller class
+ *
+ * @author jjc
+ * @date 2019/05/17
+ */
 @RestController
 @RequestMapping("/answer")
 public class AnswerController {
@@ -38,6 +46,8 @@ public class AnswerController {
     @Autowired
     private WorkerService workerService;
     @Autowired
+    private AnswerRepository answerRepository;
+    @Autowired
     private HttpServletRequest request;
 
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
@@ -46,12 +56,18 @@ public class AnswerController {
     }
 
     @RequestMapping(value = "/find-by-answer-id", method = RequestMethod.GET)
-    public ResultMap answerFindById(int id) {
+    public ResultMap answerFindById(Integer id) {
+        if(id == null){
+            return new ResultMap().fail("400").message("empty input");
+        }
         return new ResultMap().success().data("Answer", answerService.findAnswerById(id));
     }
 
     @RequestMapping(value = "/find-by-task-id", method = RequestMethod.GET)
-    public ResultMap answerFindByTaskId(int taskId) {
+    public ResultMap answerFindByTaskId(Integer taskId) {
+        if(taskId == null){
+            return new ResultMap().fail("400").message("empty input");
+        }
         List<Answer> result = answerService.findAnswerByTaskId(taskId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no Answer.");
@@ -60,12 +76,28 @@ public class AnswerController {
     }
 
     @RequestMapping(value = "/find-by-worker-id", method = RequestMethod.GET)
-    public ResultMap answerFindByWorkerId(int workerId) {
+    public ResultMap answerFindByWorkerId(Integer workerId) {
+        if(workerId == null){
+            return new ResultMap().fail("400").message("empty input");
+        }
         List<Answer> result = answerService.findAnswerByWorkerId(workerId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no Answer.");
         }
         return new ResultMap().success().data("Answers", result);
+    }
+
+    //根据 subtaskId 获取答案信息，用于 checker 获取对应的前 population-1 组答案
+    /**
+     * worker 第一次提交子任务答案（弃用）
+     */
+    @RequestMapping(value = "/find-by-subtask-id",method = RequestMethod.GET)
+    public ResultMap answerFindBySubtaskId(Integer subtaskId,Integer taskId){
+        if(taskId == null || subtaskId == null){
+            return new ResultMap().fail("400").message("empty input");
+        }
+        String answers=answerService.findAnswerBySubtaskId(subtaskId,taskId);
+        return new ResultMap().success().data("answers",answers);
     }
 
     @RequestMapping(value = "/find-my-answer", method = RequestMethod.GET)
@@ -80,33 +112,66 @@ public class AnswerController {
         return new ResultMap().success().data("Answers", result);
     }
 
-    // worker 第一次提交子任务答案
+    /**
+     * worker 第一次提交子任务答案（弃用）
+     */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap answerAdd(int task_id, String answer, Timestamp answer_time,int subtaskId,Integer beginAt,Integer endAt) {
+    public ResultMap answerAdd(Integer taskId, String answer, Timestamp answerTime,Integer subtaskId,Integer beginAt,Integer endAt) {
+        if(taskId == null || answer == null || answerTime == null || subtaskId == null || beginAt == null || endAt == null){
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore answerId=new IdStore();
-        String message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), task_id,answer,answer_time,answerId,subtaskId,beginAt,endAt);
-        if (!message.equals("succeed")) {
+        String message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), taskId,answer,answerTime,answerId,subtaskId,beginAt,endAt);
+        String succeed = "succeed";
+        if (!succeed.equals(message)) {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message).data("AnswerId",answerId.getId());
     }
 
     // worker 更新子任务答案
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap answerUpdate(int task_id, String answer, Timestamp answer_time, int id,int subtaskId,Integer beginAt,Integer endAt) {
-        String authToken = request.getHeader(this.tokenHeader);
-        String username = this.tokenUtils.getUsernameFromToken(authToken);
-        String message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getId(),task_id, answer,answer_time,id,subtaskId,beginAt,endAt);
-        if(!message.equals("succeed")){
-            return new ResultMap().fail("400").message("update failed");
+    /**
+     * worker 第一次提交子任务答案（弃用）
+     */
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public ResultMap answerUpdate(Integer taskId, String answer, Timestamp answerTime,Integer subtaskId, Integer beginAt,Integer endAt) {
+        if(taskId == null || answer == null || answerTime == null || subtaskId == null || beginAt == null || endAt == null){
+            return new ResultMap().fail("400").message("empty input");
         }
-        return new ResultMap().success("201").message(message);
+        //判断该答案字段是否已存在
+        if(answerRepository.existsBySubtaskId(subtaskId)){
+            //答案字段已存在
+            Answer answer1=answerRepository.findBySubtaskId(subtaskId);
+            String authToken = request.getHeader(this.tokenHeader);
+            String username = this.tokenUtils.getUsernameFromToken(authToken);
+            String message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getId(),taskId, answer,answerTime,answer1.getId(),subtaskId,beginAt,endAt);
+            String succeed = "succeed";
+            if(!succeed.equals(message)){
+                return new ResultMap().fail("400").message("update failed");
+            }
+            return new ResultMap().success("201").message(message).data("AnswerId",answer1.getId());
+        }
+        else{
+            //答案字段不存在
+            String authToken = request.getHeader(this.tokenHeader);
+            String username = this.tokenUtils.getUsernameFromToken(authToken);
+            IdStore answerId=new IdStore();
+            String message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), taskId,answer,answerTime,answerId,subtaskId,beginAt,endAt);
+            String succeed = "succeed";
+            if (!succeed.equals(message)) {
+                return new ResultMap().fail("400").message(message);
+            }
+            return new ResultMap().success("201").message(message).data("AnswerId",answerId.getId());
+        }
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResultMap answerDelete(int id) {
+    public ResultMap answerDelete(Integer id) {
+        if(id == null){
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = answerService.deleteAnswer(id);
         return new ResultMap().success("201").message(message);
     }

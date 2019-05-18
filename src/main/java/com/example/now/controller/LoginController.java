@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.now.repository.UserRepository;
 import javax.validation.Valid;
 
+
+/**
+ * Login controller class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @RestController
 public class LoginController {
     private final LoginService loginService;
@@ -28,6 +35,9 @@ public class LoginController {
     }
 
     private ResultMap checkAccount(String username, String password, UserDetails loginDetail,String role) {
+        if (username == null || password == null || role == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         if (loginDetail == null||!userRepository.findByUsername(username).getRole().equals(role)) {
             return new ResultMap().fail("404").message("账号不存在！");
         } else {
@@ -41,6 +51,9 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResultMap login(String username, String password,String role) {
+        if (username == null || password == null || role == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         UserDetails loginDetail = loginService.getLoginDetail(username);
         ResultMap ifLoginFail = checkAccount(username, password, loginDetail,role);
         if (ifLoginFail != null) {

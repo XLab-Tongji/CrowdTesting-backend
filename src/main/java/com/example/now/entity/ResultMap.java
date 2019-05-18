@@ -1,10 +1,15 @@
 package com.example.now.entity;
 
 import java.util.HashMap;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
+/**
+ * Result map entity class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 public class ResultMap extends HashMap<String, Object> {
-
 
     public ResultMap() {
 

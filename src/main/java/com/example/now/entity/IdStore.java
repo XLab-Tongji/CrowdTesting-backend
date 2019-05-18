@@ -1,5 +1,12 @@
 package com.example.now.entity;
 
+
+/**
+ * IdStore entity class
+ *
+ * @author jjc
+ * @date 2019/05/17
+ */
 public class IdStore {
     int id;
 

@@ -20,6 +20,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+
+/**
+ * User controller class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @RestController
 public class UserController {
     @Value("${token.header}")
@@ -37,38 +44,57 @@ public class UserController {
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResultMap register(String username,String password, String role) {
+        if (username == null || password == null || role == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = userService.register(username, password, role);
-        if (message != "succeed") {
+        String succeed = "succeed";
+        if (!succeed.equals(message)) {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message);
     }
+
     @RequestMapping(value = "/register-as-requester", method = RequestMethod.POST)
-    public ResultMap registerAsRequester(String eMail,String password, String username, String name, String teleNumber, String research_field, String institutionName, String address, String payMethod, String gender, int age) {
+    public ResultMap registerAsRequester(String eMail,String password, String username, String name, String teleNumber, String researchField, String institutionName, String address, String payMethod, String gender, Integer age) {
+        if (eMail == null || password == null || username == null || name == null || teleNumber == null || researchField == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message1 = userService.register(eMail, password, "ROLE_REQUESTER");
-        if (message1 != "succeed") {
+        String succeed = "succeed";
+        if (!succeed.equals(message1)) {
             return new ResultMap().fail("400").message(message1);
         }
         IdStore idStore=new IdStore();
-        String message2 = requesterService.addRequester(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age,idStore);
+        String message2 = requesterService.addRequester(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age,idStore);
         return new ResultMap().success("201").message(message2).data("requesterId",idStore.getId());
     }
+
     @RequestMapping(value = "/register-as-worker", method = RequestMethod.POST)
-    public ResultMap registerAsWorker(String eMail,String password, String username, String name, String teleNumber, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {
+    public ResultMap registerAsWorker(String eMail,String password, String username, String name, String teleNumber, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String school) {
+        if (eMail == null || password == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || school == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message1 = userService.register(eMail, password, "ROLE_WORKER");
-        if (message1 != "succeed") {
+        String succeed = "succeed";
+        if (!succeed.equals(message1)) {
             return new ResultMap().fail("400").message(message1);
         }
         IdStore idStore=new IdStore();
         String message2 = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,school);
         return new ResultMap().success("201").message(message2).data("workerId",idStore.getId());
     }
+
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     public ResultMap changePassword(String password) {
+        if (password == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         String message = userService.changePassword(username, password);
-        if (message != "succeed") {
+        String succeed = "succeed";
+        if (!succeed.equals(message)) {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message);

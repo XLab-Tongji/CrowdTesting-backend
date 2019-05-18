@@ -1,4 +1,4 @@
-package com.example.now.service.Iml;
+package com.example.now.service.impl;
 
 import com.example.now.service.IQiniuUploadFileService;
 import com.qiniu.common.QiniuException;
@@ -15,6 +15,13 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.InputStream;
 
+/**
+ * Qiniu upload file(image) service implementation class
+ * prepared for extending(not used now)
+ *
+ * @author qsw
+ * @date 2019/05/17
+ */
 @Service
 public class QiniuUploadFileServiceImpl implements IQiniuUploadFileService,InitializingBean {
     @Autowired
@@ -36,7 +43,8 @@ public class QiniuUploadFileServiceImpl implements IQiniuUploadFileService,Initi
     public Response uploadFile(File file,String key) throws QiniuException {
         Response response = this.uploadManager.put(file, key, getUploadToken());
         int retry = 0;
-        while (response.needRetry() && retry < 3) {
+        int maxRetry = 3;
+        while (response.needRetry() && retry < maxRetry) {
             response = this.uploadManager.put(file, key, getUploadToken());
             retry++;
         }
@@ -47,7 +55,8 @@ public class QiniuUploadFileServiceImpl implements IQiniuUploadFileService,Initi
     public Response uploadFile(InputStream inputStream,String key) throws QiniuException {
         Response response = this.uploadManager.put(inputStream, key, getUploadToken(), null, null);
         int retry = 0;
-        while (response.needRetry() && retry < 3) {
+        int maxRetry = 3;
+        while (response.needRetry() && retry < maxRetry) {
             response = this.uploadManager.put(inputStream, key, getUploadToken(), null, null);
             retry++;
         }
@@ -58,7 +67,8 @@ public class QiniuUploadFileServiceImpl implements IQiniuUploadFileService,Initi
     public Response delete(String key) throws QiniuException {
         Response response = bucketManager.delete(this.bucket, key);
         int retry = 0;
-        while (response.needRetry() && retry++ < 3) {
+        int maxRetry = 3;
+        while (response.needRetry() && retry++ < maxRetry) {
             response = bucketManager.delete(bucket, key);
         }
         return response;
