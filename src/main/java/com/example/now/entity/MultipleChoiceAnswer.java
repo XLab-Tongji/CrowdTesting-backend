@@ -1,5 +1,13 @@
 package com.example.now.entity;
-//TODO : 待删
+
+
+/**
+ * Multiple choice answer entity class
+ *
+ * TODO : 待删
+ * @author jjc
+ * @date 2019/05/17
+ */
 public class MultipleChoiceAnswer {
     public Integer ans;
     public Integer index;

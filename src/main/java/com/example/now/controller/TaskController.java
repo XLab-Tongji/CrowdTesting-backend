@@ -25,6 +25,13 @@ import java.util.List;
 
 import com.example.now.util.DESUtil;
 
+
+/**
+ * Task controller class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @RestController
 @RequestMapping("/task")
 public class TaskController {
@@ -43,9 +50,9 @@ public class TaskController {
 
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
-        List<Task> usable_task=taskService.findAllTask();
+        List<Task> usableTask=taskService.findAllTask();
         List<Task> tasks=new ArrayList<Task>();
-        for(Task task : usable_task){
+        for(Task task : usableTask){
             if(task.getStatus() != task.getPopulation() + 1){
                 tasks.add(task);
             }
@@ -54,12 +61,18 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/find-by-id", method = RequestMethod.GET)
-    public ResultMap taskFindById(int id) {
+    public ResultMap taskFindById(Integer id) {
+        if (id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         return new ResultMap().success().data("task", taskService.findTaskById(id));
     }
 
     @RequestMapping(value = "/find-by-name", method = RequestMethod.GET)
     public ResultMap taskFindByName(String name) {
+        if (name == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         List<Task> result = taskService.findTaskByName(name);
         if (result.isEmpty()) {
             return new ResultMap().fail("204").message("there is no task with that name");
@@ -68,8 +81,11 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/find-by-requester-id", method = RequestMethod.GET)
-    public ResultMap taskFindByRequesterId(int requesterid) {
-        List<Task> result = taskService.findTaskByRequesterId(requesterid);
+    public ResultMap taskFindByRequesterId(Integer requesterId) {
+        if (requesterId == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
+        List<Task> result = taskService.findTaskByRequesterId(requesterId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no task published by that requester");
         }
@@ -77,7 +93,10 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/find-by-reward", method = RequestMethod.GET)
-    public ResultMap taskFindByReward(int lowest, int highest) {
+    public ResultMap taskFindByReward(Integer lowest, Integer highest) {
+        if (lowest == null || highest == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         List<Task> result = taskService.findTaskByReward(lowest, highest);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no task whose reward is in the given range");
@@ -86,44 +105,57 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap taskAdd(String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
+    public ResultMap taskAdd(String name, String description, Float reward, Integer status, String type, String restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
+        if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,population,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId);
-        if (!message.equals("succeed")) {
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge,taskId);
+        String succeed = "succeed";
+        if (!succeed.equals(message)) {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message).data("taskId",taskId.getId());
     }
 
-    @RequestMapping(value = "/add-questionaire", method = RequestMethod.POST)
-    public ResultMap questionaireAdd(String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age,String url) {
+    @RequestMapping(value = "/add-questionnaire", method = RequestMethod.POST)
+    public ResultMap questionnaireAdd(String name, String description, Float reward, Integer status, String type, String restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge,String url) {
+        if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null || url == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,population,level,time_limitation,pay_time,area,usage,min_age,max_age,taskId);
-        if (!message.equals("succeed")) {
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge,taskId);
+        String succeed = "succeed";
+        if (!succeed.equals(message)) {
             return new ResultMap().fail("400").message(message);
         }
-        Task the_task = taskService.findTaskById(taskId.getId());
         String message1 = taskService.createTaskResource(taskId.getId(), url);
-        if (!message1.equals("succeed")) {
+        if (!succeed.equals(message1)) {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message).data("taskId",taskId.getId());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap taskUpdate(int taskId, String name, String description, Float reward, int status, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
+    public ResultMap taskUpdate(int taskId, String name, String description, Float reward, Integer status, String type, String restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
+        if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
-        String message = taskService.updateTask(taskId,name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,start_time,end_time,population,level,time_limitation,pay_time,area,usage,min_age,max_age);
+        String message = taskService.updateTask(taskId,name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge);
         return new ResultMap().success("201").message(message);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResultMap taskDelete(int id) {
+    public ResultMap taskDelete(Integer id) {
+        if (id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = taskService.deleteTask(id);
         return new ResultMap().success("201").message(message);
     }
@@ -140,31 +172,46 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add-resource", method = RequestMethod.POST)
-    public ResultMap taskResourceAdd(int taskId, String description, String options, MultipartFile file) {
+    public ResultMap taskResourceAdd(Integer taskId, String description, String options, MultipartFile file) {
+        if (taskId == null || description == null || options == null || file == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = taskService.createTaskResource(taskId, description, options, file);
         return new ResultMap().success("201").message(message);
     }
 
     @RequestMapping(value = "/add-resource-no-file", method = RequestMethod.POST)
-    public ResultMap taskResourceAdd(int taskId, String description, String options) {
+    public ResultMap taskResourceAdd(Integer taskId, String description, String options) {
+        if (taskId == null || description == null || options == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = taskService.createTaskResource(taskId, description, options);
         return new ResultMap().success("201").message(message);
     }
 
     @RequestMapping(value = "/add-resource-no-options", method = RequestMethod.POST)
-    public ResultMap taskResourceAdd(int taskId, String description, MultipartFile file) {
+    public ResultMap taskResourceAdd(Integer taskId, String description, MultipartFile file) {
+        if (taskId == null || description == null || file == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = taskService.createTaskResource(taskId, description, file);
         return new ResultMap().success("201").message(message);
     }
 
     @RequestMapping(value = "/add-resource-from-url", method = RequestMethod.POST)
-    public ResultMap taskResourceAdd(int taskId, String url) {
+    public ResultMap taskResourceAdd(Integer taskId, String url) {
+        if (taskId == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = taskService.createTaskResource(taskId, url);
         return new ResultMap().success("201").message(message);
     }
 
     @RequestMapping(value = "/read-resource", method = RequestMethod.GET)
-    public String taskResourceFind(int taskId) {
+    public String taskResourceFind(Integer taskId) {
+        if (taskId == null) {
+            return "empty input";
+        }
         String content = taskService.readTaskResource(taskId);
         JSONObject json=new JSONObject(content);
         json.put("code",200);
@@ -172,18 +219,21 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/submitResponseCallback", method = RequestMethod.POST)
-    public ResultMap submitResponseCallback(String userId, String taskId, int status) {
+    public ResultMap submitResponseCallback(String userId, String taskId, Integer status) {
+        if (taskId == null || userId == null || status == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         int realUserId = Integer.parseInt(DESUtil.decode("monetware", userId));
         int realTaskId = Integer.parseInt(DESUtil.decode("monetware", taskId));
-        Worker the_worker = workerService.findWorkerById(realUserId);
-        Task the_task = taskService.findTaskById(realTaskId);
+        Worker theWorker = workerService.findWorkerById(realUserId);
+        Task theTask = taskService.findTaskById(realTaskId);
         if (status == 1) {
             try {
-                the_worker.setBalance(the_worker.getBalance() + the_task.getReward());
-                workerService.updateWorker(the_worker.getId(), the_worker.getUsername(), the_worker.getName(), the_worker.getTeleNumber(), the_worker.getEMail(), the_worker.getWithdrawnMethod(), the_worker.getEducation(), the_worker.getWorkArea(), the_worker.getAge(), the_worker.getGender(), the_worker.getMajor(), the_worker.getSchool(), the_worker.getCorrect_number_answered(), the_worker.getAll_number_answered(), the_worker.getOvertime_number(), the_worker.getBalance());
-                the_task.setStatus(the_task.getStatus() + 1);
-                if(the_task.getPopulation() == the_task.getStatus()){
-                    the_task.setIsFinished(1);
+                theWorker.setBalance(theWorker.getBalance() + theTask.getReward());
+                workerService.updateWorker(theWorker.getId(), theWorker.getUsername(), theWorker.getName(), theWorker.getTeleNumber(), theWorker.getEMail(), theWorker.getWithdrawnMethod(), theWorker.getEducation(), theWorker.getWorkArea(), theWorker.getAge(), theWorker.getGender(), theWorker.getMajor(), theWorker.getSchool(), theWorker.getCorrectNumberAnswered(), theWorker.getAllNumberAnswered(), theWorker.getOvertimeNumber(), theWorker.getBalance());
+                theTask.setStatus(theTask.getStatus() + 1);
+                if(theTask.getPopulation() == theTask.getStatus()){
+                    theTask.setIsFinished(1);
                 }
             } catch (Exception e) {
                 return new ResultMap().fail("503");
@@ -193,6 +243,9 @@ public class TaskController {
     }
     @RequestMapping(value = "/getDES", method = RequestMethod.POST)
     public String submit(String userId, String taskId) {
+        if (userId == null || taskId == null) {
+            return "empty input";
+        }
         String realUserId = DESUtil.encode("monetware", userId);
         String realTaskId = DESUtil.encode("monetware", taskId);
         JSONObject json=new JSONObject();

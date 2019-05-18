@@ -3,16 +3,23 @@ package com.example.now.entity;
 import javax.persistence.*;
 import lombok.Data;
 
+
+/**
+ * Worker entity class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @Entity
 @Data
-@Table(name = "WORKER")
+@Table(name = "worker")
 public class Worker {
     @Id
     @GeneratedValue
-    @Column(name = "WORKER_ID")
+    @Column(name = "worker_id")
     private int id;
 
-    @Column(nullable = false, name = "USERNAME")
+    @Column(nullable = false, name = "username")
     private String username;
 
     @Column(nullable = false, name = "name")
@@ -21,22 +28,22 @@ public class Worker {
     @Column(name = "tele_number")
     private String teleNumber;
 
-    @Column(name = "E_MAIL")
+    @Column(name = "e_mail")
     private String eMail;
 
-    @Column(name = "BALANCE")
+    @Column(name = "balance")
     private float balance;
 
-    @Column(name = "WITHDRAWN_METHOD")
+    @Column(name = "withdrawn_method")
     private String withdrawnMethod;
 
-    @Column(name = "EDUCATION")
+    @Column(name = "education")
     private String education;
 
-    @Column(name = "WORK_AREA")
+    @Column(name = "work_area")
     private String workArea;
 
-    @Column(name = "AGE")
+    @Column(name = "age")
     private int age;
 
     @Column(name = "xp")
@@ -52,48 +59,56 @@ public class Worker {
     private String school;
 
     @Column(name = "correct_number_answered")
-    private int correct_number_answered;
+    private int correctNumberAnswered;
 
     @Column(name = "overtime_number")
-    private int overtime_number;
+    private int overtimeNumber;
 
     @Column(name = "all_number_answered")
-    private int all_number_answered;
+    private int allNumberAnswered;
 
     @Transient
     private int level;
+
     @Transient
     public int getLevel() {
         return level;
     }
+
     @Transient
     public void setLevel(){
-        if(xp<=16500)
-            this.level=(int)((1+Math.sqrt(1+2*xp/75))/2);
-        else
+        final int xpLine = 16500;
+        if(xp <= xpLine) {
+            this.level = (int) ((1 + Math.sqrt(1 + (float)2 * xp / 75)) / 2);
+        }
+        else{
             this.level=11+(xp-16500)/3000;
+        }
     }
 
     @Transient
     private int credit;
+
     @Transient
     public int getCredit() {
         return credit;
     }
+
     @Transient
     public void setCredit(){
-        float correct_number_answered = this.correct_number_answered;
-        float all_number_answered = this.all_number_answered;
-        float overtime_number = this.overtime_number;
-        float accuracy_rate = correct_number_answered / all_number_answered;
-        if(accuracy_rate <= 0.6){
+        final double accuracyRateLine = 0.6;
+        double correctNumberAnswered = this.correctNumberAnswered;
+        double allNumberAnswered = this.allNumberAnswered;
+        double overtimeNumber = this.overtimeNumber;
+        double accuracyRate = correctNumberAnswered / allNumberAnswered;
+        if(accuracyRate <= accuracyRateLine){
             this.credit = 0;
         }
         else{
-            double a = 3 + (accuracy_rate - 0.8) * 5;
-            double b = 2 / (Math.exp(-all_number_answered/100)+1);
-            double c = 2 /(Math.exp(-overtime_number/10)+1);
-            this.credit = (int)(4 + (accuracy_rate - 0.8) * 5 + 2 / (Math.exp(-all_number_answered/100)+1) - 2/(Math.exp(-overtime_number/10)+1));
+            double a = 3 + (accuracyRate - 0.8) * 5;
+            double b = 2 / (Math.exp(-allNumberAnswered/100)+1);
+            double c = 2 /(Math.exp(-overtimeNumber/10)+1);
+            this.credit = (int)(4 + (accuracyRate - 0.8) * 5 + 2 / (Math.exp(-allNumberAnswered/100)+1) - 2/(Math.exp(-overtimeNumber/10)+1));
         }
     }
 
@@ -101,7 +116,7 @@ public class Worker {
 
     }
 
-    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number) {
+    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -115,12 +130,12 @@ public class Worker {
         this.gender = gender;
         this.major = major;
         this.school = school;
-        this.all_number_answered = all_number_answered;
-        this.correct_number_answered = correct_number_answered;
-        this.overtime_number = overtime_number;
+        this.allNumberAnswered = allNumberAnswered;
+        this.correctNumberAnswered = correctNumberAnswered;
+        this.overtimeNumber = overtimeNumber;
     }
 
-    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number, float balance) {
+    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -132,9 +147,9 @@ public class Worker {
         this.gender = gender;
         this.major = major;
         this.school = school;
-        this.all_number_answered = all_number_answered;
-        this.correct_number_answered = correct_number_answered;
-        this.overtime_number = overtime_number;
+        this.allNumberAnswered = allNumberAnswered;
+        this.correctNumberAnswered = correctNumberAnswered;
+        this.overtimeNumber = overtimeNumber;
         this.balance = balance;
     }
 }

@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Worker controller class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @RestController
 @RequestMapping("/worker")
 public class WorkerController {
@@ -26,19 +32,33 @@ public class WorkerController {
     @Autowired
     private HttpServletRequest request;
 
-    //查找所有worker，具有管理员权限可以调用
+    /**
+     * 查找所有worker，具有管理员权限可以调用
+     */
     @RequestMapping(value = "/find-all",method = RequestMethod.GET)
     public ResultMap workerFindAll(){
         return new ResultMap().success().data("workers",workerService.findAllWorker());
     }
 
+    /**
+     * 根据ID查找worker
+     */
     @RequestMapping(value = "/find-by-id", method = RequestMethod.GET)
-    public ResultMap workerFindById(int id) {
+    public ResultMap workerFindById(Integer id) {
+        if (id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         return new ResultMap().success().data("worker", workerService.findWorkerById(id));
-    }           //根据ID查找worker
+    }
 
+    /**
+     * 根据名字查找worker
+     */
     @RequestMapping(value = "/find-by-username", method = RequestMethod.GET)
-    public ResultMap workerFindByUsername(String username) {                           //根据名字查找worker
+    public ResultMap workerFindByUsername(String username) {
+        if (username == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         Worker worker = workerService.findWorkerByUsername(username);
         if (worker == null) {
             return new ResultMap().fail("204").message("can not find worker");
@@ -46,24 +66,42 @@ public class WorkerController {
         return new ResultMap().success().data("worker", worker);
     }
 
+    /**
+     * 创建一个worker
+     */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap workerAdd(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {                      //创建一个worker
+    public ResultMap workerAdd(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String school) {
+        if (eMail == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || school == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         IdStore idStore=new IdStore();
         String message = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,school);
         return new ResultMap().success("201").message(message).data("workerId",idStore.getId());
     }
 
+    /**
+     * 修改worker
+     */
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap workerUpdate(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school) {                      //修改worker
+    public ResultMap workerUpdate(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String school) {
+        if (eMail == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || school == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String temp = this.tokenUtils.getUsernameFromToken(authToken);
-        Worker the_worker = workerService.findWorkerByUsername(temp);
-        String message = workerService.updateWorker(the_worker.getId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,the_worker.getCorrect_number_answered(),the_worker.getAll_number_answered(), the_worker.getOvertime_number(),the_worker.getBalance());
+        Worker theWorker = workerService.findWorkerByUsername(temp);
+        String message = workerService.updateWorker(theWorker.getId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,theWorker.getCorrectNumberAnswered(),theWorker.getAllNumberAnswered(), theWorker.getOvertimeNumber(),theWorker.getBalance());
         return new ResultMap().success("201").message(message);
     }
 
+    /**
+     * 删除worker
+     */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResultMap workerDelete(int id) {                      //删除worker
+    public ResultMap workerDelete(Integer id) {
+        if (id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = workerService.deleteWorker(id);
         return new ResultMap().success("201").message(message);
     }

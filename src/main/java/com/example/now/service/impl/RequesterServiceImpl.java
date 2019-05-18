@@ -1,4 +1,4 @@
-package com.example.now.service.Iml;
+package com.example.now.service.impl;
 
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Requester;
@@ -8,6 +8,13 @@ import com.example.now.repository.RequesterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * Requester service implementation class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @Service
 public class RequesterServiceImpl implements RequesterService {
     @Autowired
@@ -26,20 +33,20 @@ public class RequesterServiceImpl implements RequesterService {
     }
 
     @Override
-    public String addRequester(String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age, IdStore id) {
+    public String addRequester(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age, IdStore id) {
         if (username == null || name == null) {
             return "username or name is empty";
         }
-        Requester requester = new Requester(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age);
+        Requester requester = new Requester(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age);
         Requester temp=requesterRepository.saveAndFlush(requester);
         id.setId(temp.getRequesterId());
         return "succeed";
     }
 
     @Override
-    public String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String research_field, String institutionName, String address, String payMethod, String gender, int age) {
+    public String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age) {
         Requester requester=requesterRepository.findById(requesterId);
-        requester.setAll(username, name,teleNumber,eMail,research_field,institutionName,address,payMethod,gender,age);
+        requester.setAll(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age);
         requesterRepository.saveAndFlush(requester);
         return "succeed";
     }

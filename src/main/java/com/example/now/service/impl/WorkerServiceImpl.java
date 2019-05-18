@@ -1,4 +1,4 @@
-package com.example.now.service.Iml;
+package com.example.now.service.impl;
 
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Worker;
@@ -10,6 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Worker service implementation class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @Service
 public class WorkerServiceImpl implements WorkerService {
     @Autowired
@@ -50,9 +56,9 @@ public class WorkerServiceImpl implements WorkerService {
     }
 
     @Override
-    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correct_number_answered, int all_number_answered, int overtime_number, float balance) {
+    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance) {
         Worker worker=workerRepository.findById(workerId);
-        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school, correct_number_answered, all_number_answered, overtime_number,balance);
+        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school, correctNumberAnswered, allNumberAnswered, overtimeNumber,balance);
         workerRepository.saveAndFlush(worker);
         return "succeed";
     }

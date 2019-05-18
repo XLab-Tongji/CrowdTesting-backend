@@ -1,4 +1,4 @@
-package com.example.now.service.Iml;
+package com.example.now.service.impl;
 
 import com.example.now.entity.*;
 import com.example.now.repository.SubtaskRepository;
@@ -17,6 +17,12 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Answer service implementation class
+ *
+ * @author jjc
+ * @date 2019/05/17
+ */
 @Service
 public class AnswerServiceImpl implements AnswerService {
     @Autowired
@@ -55,10 +61,11 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public String addAnswer(int worker_id, int task_id, String answer, Timestamp answer_time, IdStore id,int subtaskId,Integer beginAt,Integer endAt) {
-        if (answer == null)
+    public String addAnswer(int workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt) {
+        if (answer == null){
             return "inputs are not enough";
-        Answer temp = new Answer(worker_id, task_id, answer_time, answer);
+        }
+        Answer temp = new Answer(workerId, taskId, answerTime, answer);
         temp.setSubtaskId(subtaskId);
         temp.setBeginAt(beginAt);
         temp.setEndAt(endAt);
@@ -67,48 +74,51 @@ public class AnswerServiceImpl implements AnswerService {
         Answer result=answerRepository.saveAndFlush(temp);
         id.setId(result.getId());
         //更新对应 subtask 中的 updated_time,now_begin
-        subtask.setNow_begin(endAt+1);
-        subtask.setUpdated_time(new Timestamp(System.currentTimeMillis()));
+        subtask.setNowBegin(endAt+1);
+        subtask.setUpdatedTime(new Timestamp(System.currentTimeMillis()));
+
         //若该子任务已完成，则修改对应子任务字段
         if(isFinished(result)){
-            if(result.getSubtaskId()==null)
+            if(result.getSubtaskId()==null) {
                 System.out.println("SubtaskId is null");
+            }
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
             subtask.setIsFinished(1);
         }
         subtaskRepository.saveAndFlush(subtask);
         //将答案写入 task 中的 answer 字段
-        taskService.updateAnswer(task_id,answer,subtask.getNumber_of_task());
+        taskService.updateAnswer(taskId,answer,subtask.getNumberOfTask());
         return "succeed";
     }
 
     @Override
-    public String updateAnswer(int worker_id, int task_id, String answer, Timestamp answer_time,int id,int subtaskId,Integer beginAt,Integer endAt) {
-        Answer new_answer=answerRepository.findById(id);
+    public String updateAnswer(int workerId, int taskId, String answer, Timestamp answerTime,int id,int subtaskId,Integer beginAt,Integer endAt) {
+        Answer newAnswer=answerRepository.findById(id);
         //判断答案是否相连，即 new_answer.endAt 是否等于 beginAt-1
-        if(new_answer.getEndAt()==beginAt-1){
+        if(newAnswer.getEndAt()==beginAt-1){
             //答案 json 合并，并更新字段
-            new_answer.setAll(worker_id, task_id, answer_time, JsonUtil.appendJson(new_answer.getAnswer(),answer));
-            new_answer.setEndAt(endAt);
+            newAnswer.setAll(workerId, taskId, answerTime, JsonUtil.appendJson(newAnswer.getAnswer(),answer));
+            newAnswer.setEndAt(endAt);
         }
         else{
             return "failed";
         }
-        answerRepository.saveAndFlush(new_answer);
+        answerRepository.saveAndFlush(newAnswer);
         //更新对应 subtask 中的 updated_time,now_begin
         Subtask subtask=subtaskRepository.findById(subtaskId);
-        subtask.setNow_begin(endAt+1);
-        subtask.setUpdated_time(new Timestamp(System.currentTimeMillis()));
+        subtask.setNowBegin(endAt+1);
+        subtask.setUpdatedTime(new Timestamp(System.currentTimeMillis()));
         //若该子任务已完成，则修改对应子任务字段
-        if(isFinished(new_answer)){
-            if(new_answer.getSubtaskId()==null)
+        if(isFinished(newAnswer)){
+            if(newAnswer.getSubtaskId()==null) {
                 System.out.println("SubtaskId is null");
+            }
             //修改对应 subtask 的 isFinished 字段为 1 ，代表已完成
             subtask.setIsFinished(1);
         }
         subtaskRepository.saveAndFlush(subtask);
         //将答案写入对应 task 中的 answer 字段
-        taskService.updateAnswer(task_id,answer,subtask.getNumber_of_task());
+        taskService.updateAnswer(taskId,answer,subtask.getNumberOfTask());
         return "succeed";
     }
 
@@ -129,8 +139,9 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public Boolean isFinished(int id){
         Answer answer=answerRepository.findById(id);
-        if(answer.getBeginAt()==null || answer.getEndAt()==null)
+        if(answer.getBeginAt()==null || answer.getEndAt()==null) {
             return false;
+        }
         else{
             return answer.getEndAt()-answer.getBeginAt()==answer.getNumber();
         }
@@ -138,8 +149,9 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public Boolean isFinished(Answer answer){
-        if(answer.getBeginAt()==null || answer.getEndAt()==null)
+        if(answer.getBeginAt()==null || answer.getEndAt()==null) {
             return false;
+        }
         else{
             return answer.getEndAt()-answer.getBeginAt()==answer.getNumber()-1;
         }
@@ -150,7 +162,8 @@ public class AnswerServiceImpl implements AnswerService {
         Task task=taskRepository.findById(taskId);
         Subtask subtask=subtaskRepository.findById(subtaskId);
         JSONArray currentAnswers=new JSONArray(task.getAnswer());
-        int begin=subtask.getNow_begin();//得到当前的开始题号
+        //得到当前的开始题号
+        int begin=subtask.getNowBegin();
         int end=subtask.getEnd();
         int population=task.getPopulation();
         JSONArray ultimateAnswers=new JSONArray();

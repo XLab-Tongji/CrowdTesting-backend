@@ -1,17 +1,17 @@
 package com.example.now.entity;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.List;
-
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.Data;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.json.JSONObject;
-import org.json.JSONString;
 
+import javax.persistence.*;
+import java.sql.Timestamp;
+
+
+/**
+ * Transaction information entity class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @Entity
 @Data
 @Table(name = "transaction_information")

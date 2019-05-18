@@ -7,11 +7,40 @@ import java.io.File;
 import java.io.InputStream;
 
 
+/**
+ * Qiniu upload file(image) service class
+ * prepared for extending(not used now)
+ *
+ * @author qsw
+ * @date 2019/05/17
+ */
 public interface IQiniuUploadFileService {
-
+    /**
+     * upload file
+     *
+     * @param file file
+     * @param key key
+     * @return Response
+     * @throws QiniuException QiniuException
+     */
     Response uploadFile(File file,String key) throws QiniuException;
 
+    /**
+     * upload file
+     *
+     * @param inputStream inputStream
+     * @param key key
+     * @return Response
+     * @throws QiniuException QiniuException
+     */
     Response uploadFile(InputStream inputStream,String key) throws QiniuException;
 
+    /**
+     * delete file
+     *
+     * @param key key
+     * @return Response
+     * @throws  QiniuException QiniuException
+     */
     Response delete(String key) throws QiniuException;
 }

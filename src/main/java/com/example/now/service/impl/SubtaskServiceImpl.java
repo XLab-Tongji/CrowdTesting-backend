@@ -1,4 +1,4 @@
-package com.example.now.service.Iml;
+package com.example.now.service.impl;
 
 import com.example.now.entity.*;
 import com.example.now.repository.TaskRepository;
@@ -21,6 +21,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * Subtask service implementation class
+ *
+ * @author jjc
+ * @date 2019/05/17
+ */
 @Service
 public class SubtaskServiceImpl implements SubtaskService{
     @Autowired
@@ -41,11 +48,11 @@ public class SubtaskServiceImpl implements SubtaskService{
         List<Subtask> temp = subtaskRepository.findAll();
         Collections.reverse(temp);
         for(int i=0;i<temp.size();i++){
-            Task the_task =  taskRepository.findById(temp.get(i).getTaskId());
-            Requester the_requester = requesterRepository.findById(the_task.getRequesterid()).get();
-            temp.get(i).setTask_type(the_task.getType());
-            temp.get(i).setTitle(the_task.getName());
-            temp.get(i).setUsername(the_requester.getUsername());
+            Task theTask =  taskRepository.findById(temp.get(i).getTaskId());
+            Requester theRequester = requesterRepository.findById(theTask.getRequesterId()).get();
+            temp.get(i).setTaskType(theTask.getType());
+            temp.get(i).setTitle(theTask.getName());
+            temp.get(i).setUsername(theRequester.getUsername());
         }
         return temp;
     }
@@ -53,11 +60,11 @@ public class SubtaskServiceImpl implements SubtaskService{
     @Override
     public Subtask findSubtaskById(int id) {
         Subtask temp = subtaskRepository.findById(id);
-        Task the_task =  taskRepository.findById(temp.getTaskId());
-        Requester the_requester = requesterRepository.findById(the_task.getRequesterid()).get();
-        temp.setTask_type(the_task.getType());
-        temp.setTitle(the_task.getName());
-        temp.setUsername(the_requester.getUsername());
+        Task theTask =  taskRepository.findById(temp.getTaskId());
+        Requester theRequester = requesterRepository.findById(theTask.getRequesterId()).get();
+        temp.setTaskType(theTask.getType());
+        temp.setTitle(theTask.getName());
+        temp.setUsername(theRequester.getUsername());
         return temp;
     }
 
@@ -66,11 +73,11 @@ public class SubtaskServiceImpl implements SubtaskService{
         List<Subtask> temp = subtaskRepository.findByWorkerId(id);
         Collections.reverse(temp);
         for(int i=0;i<temp.size();i++){
-            Task the_task =  taskRepository.findById(temp.get(i).getTaskId());
-            Requester the_requester = requesterRepository.findById(the_task.getRequesterid()).get();
-            temp.get(i).setTask_type(the_task.getType());
-            temp.get(i).setTitle(the_task.getName());
-            temp.get(i).setUsername(the_requester.getUsername());
+            Task theTask =  taskRepository.findById(temp.get(i).getTaskId());
+            Requester theRequester = requesterRepository.findById(theTask.getRequesterId()).get();
+            temp.get(i).setTaskType(theTask.getType());
+            temp.get(i).setTitle(theTask.getName());
+            temp.get(i).setUsername(theRequester.getUsername());
         }
         return temp;
     }
@@ -80,18 +87,18 @@ public class SubtaskServiceImpl implements SubtaskService{
         List<Subtask> temp = subtaskRepository.findByTaskId(id);
         Collections.reverse(temp);
         for(int i=0;i<temp.size();i++){
-            Task the_task =  taskRepository.findById(temp.get(i).getTaskId());
-            Requester the_requester = requesterRepository.findById(the_task.getRequesterid()).get();
-            temp.get(i).setTask_type(the_task.getType());
-            temp.get(i).setTitle(the_task.getName());
-            temp.get(i).setUsername(the_requester.getUsername());
+            Task theTask =  taskRepository.findById(temp.get(i).getTaskId());
+            Requester theRequester = requesterRepository.findById(theTask.getRequesterId()).get();
+            temp.get(i).setTaskType(theTask.getType());
+            temp.get(i).setTitle(theTask.getName());
+            temp.get(i).setUsername(theRequester.getUsername());
         }
         return temp;
     }
 
     @Override
-    public String addSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, IdStore id, int now_begin) {
-        Subtask temp = new Subtask(begin, end, created_time, deadline, updated_time, is_finished, type, workerId, taskId, number_of_task, now_begin);
+    public String addSubtask(int begin, int end, Timestamp createdTime, Timestamp deadline, Timestamp updatedTime, int isFinished, int type, int workerId, int taskId, int numberOfTask, IdStore id, int nowBegin) {
+        Subtask temp = new Subtask(begin, end, createdTime, deadline, updatedTime, isFinished, type, workerId, taskId, numberOfTask, nowBegin);
         Subtask result=subtaskRepository.saveAndFlush(temp);
         id.setId(result.getId());
         return "succeed";
@@ -99,11 +106,11 @@ public class SubtaskServiceImpl implements SubtaskService{
 
     @Override
     public String readSubtaskResource(int subtaskId){
-        Subtask the_subtask = subtaskRepository.findById(subtaskId);
-        Task task = taskRepository.findById(the_subtask.getTaskId());
-        String fileName = task.getResource_link();
-        int begin = the_subtask.getNow_begin() - 1;
-        int end = the_subtask.getEnd();
+        Subtask theSubtask = subtaskRepository.findById(subtaskId);
+        Task task = taskRepository.findById(theSubtask.getTaskId());
+        String fileName = task.getResourceLink();
+        int begin = theSubtask.getNowBegin() - 1;
+        int end = theSubtask.getEnd();
         File file = new File(fileName);
         Long fileLength = file.length();
         byte[] filecontent = new byte[fileLength.intValue()];
@@ -113,18 +120,18 @@ public class SubtaskServiceImpl implements SubtaskService{
             in.close();
             String str = new String(filecontent, 0, fileLength.intValue(), StandardCharsets.UTF_8);
             JSONObject json = new JSONObject(str);
-            JSONObject new_json = new JSONObject();
+            JSONObject newJson = new JSONObject();
             String desc = json.getString("desc");
             JSONArray opts = json.getJSONArray("opts");
-            new_json.put("desc",desc);
-            new_json.put("opts",opts);
-            JSONArray new_urls = new JSONArray();
-            JSONArray urls_list = json.getJSONArray("urls");
+            newJson.put("desc",desc);
+            newJson.put("opts",opts);
+            JSONArray newUrls = new JSONArray();
+            JSONArray urlsList = json.getJSONArray("urls");
             for(int i=begin;i<end;i++){
-                new_urls.put(urls_list.getJSONObject(i));
+                newUrls.put(urlsList.getJSONObject(i));
             }
-            new_json.put("urls",new_urls);
-            return new_json.toString();
+            newJson.put("urls",newUrls);
+            return newJson.toString();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return "false";
@@ -135,10 +142,10 @@ public class SubtaskServiceImpl implements SubtaskService{
     }
 
     @Override
-    public String updateSubtask(int begin, int end, Timestamp created_time, Timestamp deadline, Timestamp updated_time, int is_finished, int type, int workerId, int taskId, int number_of_task, int now_begin, int id) {
-        Subtask new_Subtask=subtaskRepository.findById(id);
-        new_Subtask.setAll(begin, end, created_time, deadline, updated_time, is_finished, type, workerId, taskId, number_of_task,now_begin);
-        subtaskRepository.saveAndFlush(new_Subtask);
+    public String updateSubtask(int begin, int end, Timestamp createdTime, Timestamp deadline, Timestamp updatedTime, int isFinished, int type, int workerId, int taskId, int numberOfTask, int nowBegin, int id) {
+        Subtask newSubtask=subtaskRepository.findById(id);
+        newSubtask.setAll(begin, end, createdTime, deadline, updatedTime, isFinished, type, workerId, taskId, numberOfTask,nowBegin);
+        subtaskRepository.saveAndFlush(newSubtask);
         return "succeed";
     }
 
@@ -164,21 +171,21 @@ public class SubtaskServiceImpl implements SubtaskService{
                 //写回
                 subtaskRepository.saveAndFlush(subtask);
                 //更改对应 task 的 answer 字段
-                taskService.deleteExpiredAnswer(subtask.getTaskId(),subtask.getNumber_of_task(),subtask.getBegin(),subtask.getEnd());
+                taskService.deleteExpiredAnswer(subtask.getTaskId(),subtask.getNumberOfTask(),subtask.getBegin(),subtask.getEnd());
                 //删除 answer 表中对应的数据
                 answerService.deleteAnswerBySubtaskId(subtask.getId());
                 //更新对应 worker 的过期子任务数
                 Worker worker=workerRepository.findById(subtask.getWorkerId());
-                worker.setOvertime_number(worker.getOvertime_number()+1);
+                worker.setOvertimeNumber(worker.getOvertimeNumber()+1);
                 workerRepository.saveAndFlush(worker);
                 Task task = taskRepository.findById(subtask.getTaskId());
-                JSONObject rest_of_question = new JSONObject(task.getRest_of_question());
+                JSONObject restOfQuestion = new JSONObject(task.getRestOfQuestion());
                 JSONObject backQuestions = new JSONObject();
-                backQuestions.put("begin", subtask.getNow_begin());
+                backQuestions.put("begin", subtask.getNowBegin());
                 backQuestions.put("end", subtask.getEnd());
-                rest_of_question.getJSONArray(String.valueOf(subtask.getNumber_of_task())).put(backQuestions);
-                task.setRest_of_question(rest_of_question.toString());
-                String message = updateSubtask(subtask.getBegin(), subtask.getNow_begin() - 1, subtask.getCreated_time(), subtask.getDeadline(), subtask.getUpdated_time(), subtask.getIsFinished(), subtask.getType(), subtask.getWorkerId(), subtask.getTaskId(), subtask.getNumber_of_task(), subtask.getNow_begin(),subtask.getId());
+                restOfQuestion.getJSONArray(String.valueOf(subtask.getNumberOfTask())).put(backQuestions);
+                task.setRestOfQuestion(restOfQuestion.toString());
+                String message = updateSubtask(subtask.getBegin(), subtask.getNowBegin() - 1, subtask.getCreatedTime(), subtask.getDeadline(), subtask.getUpdatedTime(), subtask.getIsFinished(), subtask.getType(), subtask.getWorkerId(), subtask.getTaskId(), subtask.getNumberOfTask(), subtask.getNowBegin(),subtask.getId());
             }
         }
     }

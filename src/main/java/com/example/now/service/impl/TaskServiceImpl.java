@@ -1,4 +1,4 @@
-package com.example.now.service.Iml;
+package com.example.now.service.impl;
 
 import com.example.now.entity.*;
 import com.example.now.repository.*;
@@ -23,6 +23,12 @@ import org.apache.commons.io.input.BOMInputStream;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Task service implementation class
+ *
+ * @author hyq
+ * @date 2019/05/17
+ */
 @Service
 public class TaskServiceImpl implements TaskService {
     @Autowired
@@ -35,14 +41,16 @@ public class TaskServiceImpl implements TaskService {
     private RequesterService requesterService;
     @Autowired
     private WorkerRepository workerRepository;
-    //任务未审核的标志
-    private int UNREVIEWED = 0;
+    /**
+     * 任务未审核的标志
+     */
+    private int unReviewed = 0;
 
     @Override
     public List<Task> findAllTask() {
         List<Task> temp = taskRepository.findAll();
         for (Task aTask : temp) {
-            aTask.setInstitution_name(requesterService.findRequesterById(aTask.getRequesterid()).getInstitutionName());
+            aTask.setInstitutionName(requesterService.findRequesterById(aTask.getRequesterId()).getInstitutionName());
         }
         Collections.reverse(temp);
         return temp;
@@ -51,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task findTaskById(int id) {
         Task aTask = taskRepository.findById(id);
-        aTask.setInstitution_name(requesterService.findRequesterById(aTask.getRequesterid()).getInstitutionName());
+        aTask.setInstitutionName(requesterService.findRequesterById(aTask.getRequesterId()).getInstitutionName());
         return aTask;
     }
 
@@ -59,7 +67,7 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTaskByName(String name) {
         List<Task> temp = taskRepository.findByName(name);
         for (Task aTask : temp) {
-            aTask.setInstitution_name(requesterService.findRequesterById(aTask.getRequesterid()).getInstitutionName());
+            aTask.setInstitutionName(requesterService.findRequesterById(aTask.getRequesterId()).getInstitutionName());
         }
         Collections.reverse(temp);
         return temp;
@@ -67,9 +75,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> findTaskByRequesterId(int id) {
-        List<Task> temp = taskRepository.findByRequesterid(id);
+        List<Task> temp = taskRepository.findByRequesterId(id);
         for (Task aTask : temp) {
-            aTask.setInstitution_name(requesterService.findRequesterById(aTask.getRequesterid()).getInstitutionName());
+            aTask.setInstitutionName(requesterService.findRequesterById(aTask.getRequesterId()).getInstitutionName());
         }
         Collections.reverse(temp);
         return temp;
@@ -79,18 +87,19 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTaskByReward(int lowest, int highest) {
         List<Task> temp = taskRepository.findByRewardBetween(lowest, highest);
         for (Task aTask : temp) {
-            aTask.setInstitution_name(requesterService.findRequesterById(aTask.getRequesterid()).getInstitutionName());
+            aTask.setInstitutionName(requesterService.findRequesterById(aTask.getRequesterId()).getInstitutionName());
         }
         Collections.reverse(temp);
         return temp;
     }
 
     @Override
-    public String addTask(String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age, IdStore taskId) {
-        if (name == null || description == null)
+    public String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId) {
+        if (name == null || description == null) {
             return "inputs are not enough";
+        }
         int allNumber = 0;
-        Task temp = new Task(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, UNREVIEWED, allNumber);
+        Task temp = new Task(name, description, reward, status, requesterId, type, restrictions, startTime, endTime, population, level, timeLimitation, payTime, area, usage, minAge, maxAge, unReviewed, allNumber);
         //初始化 answer 放在 createTaskResource() 中
         temp.setJudgedNumber(0);
         Task result = taskRepository.saveAndFlush(temp);
@@ -99,9 +108,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterid, String type, String restrictions, Timestamp start_time, Timestamp end_time, int population, int level, Float time_limitation, Float pay_time, String area, String usage, int min_age, int max_age) {
+    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge) {
         Task task = taskRepository.findById(taskId);
-        task.setAll(name, description, reward, status, requesterid, type, restrictions, start_time, end_time, population, level, time_limitation, pay_time, area, usage, min_age, max_age, task.getReviewed(), task.getAllNumber());
+        task.setAll(name, description, reward, status, requesterId, type, restrictions, startTime, endTime, population, level, timeLimitation, payTime, area, usage, minAge, maxAge, task.getReviewed(), task.getAllNumber());
         taskRepository.saveAndFlush(task);
         return "succeed";
     }
@@ -129,7 +138,7 @@ public class TaskServiceImpl implements TaskService {
             inputStream.close();
             String strRead = new String(bytes);
             JSONArray urlArray = new JSONArray(strRead);
-            int number_of_questions = urlArray.length();
+            int numberOfQuestions = urlArray.length();
             JSONArray optArray = new JSONArray(options);
             JSONObject obj = new JSONObject();
             obj.put("desc", description);
@@ -137,7 +146,7 @@ public class TaskServiceImpl implements TaskService {
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
             String filePath = "C:/Users/Administrator/Desktop/xml/";
-            String resource_link = filePath + taskId + ".txt";
+            String resourceLink = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
             // 一、检查放置文件的文件夹路径是否存在，不存在则创建
@@ -149,7 +158,8 @@ public class TaskServiceImpl implements TaskService {
             try {
                 // 二、检查目标文件是否存在，不存在则创建
                 if (!checkFile.exists()) {
-                    checkFile.createNewFile();// 创建目标文件
+                    // 创建目标文件
+                    checkFile.createNewFile();
                 }
                 // 三、向目标文件中写入内容
                 // FileWriter(File file, boolean append)，append为true时为追加模式，false或缺省则为覆盖模式
@@ -157,21 +167,21 @@ public class TaskServiceImpl implements TaskService {
                 writer = new BufferedWriter(new OutputStreamWriter(out,"UTF-8"));
                 writer.append(content);
                 writer.flush();
-                task.setResource_link(resource_link);
-                task.setNumberOfQuestions(number_of_questions);
-                JSONObject rest_of_questions = new JSONObject();
-                JSONArray rest_of_question_list = new JSONArray();
-                JSONObject rest_of_question = new JSONObject();
-                rest_of_question.put("begin","1");
-                rest_of_question.put("end",String.valueOf(number_of_questions));
-                rest_of_question_list.put(rest_of_question);
+                task.setResourceLink(resourceLink);
+                task.setNumberOfQuestions(numberOfQuestions);
+                JSONObject restOfQuestions = new JSONObject();
+                JSONArray restOfQuestionList = new JSONArray();
+                JSONObject restOfQuestion = new JSONObject();
+                restOfQuestion.put("begin","1");
+                restOfQuestion.put("end",String.valueOf(numberOfQuestions));
+                restOfQuestionList.put(restOfQuestion);
                 for(int i = 0; i < task.getPopulation();i++){
-                    rest_of_questions.put(String.valueOf(i), rest_of_question_list);
+                    restOfQuestions.put(String.valueOf(i), restOfQuestionList);
                 }
-                task.setRest_of_question(rest_of_questions.toString());
-                task.setNumberOfQuestions(number_of_questions);
+                task.setRestOfQuestion(restOfQuestions.toString());
+                task.setNumberOfQuestions(numberOfQuestions);
                 //初始化 task 中的 answer 字段
-                String answer=JsonUtil.initializeAnswer(task.getPopulation(),number_of_questions,task.getType());
+                String answer=JsonUtil.initializeAnswer(task.getPopulation(),numberOfQuestions,task.getType());
                 task.setAnswer(answer);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
@@ -195,13 +205,13 @@ public class TaskServiceImpl implements TaskService {
             inputStream.close();
             String strRead = new String(bytes);
             JSONArray urlArray = new JSONArray(strRead);
-            int number_of_questions = urlArray.length();
+            int numberOfQuestions = urlArray.length();
             JSONObject obj = new JSONObject();
             obj.put("desc", description);
             obj.put("urls", urlArray);
             Task task = taskRepository.findById(taskId);
             String filePath = "C:/Users/Administrator/Desktop/xml/";
-            String resource_link = filePath + taskId + ".txt";
+            String resourceLink = filePath + taskId + ".txt";
             String content = obj.toString();
             File dir = new File(filePath);
             // 一、检查放置文件的文件夹路径是否存在，不存在则创建
@@ -213,7 +223,8 @@ public class TaskServiceImpl implements TaskService {
             try {
                 // 二、检查目标文件是否存在，不存在则创建
                 if (!checkFile.exists()) {
-                    checkFile.createNewFile();// 创建目标文件
+                    // 创建目标文件
+                    checkFile.createNewFile();
                 }
                 // 三、向目标文件中写入内容
                 // FileWriter(File file, boolean append)，append为true时为追加模式，false或缺省则为覆盖模式
@@ -221,21 +232,21 @@ public class TaskServiceImpl implements TaskService {
                 writer = new BufferedWriter(new OutputStreamWriter(out,"UTF-8"));
                 writer.append(content);
                 writer.flush();
-                task.setResource_link(resource_link);
-                task.setNumberOfQuestions(number_of_questions);
-                JSONObject rest_of_questions = new JSONObject();
-                JSONArray rest_of_question_list = new JSONArray();
-                JSONObject rest_of_question = new JSONObject();
-                rest_of_question.put("begin","1");
-                rest_of_question.put("end",String.valueOf(number_of_questions));
-                rest_of_question_list.put(rest_of_question);
+                task.setResourceLink(resourceLink);
+                task.setNumberOfQuestions(numberOfQuestions);
+                JSONObject restOfQuestions = new JSONObject();
+                JSONArray restOfQuestionList = new JSONArray();
+                JSONObject restOfQuestion = new JSONObject();
+                restOfQuestion.put("begin","1");
+                restOfQuestion.put("end",String.valueOf(numberOfQuestions));
+                restOfQuestionList.put(restOfQuestion);
                 for(int i = 0; i < task.getPopulation();i++){
-                    rest_of_questions.put(String.valueOf(i), rest_of_question_list);
+                    restOfQuestions.put(String.valueOf(i), restOfQuestionList);
                 }
-                task.setRest_of_question(rest_of_questions.toString());
-                task.setNumberOfQuestions(number_of_questions);
+                task.setRestOfQuestion(restOfQuestions.toString());
+                task.setNumberOfQuestions(numberOfQuestions);
                 //初始化 task 中的 answer 字段
-                String answer=JsonUtil.initializeAnswer(task.getPopulation(),number_of_questions,task.getType());
+                String answer=JsonUtil.initializeAnswer(task.getPopulation(),numberOfQuestions,task.getType());
                 task.setAnswer(answer);
                 taskRepository.saveAndFlush(task);
             } catch (IOException e) {
@@ -257,12 +268,13 @@ public class TaskServiceImpl implements TaskService {
         obj.put("opts", optArray);
         Task task = taskRepository.findById(taskId);
         String filePath = "C:/Users/Administrator/Desktop/xml/";
-        String resource_link = filePath + taskId + ".txt";
+        String resourceLink = filePath + taskId + ".txt";
         String content = obj.toString();
         File dir = new File(filePath);
         // 一、检查放置文件的文件夹路径是否存在，不存在则创建
         if (!dir.exists()) {
-            dir.mkdirs();// mkdirs创建多级目录
+            // mkdirs创建多级目录
+            dir.mkdirs();
         }
         File checkFile = new File(filePath + taskId + ".txt");
         BufferedWriter writer = null;
@@ -277,7 +289,7 @@ public class TaskServiceImpl implements TaskService {
             writer = new BufferedWriter(new OutputStreamWriter(out,"UTF-8"));
             writer.append(content);
             writer.flush();
-            task.setResource_link(resource_link);
+            task.setResourceLink(resourceLink);
             taskRepository.saveAndFlush(task);
         } catch (IOException e) {
             e.printStackTrace();
@@ -289,7 +301,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String createTaskResource(int taskId, String url) {
         Task task = taskRepository.findById(taskId);
-        task.setResource_link(url);
+        task.setResourceLink(url);
         taskRepository.saveAndFlush(task);
         return "succeed";
     }
@@ -297,7 +309,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public String readTaskResource(int taskId) {
         Task task = taskRepository.findById(taskId);
-        String fileName = task.getResource_link();
+        String fileName = task.getResourceLink();
         File file = new File(fileName);
         Long fileLength = file.length();
         byte[] filecontent = new byte[fileLength.intValue()];
@@ -328,13 +340,18 @@ public class TaskServiceImpl implements TaskService {
         int increment=endAt-beginAt+1;
         task.setDistributedNumber(oldDistributedNumber+increment);
         int newDistributedNumber=task.getDistributedNumber();
-        int allNumber=task.getAllNumber();//应分配的总数
+        int allNumber=task.getAllNumber();
+        //应分配的总数
         //检测该 task 是否分配完成，若修改 isDistributed 字段
-        if(newDistributedNumber==(allNumber*3/2)){
-            task.setIsDistributed(1);//普通任务分配完成
+        final int num3 = 3;
+        final int num2 = 2;
+        if(newDistributedNumber==(allNumber*num3/num2)){
+            //普通任务分配完成
+            task.setIsDistributed(1);
         }
         else if(newDistributedNumber==allNumber){
-            task.setIsDistributed(2);//所有任务分配完成
+            //所有任务分配完成
+            task.setIsDistributed(2);
         }
         taskRepository.saveAndFlush(task);
         return "succeed";
@@ -359,8 +376,11 @@ public class TaskServiceImpl implements TaskService {
             if(flag==1){continue;}
             // 3. 将所有子任务的答案合并成两份，存入任务的 answer 字段
             List<Answer> answers=answerRepository.findByTaskIdOrderByBeginAt(task.getId());
-            int temp=2;//temp 为普通任务的份数，目前为两份
-            if (!mergeAndUpdateAnswer(task, numberOfQuestions, temp, answers)) return "failed";
+            int temp=2;
+            //temp 为普通任务的份数，目前为两份
+            if (!mergeAndUpdateAnswer(task, numberOfQuestions, temp, answers)) {
+                return "failed";
+            }
             // 4. 将任务 isFinished 字段置为 1，代表该任务的所有普通子任务已完成，可以分配审核任务
             task.setIsFinished(1);
             taskRepository.saveAndFlush(task);
@@ -394,9 +414,12 @@ public class TaskServiceImpl implements TaskService {
             }
             if (flag == 1) { continue; }
             // 3. 将审核任务的答案合并成一份，添加到任务的 answer 字段
-            int temp=1;//表示审核任务的答案只有一份
+            //表示审核任务的答案只有一份
+            int temp=1;
             List<Answer> answers=answerRepository.findByTaskIdOrderByBeginAt(task.getId());
-            if (!mergeAndUpdateAnswer(task, numberOfQuestions, temp, answers)) return "failed";
+            if (!mergeAndUpdateAnswer(task, numberOfQuestions, temp, answers)) {
+                return "failed";
+            }
             // 4. 将任务 isFinished 字段置为 2，代表该任务的所有子任务已完成
             task.setIsFinished(1);
             taskRepository.saveAndFlush(task);
@@ -407,8 +430,9 @@ public class TaskServiceImpl implements TaskService {
     private boolean mergeAndUpdateAnswer(Task task, int numberOfQuestions, int temp, List<Answer> answers) {
         for(int i=0;i<temp;i++){
             String ultimateAnswer= JsonUtil.mergeJson(answers,answers.get(i).getAnswer(),answers.get(i).getEndAt(),numberOfQuestions);
-            if(ultimateAnswer.equals("failed"))
+            if("failed".equals(ultimateAnswer)) {
                 return false;
+            }
             //存入任务的 answer 字段
             if(i==0){
                 JSONArray jsonArray=new JSONArray();
@@ -434,14 +458,20 @@ public class TaskServiceImpl implements TaskService {
         JSONArray answer = answers.getJSONArray(numberOfTask);
         JSONArray partialAnswerJson = new JSONArray(partialAnswer);
         for (int i = 0; i < partialAnswerJson.length(); i++) {
-            int index = partialAnswerJson.getJSONObject(i).getInt("index");    //获取当前题号
-            JSONObject updatedAnswer = answer.getJSONObject(index - 1);       //被更新的答案
+            //获取当前题号
+            int index = partialAnswerJson.getJSONObject(i).getInt("index");
+
+            //被更新的答案
+            JSONObject updatedAnswer = answer.getJSONObject(index - 1);
             updatedAnswer.put("isFinished", true);
             updatedAnswer.put("content",partialAnswerJson.getJSONObject(i));
             updatedAnswer.getJSONObject("content").put("index", index);
-            answer.put(index - 1, updatedAnswer);                          //存回
+
+            //存回
+            answer.put(index - 1, updatedAnswer);
             }
-        answers.put(numberOfTask,answer);//存回
+        //存回
+        answers.put(numberOfTask,answer);
         task.setAnswer(answers.toString());
         taskRepository.saveAndFlush(task);
         return true;
@@ -450,15 +480,19 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Boolean isFinishedForSimpleSubtasks(int taskId){
         Task task=taskRepository.findById(taskId);
-        if(task.getAnswer().equals("[]"))
+        String empty = "[]";
+        if(empty.equals(task.getAnswer())) {
             return false;
+        }
         JSONArray answers=new JSONArray(task.getAnswer());
-        int number=2;//TODO : 改为由 population 生成
+        int number=2;
+        //TODO : 改为由 population 生成
         for(int i=0;i<number;i++){
             JSONArray answer=answers.getJSONArray(i);
             for(int j=0;j<answer.length();j++){
-                if(!answer.getJSONObject(j).getBoolean("isFinished"))
+                if(!answer.getJSONObject(j).getBoolean("isFinished")) {
                     return false;
+                }
             }
         }
         return true;
@@ -467,15 +501,18 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Boolean isFinishedForAllSubtasks(int taskId){
         Task task=taskRepository.findById(taskId);
-        if(task.getAnswer().equals("[]"))
+        String empty = "[]";
+        if(empty.equals(task.getAnswer())) {
             return false;
+        }
         JSONArray answers=new JSONArray(task.getAnswer());
         int number=task.getPopulation();
         for(int i=0;i<number;i++){
             JSONArray answer=answers.getJSONArray(i);
             for(int j=0;j<answer.length();j++){
-                if(!answer.getJSONObject(j).getBoolean("isFinished"))
+                if(!answer.getJSONObject(j).getBoolean("isFinished")) {
                     return false;
+                }
             }
         }
         return true;
@@ -494,28 +531,34 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(2);
                 //更新 worker 的正确题数、做题总数、余额
-                if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
+                String ver1 = "ver1";
+                String ver4 = "ver4";
+                if(ver1.equals(tasks0.get(i).getType())||ver4.equals(tasks0.get(i).getType())){
                     calculateCorrectNumberAndBalanceForChoice(tasks0.get(i).getId());
                 }
             }
-            taskRepository.saveAndFlush(tasks0.get(i));//存回
+            taskRepository.saveAndFlush(tasks0.get(i));
+            //存回
         }
         //处理 isFinished 字段为 1 的任务(所有任务都已完成)
         for(int i=0;i<tasks1.size();i++){
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数、余额
-                if(tasks0.get(i).getType().equals("ver1")||tasks0.get(i).getType().equals("ver4")){
+                String ver1 = "ver1";
+                String ver4 = "ver4";
+                if(ver1.equals(tasks0.get(i).getType())||ver4.equals(tasks0.get(i).getType())){
                     calculateCorrectNumberAndBalanceForChoice(tasks1.get(i).getId());
                 }
             }
-            taskRepository.saveAndFlush(tasks1.get(i));//存回
+            taskRepository.saveAndFlush(tasks1.get(i));
+            //存回
         }
     }
 
     @Override
     public void calculateCorrectNumberAndBalanceForChoice(int taskId){
-        //更新 correct_number_answered 字段和 all_number_answered 字段
+        //更新 CorrectNumberAnswered 字段和 AllNumberAnswered 字段
         //1. 取出正确答案
         Task task=taskRepository.findById(taskId);
         JSONArray answers=new JSONArray(task.getAnswer());
@@ -533,25 +576,28 @@ public class TaskServiceImpl implements TaskService {
                     correctNumber++;
                 }
             }
-            //4. 将correctNumber 写回对应 worker 的 correct_number_answered 字段
-            //   并更新对应 worker 的 all_number_answered 字段
+            //4. 将correctNumber 写回对应 worker 的 CorrectNumberAnswered 字段
+            //   并更新对应 worker 的 AllNumberAnswered 字段
             //   并更新 worker 的 balance 字段
             Worker worker=workerRepository.findById(answer.getWorkerId());
-            worker.setCorrect_number_answered(worker.getCorrect_number_answered()+correctNumber);
-            worker.setAll_number_answered(worker.getAll_number_answered()+answer.getNumber());
-            worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());//TODO : 记录收支情况
+            worker.setCorrectNumberAnswered(worker.getCorrectNumberAnswered()+correctNumber);
+            worker.setAllNumberAnswered(worker.getAllNumberAnswered()+answer.getNumber());
+
+            //TODO : 记录收支情况
+            worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());
             workerRepository.saveAndFlush(worker);
         }
     }
 
     @Override
-    public Boolean deleteExpiredAnswer(int taskId,int number_of_task,int beginAt,int endAt){
-        if(beginAt>endAt||number_of_task<0)
+    public Boolean deleteExpiredAnswer(int taskId,int numberOfTask,int beginAt,int endAt){
+        if(beginAt>endAt||numberOfTask<0) {
             return false;
+        }
         //1. 获取对应 answer
         Task task=taskRepository.findById(taskId);
         JSONArray answers=new JSONArray(task.getAnswer());
-        JSONArray answer=answers.getJSONArray(number_of_task);
+        JSONArray answer=answers.getJSONArray(numberOfTask);
         //2. 将已过期答案的 isFinished 字段设为 false
         for(int i=beginAt-1;i<endAt;i++){
             JSONObject expiredAnswer=answer.getJSONObject(i);
@@ -564,18 +610,24 @@ public class TaskServiceImpl implements TaskService {
     public String getJudgedAnswer(int taskId,int number){
         //判断任务类型
         Task task=taskRepository.findById(taskId);
-        if(!("ver2".equals(task.getType()))&&!("ver3".equals(task.getType())))
+        String ver2 = "ver2";
+        String ver3 = "ver3";
+        if(!(ver2.equals(task.getType()))&&!(ver3.equals(task.getType()))) {
             return "failed";
+        }
         //判断是否有足够多需要被判断的题
-        if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getAllNumber())
+        if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getAllNumber()) {
             return "failed";
+        }
         //获取答案
         JSONArray answers=new JSONArray(task.getAnswer());
         JSONArray outputAnswers=new JSONArray();
         for(int i=0;i<task.getPopulation();i++){
             JSONArray answer=answers.getJSONArray(i);
             JSONArray outputAnswer=new JSONArray();
-            int count=0;//计数器
+
+            //计数器
+            int count=0;
             for(int j=0;j<answer.length();j++){
                 JSONObject singleAnswer=answer.getJSONObject(j);
                 if(singleAnswer.getJSONObject("content").isNull("isCorrect")){
@@ -602,8 +654,11 @@ public class TaskServiceImpl implements TaskService {
     public String judgeAnswer(int taskId,String answer){
         //判断任务类型
         Task task=taskRepository.findById(taskId);
-        if(!("ver2".equals(task.getType()))&&!("ver3".equals(task.getType())))
+        String ver2 = "ver2";
+        String ver3 = "ver3";
+        if(!(ver2.equals(task.getType()))&&!(ver3.equals(task.getType()))) {
             return "failed";
+        }
         //更新 answer 字段
         JSONArray answers=new JSONArray(task.getAnswer());
         JSONArray inputAnswers=new JSONArray(answer);
@@ -634,7 +689,7 @@ public class TaskServiceImpl implements TaskService {
         List<Subtask> subtasks=subTaskRepository.findByTaskId(taskId);
         for(int i=0;i<subtasks.size();i++){
             int workerId=subtasks.get(i).getWorkerId();
-            int numberOfTask=subtasks.get(i).getNumber_of_task();
+            int numberOfTask=subtasks.get(i).getNumberOfTask();
             int begin=subtasks.get(i).getBegin();
             int end=subtasks.get(i).getEnd();
             Worker worker=workerRepository.findById(workerId);
@@ -643,9 +698,9 @@ public class TaskServiceImpl implements TaskService {
             for(int j=begin-1;j<end;j++){
                 int isCorrect=answer.getJSONObject(j).getJSONObject("content").getInt("isCorrect");
                 if(isCorrect==1){
-                    worker.setCorrect_number_answered(worker.getCorrect_number_answered()+1);
+                    worker.setCorrectNumberAnswered(worker.getCorrectNumberAnswered()+1);
                 }
-                worker.setAll_number_answered(worker.getAll_number_answered()+1);
+                worker.setAllNumberAnswered(worker.getAllNumberAnswered()+1);
             }
             //4. 存回
             workerRepository.saveAndFlush(worker);
