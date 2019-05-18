@@ -17,7 +17,7 @@ public interface AnswerService {
     /**
      * find all answer
      *
-     * @return List<Answer>
+     * @return 返回值说明：answer列表
      */
     List<Answer> findAllAnswer();
 
@@ -25,7 +25,7 @@ public interface AnswerService {
      * find answer by answer id
      *
      * @param id answer id
-     * @return Answer
+     * @return 返回值说明：answer
      */
     Answer findAnswerById(int id);
 
@@ -33,7 +33,7 @@ public interface AnswerService {
      * find answer by worker id
      *
      * @param id worker id
-     * @return List<Answer>
+     * @return 返回值说明：answer列表
      */
     List<Answer> findAnswerByWorkerId(int id);
 
@@ -41,7 +41,7 @@ public interface AnswerService {
      * find answer by task id
      *
      * @param id task id
-     * @return List<Answer>
+     * @return 返回值说明：answer列表
      */
     List<Answer> findAnswerByTaskId(int id);
 
@@ -56,7 +56,7 @@ public interface AnswerService {
      * @param subtaskId subtask id
      * @param beginAt beginAt
      * @param endAt endAt
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String addAnswer(int workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt);
 
@@ -71,7 +71,7 @@ public interface AnswerService {
      * @param subtaskId subtask id
      * @param beginAt beginAt
      * @param endAt endAt
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateAnswer(int workerId, int taskId, String answer, Timestamp answerTime, int id,int subtaskId,Integer beginAt,Integer endAt);
 
@@ -87,7 +87,7 @@ public interface AnswerService {
      * delete answer by subtask id
      *
      * @param subtaskId subtaskId id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String deleteAnswerBySubtaskId(int subtaskId);
 
@@ -96,7 +96,7 @@ public interface AnswerService {
      * 检测该子任务是否完成，参数为 answerId
      *
      * @param id answer id
-     * @return boolean
+     * @return 返回值说明：是否已完成
      */
     Boolean isFinished(int id);
 
@@ -115,7 +115,7 @@ public interface AnswerService {
      *
      * @param subtaskId subtask id
      * @param taskId task id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String findAnswerBySubtaskId(int subtaskId,int taskId);
 }

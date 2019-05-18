@@ -17,7 +17,7 @@ public interface TransactionInformationRepository extends JpaRepository<Transact
      * find transaction information by transaction information id
      *
      * @param id transaction information id
-     * @return TransactionInformation
+     * @return 返回值说明：transaction information
      */
     TransactionInformation findById(int id);
 
@@ -25,7 +25,7 @@ public interface TransactionInformationRepository extends JpaRepository<Transact
      * find transaction information by requester id
      *
      * @param id requester id
-     * @return TransactionInformation<Answer>
+     * @return 返回值说明：transaction information列表
      */
     List<TransactionInformation> findByRequesterId(int id);
 
@@ -33,7 +33,7 @@ public interface TransactionInformationRepository extends JpaRepository<Transact
      * find transaction information by task id
      *
      * @param id task id
-     * @return TransactionInformation<Answer>
+     * @return 返回值说明：transaction information列表
      */
     List<TransactionInformation> findByTaskId(int id);
 

@@ -15,7 +15,7 @@ public interface RequesterService {
      * find requester by requester id
      *
      * @param id requester id
-     * @return Requester
+     * @return 返回值说明：requester信息
      */
     Requester findRequesterById(int id);
 
@@ -23,7 +23,7 @@ public interface RequesterService {
      * find requester by username
      *
      * @param username username
-     * @return Requester
+     * @return 返回值说明：requester信息
      */
     Requester findRequesterByUsername(String username);
 
@@ -41,7 +41,7 @@ public interface RequesterService {
      * @param gender gender
      * @param age age
      * @param id get id of the new requester
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String addRequester(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age,IdStore id);
 
@@ -59,7 +59,7 @@ public interface RequesterService {
      * @param gender gender
      * @param age age
      * @param requesterId requester id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age);
 
@@ -67,7 +67,7 @@ public interface RequesterService {
      * delete requester by requester id
      *
      * @param id requester id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String deleteRequester(int id);
 }

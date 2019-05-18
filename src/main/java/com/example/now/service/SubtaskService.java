@@ -17,7 +17,7 @@ public interface SubtaskService {
     /**
      * find all subtask
      *
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findAllSubtask();
 
@@ -25,7 +25,7 @@ public interface SubtaskService {
      * find subtask by subtask id
      *
      * @param id subtask id
-     * @return Subtask
+     * @return 返回值说明：subtask
      */
     Subtask findSubtaskById(int id);
 
@@ -33,7 +33,7 @@ public interface SubtaskService {
      * find subtask by worker id
      *
      * @param id worker id
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findSubtaskByWorkerId(int id);
 
@@ -41,7 +41,7 @@ public interface SubtaskService {
      * find subtask by task id
      *
      * @param id task id
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findSubtaskByTaskId(int id);
 
@@ -60,7 +60,7 @@ public interface SubtaskService {
      * @param numberOfTask the number of questions in task
      * @param id get id of the new subtask
      * @param nowBegin the position of the questions start
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String addSubtask(int begin, int end, Timestamp createdTime, Timestamp deadline, Timestamp updatedTime, int isFinished, int type, int workerId, int taskId, int numberOfTask, IdStore id, int nowBegin);
 
@@ -68,7 +68,7 @@ public interface SubtaskService {
      * find subtask resource(questions) by subtask id
      *
      * @param subtaskId subtask id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String readSubtaskResource(int subtaskId);
 
@@ -95,7 +95,7 @@ public interface SubtaskService {
      * delete subtask by subtask id
      *
      * @param id subtask id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String deleteSubtask(int id);
 

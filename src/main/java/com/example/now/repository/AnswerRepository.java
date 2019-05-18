@@ -17,7 +17,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * find answer by answer id
      *
      * @param id answer id
-     * @return Answer
+     * @return 返回值说明：answer
      */
     Answer findById(int id);
 
@@ -25,7 +25,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * find answer by subtask id
      *
      * @param id subtask id
-     * @return Answer
+     * @return 返回值说明：answer
      */
     Answer findBySubtaskId(int id);
 
@@ -33,7 +33,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * check whether answer exists by subtask id
      *
      * @param id subtask id
-     * @return boolean
+     * @return 返回值说明：是否存在subtask
      */
     boolean existsBySubtaskId(int id);
 
@@ -41,7 +41,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * find answer by worker id
      *
      * @param id worker id
-     * @return List<Answer>
+     * @return 返回值说明：answer列表
      */
     List<Answer> findByWorkerId(int id);
 
@@ -49,7 +49,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * find answer by task id
      *
      * @param id task id
-     * @return List<Answer>
+     * @return 返回值说明：answer列表
      */
     List<Answer> findByTaskId(int id);
 
@@ -57,7 +57,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * find answer by task id order by the property "beginAt"
      *
      * @param id task id
-     * @return List<Answer>
+     * @return 返回值说明：answer列表
      */
     public List<Answer> findByTaskIdOrderByBeginAt(int id);
 
@@ -72,7 +72,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
      * delete answer by subtask id
      *
      * @param id subtask id
-     * @return boolean
+     * @return 返回值说明：是否删除成功
      */
     boolean deleteBySubtaskId(int id);
 }

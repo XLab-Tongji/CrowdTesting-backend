@@ -18,7 +18,7 @@ public interface TaskService {
     /**
      * find all task
      *
-     * @return List<task>
+     * @return 返回值说明：task列表
      */
     List<Task> findAllTask();
 
@@ -26,7 +26,7 @@ public interface TaskService {
      * find task by id
      *
      * @param id task id
-     * @return task
+     * @return 返回值说明：task
      */
     Task findTaskById(int id);
 
@@ -34,7 +34,7 @@ public interface TaskService {
      * find task by name
      *
      * @param name name
-     * @return List<task>
+     * @return 返回值说明：task列表
      */
     List<Task> findTaskByName(String name);
 
@@ -42,7 +42,7 @@ public interface TaskService {
      * find task by requester id
      *
      * @param id requester id
-     * @return List<task>
+     * @return 返回值说明：task列表
      */
     List<Task> findTaskByRequesterId(int id);
 
@@ -51,7 +51,7 @@ public interface TaskService {
      *
      * @param lowest least money
      * @param highest most money
-     * @return List<Task>
+     * @return 返回值说明：task列表
      */
     List<Task> findTaskByReward(int lowest, int highest);
 
@@ -76,7 +76,7 @@ public interface TaskService {
      * @param minAge min age
      * @param maxAge max age
      * @param taskId get id of the new task
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId);
 
@@ -101,7 +101,7 @@ public interface TaskService {
      * @param usage the usage of the result
      * @param minAge min age
      * @param maxAge max age
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge);
 
@@ -109,7 +109,7 @@ public interface TaskService {
      * update task directly
      *
      * @param task task
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateTaskDirectly(Task task);
 
@@ -117,7 +117,7 @@ public interface TaskService {
      * delete task by task id
      *
      * @param id task id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String deleteTask(int id);
 
@@ -128,7 +128,7 @@ public interface TaskService {
      * @param description description
      * @param options options
      * @param file url file
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String createTaskResource(int taskId, String description, String options, MultipartFile file);
 
@@ -138,7 +138,7 @@ public interface TaskService {
      * @param taskId task id
      * @param description description
      * @param file url file
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String createTaskResource(int taskId, String description, MultipartFile file);
 
@@ -148,7 +148,7 @@ public interface TaskService {
      * @param taskId task id
      * @param description description
      * @param options options
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String createTaskResource(int taskId, String description, String options);
 
@@ -157,7 +157,7 @@ public interface TaskService {
      *
      * @param taskId task id
      * @param url questionnaire url
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String createTaskResource(int taskId, String url);
 
@@ -165,7 +165,7 @@ public interface TaskService {
      * read task resource
      *
      * @param taskId task id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String readTaskResource(int taskId);
 
@@ -177,7 +177,7 @@ public interface TaskService {
      * @param taskId task id
      * @param beginAt begin position
      * @param endAt end position
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateDistributedNumber(int taskId,Integer beginAt,Integer endAt);
 
@@ -185,7 +185,7 @@ public interface TaskService {
      * merge ordinary subtask
      * （已弃用）将完成的所有子任务（普通类型）合并为两份答案，存放于 answer 字段中
      *
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String mergeOrdinarySubtask();
 
@@ -193,7 +193,7 @@ public interface TaskService {
      * merge all subtask
      * （已弃用）将审核子任务的答案添加在 answer 字段中
      *
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String mergeAllSubtask();
 
@@ -204,7 +204,7 @@ public interface TaskService {
      * @param taskId task id
      * @param answer answer
      * @param numberOfTask number of task
-     * @return Boolean
+     * @return 返回值说明：是否更新成功
      */
     Boolean updateAnswer(int taskId,String answer,int numberOfTask);
 
@@ -213,7 +213,7 @@ public interface TaskService {
      * 检测 task 所有普通任务是否完成，通过 task 的 answer 字段来判断
      *
      * @param taskId task id
-     * @return Boolean
+     * @return 返回值说明：是否完成
      */
     Boolean isFinishedForSimpleSubtasks(int taskId);
 
@@ -222,7 +222,7 @@ public interface TaskService {
      * 检测 task 所有任务（普通和审核）是否完成，通过 task 的 answer 字段来判断
      *
      * @param taskId task id
-     * @return Boolean
+     * @return 返回值说明：是否完成
      */
     Boolean isFinishedForAllSubtasks(int taskId);
 
@@ -234,7 +234,7 @@ public interface TaskService {
      * @param numberOfTask number of task
      * @param beginAt begin position
      * @param endAt end position
-     * @return Boolean
+     * @return 返回值说明：是否删除成功
      */
     Boolean deleteExpiredAnswer(int taskId,int numberOfTask,int beginAt,int endAt);
 
@@ -268,7 +268,7 @@ public interface TaskService {
      *
      * @param taskId task id
      * @param number number
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String getJudgedAnswer(int taskId,int number);
 

@@ -15,7 +15,7 @@ public interface RequesterRepository extends JpaRepository<Requester, Integer> {
      * find requester by e-mail
      *
      * @param eMail e-mail
-     * @return Requester
+     * @return 返回值说明：requester
      */
     Requester findByEMail(String eMail);
 
@@ -23,7 +23,7 @@ public interface RequesterRepository extends JpaRepository<Requester, Integer> {
      * find requester by requester id
      *
      * @param id requester id
-     * @return Requester
+     * @return 返回值说明：requester
      */
     Requester findById(int id);
 }

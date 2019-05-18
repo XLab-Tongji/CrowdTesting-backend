@@ -15,7 +15,7 @@ public interface LoginService {
      * get user detailed information by username
      *
      * @param username username
-     * @return UserDetails
+     * @return 返回值说明：用户个人信息
      */
     UserDetails getLoginDetail(String username);
 
@@ -23,7 +23,7 @@ public interface LoginService {
      * generate token by token detail
      *
      * @param tokenDetail token detail
-     * @return String
+     * @return 返回值说明：生成token
      */
     String generateToken(TokenDetail tokenDetail);
 

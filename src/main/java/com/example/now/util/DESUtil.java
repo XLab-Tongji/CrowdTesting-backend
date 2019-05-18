@@ -23,8 +23,6 @@ public class DESUtil {
      * @param key
      * 加密私钥，长度不能够小于8位
      * @return 加密后的字节数组，一般结合Base64编码使用
-     * @throws InvalidAlgorithmParameterException
-     * @throws Exception
      */
     public static String encode(String key, String data) {
         if (data == null){
@@ -56,8 +54,6 @@ public class DESUtil {
      * @param key
      *            解密私钥，长度不能够小于8位
      * @return 解密后的字节数组
-     * @throws Exception
-     *             异常
      */
     public static String decode(String key, String data) {
         if (data == null){
