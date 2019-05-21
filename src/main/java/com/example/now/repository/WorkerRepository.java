@@ -16,7 +16,7 @@ public interface WorkerRepository extends JpaRepository<Worker, Integer> {
      * find worker by e-mail
      *
      * @param eMail e-mail
-     * @return Worker
+     * @return 返回值说明：worker
      */
     Worker findByEMail(String eMail);
 
@@ -24,7 +24,7 @@ public interface WorkerRepository extends JpaRepository<Worker, Integer> {
      * find worker by worker id
      *
      * @param id worker id
-     * @return Worker
+     * @return 返回值说明：worker
      */
     Worker findById(int id);
 }

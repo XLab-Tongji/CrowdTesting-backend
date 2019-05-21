@@ -12,7 +12,7 @@ public interface AdminService {
      * check task reviewed or not
      *
      * @param id task id
-     * @return boolean
+     * @return 返回值说明：成功或失败信息
      */
      boolean reviewTask(int id);
 }

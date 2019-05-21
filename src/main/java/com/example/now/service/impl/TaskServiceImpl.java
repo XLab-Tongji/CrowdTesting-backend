@@ -41,6 +41,8 @@ public class TaskServiceImpl implements TaskService {
     private RequesterService requesterService;
     @Autowired
     private WorkerRepository workerRepository;
+    @Autowired
+    private TransactionInformationRepository transactionInformationRepository;
     /**
      * 任务未审核的标志
      */
@@ -585,6 +587,9 @@ public class TaskServiceImpl implements TaskService {
 
             //TODO : 记录收支情况
             worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            TransactionInformation transactionInformation = new TransactionInformation(0,worker.getId(),task.getId(), now, (float) (task.getPopulation() * task.getReward() * 1.2));
+            transactionInformationRepository.saveAndFlush(transactionInformation);
             workerRepository.saveAndFlush(worker);
         }
     }

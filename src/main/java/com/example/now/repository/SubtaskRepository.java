@@ -17,7 +17,7 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
      * find subtask by subtask id
      *
      * @param id subtask id
-     * @return Subtask
+     * @return 返回值说明：subtask
      */
     Subtask findById(int id);
 
@@ -25,7 +25,7 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
      * find subtask by worker id
      *
      * @param id worker id
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findByWorkerId(int id);
 
@@ -33,7 +33,7 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
      * find subtask by task id
      *
      * @param id task id
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findByTaskId(int id);
 
@@ -42,7 +42,7 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
      *
      * @param taskId task id
      * @param type type
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findByTaskIdAndType(int taskId,int type);
 
@@ -57,7 +57,7 @@ public interface SubtaskRepository extends JpaRepository<Subtask, Integer> {
      * find subtask by isFinished
      *
      * @param isFinished isFinished
-     * @return List<Subtask>
+     * @return 返回值说明：subtask列表
      */
     List<Subtask> findByIsFinished(int isFinished);
 }

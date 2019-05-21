@@ -14,7 +14,7 @@ public interface UserService {
      * @param username username
      * @param password password
      * @param role role
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String register(String username, String password, String role);
 
@@ -23,7 +23,7 @@ public interface UserService {
      *
      * @param name username
      * @param password password
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String changePassword(String name, String password);
 }

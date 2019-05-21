@@ -1,9 +1,8 @@
 package com.example.now.controller;
 
-import com.example.now.entity.IdStore;
-import com.example.now.entity.Worker;
+import com.example.now.entity.*;
+import com.example.now.repository.TransactionInformationRepository;
 import com.example.now.service.WorkerService;
-import com.example.now.entity.ResultMap;
 import com.example.now.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Worker controller class
@@ -31,6 +31,8 @@ public class WorkerController {
     private WorkerService workerService;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private TransactionInformationRepository transactionInformationRepository;
 
     /**
      * 查找所有worker，具有管理员权限可以调用
@@ -111,5 +113,17 @@ public class WorkerController {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         return new ResultMap().success().data("worker", workerService.findWorkerByUsername(username));
+    }
+
+    /**
+     * 查看worker交易记录
+     */
+    @RequestMapping(value = "/view-transaction-info",method = RequestMethod.GET)
+    public ResultMap findMyTransactionInfo() {
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        Worker worker = workerService.findWorkerByUsername(username);
+        List<TransactionInformation> transactionInformations = transactionInformationRepository.findByWorkerId(worker.getId());
+        return new ResultMap().success().data("transaction_info", transactionInformations);
     }
 }

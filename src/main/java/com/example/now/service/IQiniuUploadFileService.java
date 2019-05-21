@@ -20,7 +20,7 @@ public interface IQiniuUploadFileService {
      *
      * @param file file
      * @param key key
-     * @return Response
+     * @return 返回值说明：包含是否成功上传的信息的response
      * @throws QiniuException QiniuException
      */
     Response uploadFile(File file,String key) throws QiniuException;
@@ -30,7 +30,7 @@ public interface IQiniuUploadFileService {
      *
      * @param inputStream inputStream
      * @param key key
-     * @return Response
+     * @return 返回值说明：包含是否成功上传的信息的response
      * @throws QiniuException QiniuException
      */
     Response uploadFile(InputStream inputStream,String key) throws QiniuException;
@@ -39,7 +39,7 @@ public interface IQiniuUploadFileService {
      * delete file
      *
      * @param key key
-     * @return Response
+     * @return 返回值说明：包含是否成功上传的信息的response
      * @throws  QiniuException QiniuException
      */
     Response delete(String key) throws QiniuException;

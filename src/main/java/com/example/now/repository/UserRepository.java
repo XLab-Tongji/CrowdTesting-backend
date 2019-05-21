@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, String> {
      * find user by username
      *
      * @param username username
-     * @return User
+     * @return 返回值说明：user
      */
     User findByUsername(String username);
 }

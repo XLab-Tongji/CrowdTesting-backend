@@ -16,7 +16,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
      * find task by task name
      *
      * @param name task name
-     * @return List<Task>
+     * @return 返回值说明：task列表
      */
     List<Task> findByName(String name);
 
@@ -24,7 +24,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
      * find task by task id
      *
      * @param id task id
-     * @return Task
+     * @return 返回值说明：task
      */
     Task findById(int id);
 
@@ -32,7 +32,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
      * find task by requester id
      *
      * @param id requester id
-     * @return List<Task>
+     * @return 返回值说明：task列表
      */
     List<Task> findByRequesterId(int id);
 
@@ -41,7 +41,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
      *
      * @param least least money
      * @param most most money
-     * @return List<Task>
+     * @return 返回值说明：task列表
      */
     List<Task> findByRewardBetween(int least, int most);
 
@@ -50,7 +50,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
      *
      * @param isDistributed isDistributed
      * @param isFinished isFinished
-     * @return List<Task>
+     * @return 返回值说明：task列表
      */
     List<Task> findByIsDistributedAndIsFinished(int isDistributed,int isFinished);
 
@@ -58,7 +58,7 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
      * find task by status
      *
      * @param status status
-     * @return List<Task>
+     * @return 返回值说明：task列表
      */
     List<Task> findByStatus(int status);
 

@@ -16,7 +16,7 @@ public interface WorkerService {
     /**
      * find all worker
      *
-     * @return List<Worker>
+     * @return 返回值说明：worker列表
      */
     List<Worker> findAllWorker();
 
@@ -24,7 +24,7 @@ public interface WorkerService {
      * find worker by worker id
      *
      * @param id worker id
-     * @return Worker
+     * @return 返回值说明：worker
      */
     Worker findWorkerById(int id);
 
@@ -32,7 +32,7 @@ public interface WorkerService {
      * find worker by username
      *
      * @param username username
-     * @return Worker
+     * @return 返回值说明：worker
      */
     Worker findWorkerByUsername(String username);
 
@@ -51,7 +51,7 @@ public interface WorkerService {
      * @param major major
      * @param id get id of the new worker
      * @param school school
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String addWorker(String username, String name,String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id, String school);
 
@@ -74,7 +74,7 @@ public interface WorkerService {
      * @param allNumberAnswered all number answered
      * @param overtimeNumber overtime number
      * @param balance balance
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateWorker(int workerId,String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance);
 
@@ -82,7 +82,7 @@ public interface WorkerService {
      * update worker directly
      *
      * @param worker worker
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String updateWorkerDirectly(Worker worker);
 
@@ -90,7 +90,7 @@ public interface WorkerService {
      * delete worker by worker id
      *
      * @param id worker id
-     * @return String
+     * @return 返回值说明：成功或失败信息
      */
     String deleteWorker(int id);
 }
