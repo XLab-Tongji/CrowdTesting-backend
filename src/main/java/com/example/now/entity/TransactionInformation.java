@@ -24,6 +24,9 @@ public class TransactionInformation {
     @Column(nullable = false, name = "requester_id")
     private int requesterId;
 
+    @Column(nullable = false, name = "worker_id")
+    private int workerId;
+
     @Column(nullable = false, name = "task_id")
     private int taskId;
 
@@ -36,15 +39,17 @@ public class TransactionInformation {
     public TransactionInformation() {
     }
 
-    public TransactionInformation(int requesterId, int taskId, Timestamp time, float value) {
+    public TransactionInformation(int requesterId, int workerId, int taskId, Timestamp time, float value) {
         this.requesterId = requesterId;
+        this.workerId = workerId;
         this.taskId = taskId;
         this.time = time;
         this.value = value;
     }
 
-    public void setAll(int requesterId, int taskId, Timestamp time, float value) {
+    public void setAll(int requesterId, int workerId, int taskId, Timestamp time, float value) {
         this.requesterId = requesterId;
+        this.workerId = workerId;
         this.taskId = taskId;
         this.time = time;
         this.value = value;

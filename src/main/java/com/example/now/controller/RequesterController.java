@@ -3,6 +3,8 @@ package com.example.now.controller;
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Requester;
 import com.example.now.entity.ResultMap;
+import com.example.now.entity.TransactionInformation;
+import com.example.now.repository.TransactionInformationRepository;
 import com.example.now.service.RequesterService;
 import com.example.now.service.TaskService;
 import com.example.now.util.TokenUtils;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 
 
@@ -35,6 +38,8 @@ public class RequesterController {
     private TaskService taskService;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private TransactionInformationRepository transactionInformationRepository;
 
     /**
      * 根据ID查找requester
@@ -142,5 +147,17 @@ public class RequesterController {
             return new ResultMap().fail("400").message("failed");
         }
         return new ResultMap().success("201").message(message);
+    }
+
+    /**
+     * 查看requester交易记录
+     */
+    @RequestMapping(value = "/view-transaction-info",method = RequestMethod.GET)
+    public ResultMap findMyTransactionInfo() {
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        Requester requester = requesterService.findRequesterByUsername(username);
+        List<TransactionInformation> transactionInformations = transactionInformationRepository.findByRequesterId(requester.getRequesterId());
+        return new ResultMap().success().data("transaction_info", transactionInformations);
     }
 }

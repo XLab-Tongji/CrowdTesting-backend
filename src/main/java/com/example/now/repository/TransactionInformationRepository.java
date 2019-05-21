@@ -30,6 +30,14 @@ public interface TransactionInformationRepository extends JpaRepository<Transact
     List<TransactionInformation> findByRequesterId(int id);
 
     /**
+     * find transaction information by worker id
+     *
+     * @param id worker id
+     * @return 返回值说明：transaction information列表
+     */
+    List<TransactionInformation> findByWorkerId(int id);
+
+    /**
      * find transaction information by task id
      *
      * @param id task id

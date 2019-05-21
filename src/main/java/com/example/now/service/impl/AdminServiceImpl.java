@@ -5,6 +5,7 @@ import com.example.now.repository.TaskRepository;
 import com.example.now.entity.Requester;
 import com.example.now.repository.RequesterRepository;
 import com.example.now.entity.TransactionInformation;
+import com.example.now.repository.TransactionInformationRepository;
 import com.example.now.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private RequesterRepository requesterRepository;
 
+    @Autowired
+    private TransactionInformationRepository transactionInformationRepository;
+
     /**
      * 代表任务已审核
      */
@@ -36,10 +40,19 @@ public class AdminServiceImpl implements AdminService {
         Task task=taskRepository.findById(id);
         task.setReviewed(reviewed);
         String type = "调查问卷";
-        if(type.equals(task.getType())) {
+        if(!type.equals(task.getType())) {
             Requester requester = requesterRepository.findById(task.getRequesterId()).get();
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            TransactionInformation transactionInformation = new TransactionInformation(task.getRequesterId(), task.getId(), now, (float) (task.getNumberOfQuestions() * task.getReward() * 0.2));
+            TransactionInformation transactionInformation = new TransactionInformation(task.getRequesterId(),0,task.getId(), now, (float) (task.getNumberOfQuestions() * task.getReward() * 1.2));
+            requester.setBalance(requester.getBalance() - (float) (task.getNumberOfQuestions() * task.getReward() * 1.2));
+            transactionInformationRepository.saveAndFlush(transactionInformation);
+        }
+        else{
+            Requester requester = requesterRepository.findById(task.getRequesterId()).get();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            TransactionInformation transactionInformation = new TransactionInformation(task.getRequesterId(),0,task.getId(), now, (float) (task.getPopulation() * task.getReward() * 1.2));
+            requester.setBalance(requester.getBalance() - (float) (task.getPopulation() * task.getReward() * 1.2));
+            transactionInformationRepository.saveAndFlush(transactionInformation);
         }
         taskRepository.saveAndFlush(task);
         return true;
