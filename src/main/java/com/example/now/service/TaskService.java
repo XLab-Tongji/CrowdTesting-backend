@@ -241,9 +241,9 @@ public interface TaskService {
     /**
      * update task status
      * 遍历 task 表的 answer 字段，更新 isFinished 字段
-     * 若已完成，则计算 worker 的正确题数和做题总数并更新
+     * 若已完成，则计算 worker 的正确题数和做题总数和余额并更新
      *
-     * TODO ：给用户加钱
+     *
      */
     void updateStatus();
 
