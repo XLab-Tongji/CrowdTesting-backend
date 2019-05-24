@@ -547,7 +547,7 @@ public class TaskServiceImpl implements TaskService {
                 //更新 worker 的正确题数和做题总数、余额
                 String ver1 = "ver1";
                 String ver4 = "ver4";
-                if(ver1.equals(tasks0.get(i).getType())||ver4.equals(tasks0.get(i).getType())){
+                if(ver1.equals(tasks1.get(i).getType())||ver4.equals(tasks1.get(i).getType())){
                     calculateCorrectNumberAndBalanceForChoice(tasks1.get(i).getId());
                 }
             }
@@ -583,7 +583,7 @@ public class TaskServiceImpl implements TaskService {
             worker.setCorrectNumberAnswered(worker.getCorrectNumberAnswered()+correctNumber);
             worker.setAllNumberAnswered(worker.getAllNumberAnswered()+answer.getNumber());
 
-            //TODO : 记录收支情况
+            //   记录收支情况
             worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());
             workerRepository.saveAndFlush(worker);
         }
