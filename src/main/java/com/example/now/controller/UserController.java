@@ -56,8 +56,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register-as-requester", method = RequestMethod.POST)
-    public ResultMap registerAsRequester(String eMail,String password, String username, String name, String teleNumber, String researchField, String institutionName, String address, String payMethod, String gender, Integer age) {
-        if (eMail == null || password == null || username == null || name == null || teleNumber == null || researchField == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
+    public ResultMap registerAsRequester(String eMail,String password, String username, String name, String teleNumber, String institutionName, String address, String payMethod, String gender, Integer age) {
+        if (eMail == null || password == null || username == null || name == null || teleNumber == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         String message1 = userService.register(eMail, password, "ROLE_REQUESTER");
@@ -66,13 +66,13 @@ public class UserController {
             return new ResultMap().fail("400").message(message1);
         }
         IdStore idStore=new IdStore();
-        String message2 = requesterService.addRequester(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age,idStore);
+        String message2 = requesterService.addRequester(username, name,teleNumber,eMail,institutionName,address,payMethod,gender,age,idStore);
         return new ResultMap().success("201").message(message2).data("requesterId",idStore.getId());
     }
 
     @RequestMapping(value = "/register-as-worker", method = RequestMethod.POST)
-    public ResultMap registerAsWorker(String eMail,String password, String username, String name, String teleNumber, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String school) {
-        if (eMail == null || password == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || school == null) {
+    public ResultMap registerAsWorker(String eMail,String password, String username, String name, String teleNumber, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String institution) {
+        if (eMail == null || password == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || institution == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         String message1 = userService.register(eMail, password, "ROLE_WORKER");
@@ -81,7 +81,7 @@ public class UserController {
             return new ResultMap().fail("400").message(message1);
         }
         IdStore idStore=new IdStore();
-        String message2 = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,school);
+        String message2 = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,institution);
         return new ResultMap().success("201").message(message2).data("workerId",idStore.getId());
     }
 

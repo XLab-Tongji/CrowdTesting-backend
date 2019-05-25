@@ -87,9 +87,8 @@ public class AnswerController {
         return new ResultMap().success().data("Answers", result);
     }
 
-    //根据 subtaskId 获取答案信息，用于 checker 获取对应的前 population-1 组答案
     /**
-     * worker 第一次提交子任务答案（弃用）
+     * 根据 subtaskId 获取答案信息，用于 checker 获取对应的前 population-1 组答案
      */
     @RequestMapping(value = "/find-by-subtask-id",method = RequestMethod.GET)
     public ResultMap answerFindBySubtaskId(Integer subtaskId,Integer taskId){
@@ -131,9 +130,8 @@ public class AnswerController {
         return new ResultMap().success("201").message(message).data("AnswerId",answerId.getId());
     }
 
-    // worker 更新子任务答案
     /**
-     * worker 第一次提交子任务答案（弃用）
+     * worker 更新子任务答案
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResultMap answerUpdate(Integer taskId, String answer, Timestamp answerTime,Integer subtaskId, Integer beginAt,Integer endAt) {

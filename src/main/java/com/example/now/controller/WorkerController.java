@@ -72,12 +72,12 @@ public class WorkerController {
      * 创建一个worker
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap workerAdd(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String school) {
-        if (eMail == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || school == null) {
+    public ResultMap workerAdd(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String institution) {
+        if (eMail == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || institution == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         IdStore idStore=new IdStore();
-        String message = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,school);
+        String message = workerService.addWorker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,idStore,institution);
         return new ResultMap().success("201").message(message).data("workerId",idStore.getId());
     }
 
@@ -85,14 +85,14 @@ public class WorkerController {
      * 修改worker
      */
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap workerUpdate(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String school) {
-        if (eMail == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || school == null) {
+    public ResultMap workerUpdate(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, Integer age, String gender, String major, String institution) {
+        if (eMail == null || username == null || name == null || teleNumber == null || withdrawnMethod == null || education == null || workArea == null || age == null || gender == null || major == null || institution == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         String authToken = request.getHeader(this.tokenHeader);
         String temp = this.tokenUtils.getUsernameFromToken(authToken);
         Worker theWorker = workerService.findWorkerByUsername(temp);
-        String message = workerService.updateWorker(theWorker.getId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,theWorker.getCorrectNumberAnswered(),theWorker.getAllNumberAnswered(), theWorker.getOvertimeNumber(),theWorker.getBalance());
+        String message = workerService.updateWorker(theWorker.getId(),username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,institution,theWorker.getCorrectNumberAnswered(),theWorker.getAllNumberAnswered(), theWorker.getOvertimeNumber(),theWorker.getBalance());
         return new ResultMap().success("201").message(message);
     }
 

@@ -33,20 +33,20 @@ public class RequesterServiceImpl implements RequesterService {
     }
 
     @Override
-    public String addRequester(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age, IdStore id) {
+    public String addRequester(String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, int age, IdStore id) {
         if (username == null || name == null) {
             return "username or name is empty";
         }
-        Requester requester = new Requester(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age);
+        Requester requester = new Requester(username,name,teleNumber,eMail,institutionName,address,payMethod,gender,age);
         Requester temp=requesterRepository.saveAndFlush(requester);
         id.setId(temp.getRequesterId());
         return "succeed";
     }
 
     @Override
-    public String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age) {
+    public String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, int age) {
         Requester requester=requesterRepository.findById(requesterId);
-        requester.setAll(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age);
+        requester.setAll(username, name,teleNumber,eMail,institutionName,address,payMethod,gender,age);
         requesterRepository.saveAndFlush(requester);
         return "succeed";
     }
