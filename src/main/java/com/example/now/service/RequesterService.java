@@ -34,7 +34,6 @@ public interface RequesterService {
      * @param name name
      * @param teleNumber telephone number
      * @param eMail e-mail
-     * @param researchField research field
      * @param institutionName institution name
      * @param address address
      * @param payMethod pay method
@@ -43,7 +42,7 @@ public interface RequesterService {
      * @param id get id of the new requester
      * @return 返回值说明：成功或失败信息
      */
-    String addRequester(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age,IdStore id);
+    String addRequester(String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, int age,IdStore id);
 
     /**
      * create new requester
@@ -52,7 +51,6 @@ public interface RequesterService {
      * @param name name
      * @param teleNumber telephone number
      * @param eMail e-mail
-     * @param researchField research field
      * @param institutionName institution name
      * @param address address
      * @param payMethod pay method
@@ -61,7 +59,7 @@ public interface RequesterService {
      * @param requesterId requester id
      * @return 返回值说明：成功或失败信息
      */
-    String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age);
+    String updateRequester(int requesterId,String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, int age);
 
     /**
      * delete requester by requester id

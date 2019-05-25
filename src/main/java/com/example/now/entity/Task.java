@@ -44,7 +44,7 @@ public class Task implements Serializable {
     private String type;
 
     @Column
-    private String restrictions;
+    private Integer restrictions;
 
     @Column(name = "start_time")
     private Timestamp startTime;
@@ -142,7 +142,7 @@ public class Task implements Serializable {
 
     }
 
-    public Task(String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, int reviewed, Integer allNumber) {
+    public Task(String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, int reviewed, Integer allNumber) {
         this.name = name;
         this.description = description;
         this.reward = reward;
@@ -164,7 +164,7 @@ public class Task implements Serializable {
         this.reviewed = reviewed;
     }
 
-    public void setAll(String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, int reviewed, Integer allNumber) {
+    public void setAll(String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, int reviewed, Integer allNumber) {
         this.name = name;
         this.description = description;
         this.reward = reward;

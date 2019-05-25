@@ -50,10 +50,10 @@ public interface WorkerService {
      * @param gender gender
      * @param major major
      * @param id get id of the new worker
-     * @param school school
+     * @param institution institution
      * @return 返回值说明：成功或失败信息
      */
-    String addWorker(String username, String name,String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id, String school);
+    String addWorker(String username, String name,String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id, String institution);
 
     /**
      * update worker information
@@ -69,14 +69,14 @@ public interface WorkerService {
      * @param age age
      * @param gender gender
      * @param major major
-     * @param school school
+     * @param institution institution
      * @param correctNumberAnswered correct number answered
      * @param allNumberAnswered all number answered
      * @param overtimeNumber overtime number
      * @param balance balance
      * @return 返回值说明：成功或失败信息
      */
-    String updateWorker(int workerId,String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance);
+    String updateWorker(int workerId,String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String institution, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance);
 
     /**
      * update worker directly

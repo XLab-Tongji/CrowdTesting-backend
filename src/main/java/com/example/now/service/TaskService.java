@@ -78,7 +78,7 @@ public interface TaskService {
      * @param taskId get id of the new task
      * @return 返回值说明：成功或失败信息
      */
-    String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId);
+    String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId);
 
     /**
      * update task information
@@ -103,7 +103,7 @@ public interface TaskService {
      * @param maxAge max age
      * @return 返回值说明：成功或失败信息
      */
-    String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge);
+    String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge);
 
     /**
      * update task directly
