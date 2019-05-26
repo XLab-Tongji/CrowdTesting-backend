@@ -59,14 +59,29 @@ public class TaskController {
         List<Task> allTask=taskService.findAllTask();
         List<Task> tasks=new ArrayList<Task>();
         for(Task task : allTask){
-            if(task.getStatus() != task.getPopulation() + 1 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
+            if(task.getStatus() == 0 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
                 JSONObject restOfQuestions = new JSONObject(task.getRestOfQuestion());
                 Iterator iterator = restOfQuestions.keys();
                 while(iterator.hasNext()) {
                     String key = (String) iterator.next();
-                    if(restOfQuestions.getJSONArray(key).length() > 0){
-                        tasks.add(task);
-                        break;
+                    if(iterator.hasNext()) {
+                        if (restOfQuestions.getJSONArray(key).length() > 0) {
+                            tasks.add(task);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(task.getStatus() == 1 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
+                JSONObject restOfQuestions = new JSONObject(task.getRestOfQuestion());
+                Iterator iterator = restOfQuestions.keys();
+                while(iterator.hasNext()) {
+                    String key = (String) iterator.next();
+                    if(!iterator.hasNext()) {
+                        if (restOfQuestions.getJSONArray(key).length() > 0) {
+                            tasks.add(task);
+                            break;
+                        }
                     }
                 }
             }
