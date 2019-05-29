@@ -585,7 +585,7 @@ public class TaskServiceImpl implements TaskService {
             worker.setCorrectNumberAnswered(worker.getCorrectNumberAnswered()+correctNumber);
             worker.setAllNumberAnswered(worker.getAllNumberAnswered()+answer.getNumber());
 
-            //   记录收支情况
+            //5. 记录收支情况
             worker.setBalance(worker.getBalance()+answer.getNumber()*task.getReward());
             Timestamp now = new Timestamp(System.currentTimeMillis());
             TransactionInformation transactionInformation = new TransactionInformation(0,worker.getId(),task.getId(), now, (float) (task.getPopulation() * task.getReward() * 1.2));
@@ -607,7 +607,12 @@ public class TaskServiceImpl implements TaskService {
         for(int i=beginAt-1;i<endAt;i++){
             JSONObject expiredAnswer=answer.getJSONObject(i);
             expiredAnswer.put("isFinished",false);
+            answer.put(i,expiredAnswer);
         }
+        //3. 存回
+        answers.put(numberOfTask,answer);
+        task.setAnswer(answers.toString());
+        taskRepository.saveAndFlush(task);
         return true;
     }
 
