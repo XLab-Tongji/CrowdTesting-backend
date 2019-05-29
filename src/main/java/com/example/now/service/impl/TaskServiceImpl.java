@@ -96,7 +96,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId) {
+    public String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId) {
         if (name == null || description == null) {
             return "inputs are not enough";
         }
@@ -110,7 +110,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterId, String type, String restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge) {
+    public String updateTask(int taskId, String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge) {
         Task task = taskRepository.findById(taskId);
         task.setAll(name, description, reward, status, requesterId, type, restrictions, startTime, endTime, population, level, timeLimitation, payTime, area, usage, minAge, maxAge, task.getReviewed(), task.getAllNumber());
         taskRepository.saveAndFlush(task);

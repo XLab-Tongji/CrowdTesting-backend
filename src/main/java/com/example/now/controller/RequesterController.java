@@ -71,12 +71,12 @@ public class RequesterController {
      * 创建一个requester
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap requesterAdd(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, Integer age) {
-        if (username == null || name == null || teleNumber == null || eMail == null || researchField == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
+    public ResultMap requesterAdd(String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, Integer age) {
+        if (username == null || name == null || teleNumber == null || eMail == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         IdStore idStore=new IdStore();
-        String message = requesterService.addRequester(username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age,idStore);
+        String message = requesterService.addRequester(username, name,teleNumber,eMail,institutionName,address,payMethod,gender,age,idStore);
         return new ResultMap().success("201").message(message).data("requesterId",idStore.getId());
     }
 
@@ -84,13 +84,13 @@ public class RequesterController {
      * 修改requester
      */
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap requesterUpdate(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, Integer age) {
-        if (username == null || name == null || teleNumber == null || eMail == null || researchField == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
+    public ResultMap requesterUpdate(String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, Integer age) {
+        if (username == null || name == null || teleNumber == null || eMail == null || institutionName == null || address == null || payMethod == null || gender == null || age == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         String authToken = request.getHeader(this.tokenHeader);
         String temp = this.tokenUtils.getUsernameFromToken(authToken);
-        String message = requesterService.updateRequester(requesterService.findRequesterByUsername(temp).getRequesterId(),username, name,teleNumber,eMail,researchField,institutionName,address,payMethod,gender,age);
+        String message = requesterService.updateRequester(requesterService.findRequesterByUsername(temp).getRequesterId(),username, name,teleNumber,eMail,institutionName,address,payMethod,gender,age);
         return new ResultMap().success("201").message(message);
     }
 

@@ -46,8 +46,6 @@ public class Worker {
     @Column(name = "age")
     private int age;
 
-    @Column(name = "xp")
-    private int xp;
 
     @Column(name = "gender")
     private String gender;
@@ -55,8 +53,8 @@ public class Worker {
     @Column(name = "major")
     private String major;
 
-    @Column(name = "school")
-    private String school;
+    @Column(name = "institution")
+    private String institution;
 
     @Column(name = "correct_number_answered")
     private int correctNumberAnswered;
@@ -66,25 +64,6 @@ public class Worker {
 
     @Column(name = "all_number_answered")
     private int allNumberAnswered;
-
-    @Transient
-    private int level;
-
-    @Transient
-    public int getLevel() {
-        return level;
-    }
-
-    @Transient
-    public void setLevel(){
-        final int xpLine = 16500;
-        if(xp <= xpLine) {
-            this.level = (int) ((1 + Math.sqrt(1 + (float)2 * xp / 75)) / 2);
-        }
-        else{
-            this.level=11+(xp-16500)/3000;
-        }
-    }
 
     @Transient
     private int credit;
@@ -100,8 +79,15 @@ public class Worker {
         double correctNumberAnswered = this.correctNumberAnswered;
         double allNumberAnswered = this.allNumberAnswered;
         double overtimeNumber = this.overtimeNumber;
-        double accuracyRate = correctNumberAnswered / allNumberAnswered;
-        if(accuracyRate <= accuracyRateLine){
+        double accuracyRate = 0;
+        if(allNumberAnswered!=0){
+            accuracyRate = correctNumberAnswered / allNumberAnswered;
+        }
+        else{
+            accuracyRate = 0.8;
+        }
+        final double numberAnsweredLine = 100;
+        if(allNumberAnswered > numberAnsweredLine && accuracyRate <= accuracyRateLine){
             this.credit = 0;
         }
         else{
@@ -116,7 +102,7 @@ public class Worker {
 
     }
 
-    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber) {
+    public Worker(String username, String name, String teleNumber, String eMail,  String withdrawnMethod, String education, String workArea, int age,String gender, String major, String institution, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -126,16 +112,15 @@ public class Worker {
         this.education = education;
         this.workArea = workArea;
         this.age = age;
-        this.xp=0;
         this.gender = gender;
         this.major = major;
-        this.school = school;
+        this.institution = institution;
         this.allNumberAnswered = allNumberAnswered;
         this.correctNumberAnswered = correctNumberAnswered;
         this.overtimeNumber = overtimeNumber;
     }
 
-    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance) {
+    public void setAll(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, String institution, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
@@ -146,7 +131,7 @@ public class Worker {
         this.age = age;
         this.gender = gender;
         this.major = major;
-        this.school = school;
+        this.institution = institution;
         this.allNumberAnswered = allNumberAnswered;
         this.correctNumberAnswered = correctNumberAnswered;
         this.overtimeNumber = overtimeNumber;

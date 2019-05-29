@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.example.now.util.DESUtil;
@@ -50,11 +51,39 @@ public class TaskController {
 
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
-        List<Task> usableTask=taskService.findAllTask();
+        String authToken = request.getHeader(this.tokenHeader);
+        String username = this.tokenUtils.getUsernameFromToken(authToken);
+        Worker worker = workerService.findWorkerByUsername(username);
+        worker.setCredit();
+        JSONObject areaList = new JSONObject(worker.getWorkArea());
+        List<Task> allTask=taskService.findAllTask();
         List<Task> tasks=new ArrayList<Task>();
-        for(Task task : usableTask){
-            if(task.getStatus() != task.getPopulation() + 1){
-                tasks.add(task);
+        for(Task task : allTask){
+            if(task.getStatus() == 0 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
+                JSONObject restOfQuestions = new JSONObject(task.getRestOfQuestion());
+                Iterator iterator = restOfQuestions.keys();
+                while(iterator.hasNext()) {
+                    String key = (String) iterator.next();
+                    if(iterator.hasNext()) {
+                        if (restOfQuestions.getJSONArray(key).length() > 0) {
+                            tasks.add(task);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if(task.getStatus() == 1 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
+                JSONObject restOfQuestions = new JSONObject(task.getRestOfQuestion());
+                Iterator iterator = restOfQuestions.keys();
+                while(iterator.hasNext()) {
+                    String key = (String) iterator.next();
+                    if(!iterator.hasNext()) {
+                        if (restOfQuestions.getJSONArray(key).length() > 0) {
+                            tasks.add(task);
+                            break;
+                        }
+                    }
+                }
             }
         }
         return new ResultMap().success().data("tasks", TaskUtil.selectReviewedTask(tasks));
@@ -105,7 +134,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap taskAdd(String name, String description, Float reward, Integer status, String type, String restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
+    public ResultMap taskAdd(String name, String description, Float reward, Integer status, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
         if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null) {
             return new ResultMap().fail("400").message("empty input");
         }
@@ -121,7 +150,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add-questionnaire", method = RequestMethod.POST)
-    public ResultMap questionnaireAdd(String name, String description, Float reward, Integer status, String type, String restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge,String url) {
+    public ResultMap questionnaireAdd(String name, String description, Float reward, Integer status, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge,String url) {
         if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null || url == null) {
             return new ResultMap().fail("400").message("empty input");
         }
@@ -141,7 +170,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap taskUpdate(int taskId, String name, String description, Float reward, Integer status, String type, String restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
+    public ResultMap taskUpdate(int taskId, String name, String description, Float reward, Integer status, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
         if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null) {
             return new ResultMap().fail("400").message("empty input");
         }
@@ -230,7 +259,7 @@ public class TaskController {
         if (status == 1) {
             try {
                 theWorker.setBalance(theWorker.getBalance() + theTask.getReward());
-                workerService.updateWorker(theWorker.getId(), theWorker.getUsername(), theWorker.getName(), theWorker.getTeleNumber(), theWorker.getEMail(), theWorker.getWithdrawnMethod(), theWorker.getEducation(), theWorker.getWorkArea(), theWorker.getAge(), theWorker.getGender(), theWorker.getMajor(), theWorker.getSchool(), theWorker.getCorrectNumberAnswered(), theWorker.getAllNumberAnswered(), theWorker.getOvertimeNumber(), theWorker.getBalance());
+                workerService.updateWorker(theWorker.getId(), theWorker.getUsername(), theWorker.getName(), theWorker.getTeleNumber(), theWorker.getEMail(), theWorker.getWithdrawnMethod(), theWorker.getEducation(), theWorker.getWorkArea(), theWorker.getAge(), theWorker.getGender(), theWorker.getMajor(), theWorker.getInstitution(), theWorker.getCorrectNumberAnswered(), theWorker.getAllNumberAnswered(), theWorker.getOvertimeNumber(), theWorker.getBalance());
                 theTask.setStatus(theTask.getStatus() + 1);
                 if(theTask.getPopulation() == theTask.getStatus()){
                     theTask.setIsFinished(1);

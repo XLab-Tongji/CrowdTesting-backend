@@ -32,9 +32,6 @@ public class Requester {
     @Column(name = "e_mail")
     private String eMail;
 
-    @Column(name = "research_field")
-    private String researchField;
-
     @Column(name = "institution_name")
     private String institutionName;
 
@@ -57,12 +54,11 @@ public class Requester {
 
     }
 
-    public Requester(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age) {
+    public Requester(String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, int age) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
         this.eMail = eMail;
-        this.researchField = researchField;
         this.institutionName = institutionName;
         this.address = address;
         this.payMethod = payMethod;
@@ -71,12 +67,11 @@ public class Requester {
         this.balance = 0;
     }
 
-    public void setAll(String username, String name, String teleNumber, String eMail, String researchField, String institutionName, String address, String payMethod, String gender, int age) {
+    public void setAll(String username, String name, String teleNumber, String eMail, String institutionName, String address, String payMethod, String gender, int age) {
         this.username = username;
         this.name = name;
         this.teleNumber = teleNumber;
         this.eMail = eMail;
-        this.researchField = researchField;
         this.institutionName = institutionName;
         this.address = address;
         this.payMethod = payMethod;

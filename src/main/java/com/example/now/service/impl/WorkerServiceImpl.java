@@ -31,7 +31,6 @@ public class WorkerServiceImpl implements WorkerService {
     @Override
     public Worker findWorkerById(int id) {
         Worker worker=workerRepository.findById(id);
-        worker.setLevel();
         worker.setCredit();
         return worker;
     }
@@ -39,26 +38,25 @@ public class WorkerServiceImpl implements WorkerService {
     @Override
     public Worker findWorkerByUsername(String username) {
         Worker worker=workerRepository.findByEMail(username);
-        worker.setLevel();
         worker.setCredit();
         return worker;
     }
 
     @Override
-    public String addWorker(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id, String school) {
+    public String addWorker(String username, String name, String teleNumber, String eMail, String withdrawnMethod, String education, String workArea, int age, String gender, String major, IdStore id, String institution) {
         if (username == null || name == null) {
             return "username or name is empty";
         }
-        Worker worker = new Worker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school,0,0,0);
+        Worker worker = new Worker(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,institution,0,0,0);
         Worker temp=workerRepository.saveAndFlush(worker);
         id.setId(temp.getId());
         return "succeed";
     }
 
     @Override
-    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String school, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance) {
+    public String updateWorker(int workerId,String username, String name, String teleNumber, String eMail,String withdrawnMethod, String education, String workArea, int age,String gender, String major, String institution, int correctNumberAnswered, int allNumberAnswered, int overtimeNumber, float balance) {
         Worker worker=workerRepository.findById(workerId);
-        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,school, correctNumberAnswered, allNumberAnswered, overtimeNumber,balance);
+        worker.setAll(username,name,teleNumber,eMail,withdrawnMethod,education,workArea,age,gender,major,institution, correctNumberAnswered, allNumberAnswered, overtimeNumber,balance);
         workerRepository.saveAndFlush(worker);
         return "succeed";
     }
