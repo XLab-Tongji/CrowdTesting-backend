@@ -712,7 +712,13 @@ public class TaskServiceImpl implements TaskService {
                 }
                 worker.setAllNumberAnswered(worker.getAllNumberAnswered()+1);
             }
-            //4. 存回
+            //4. 记录收支情况
+            int number=end-begin+1;
+            worker.setBalance(worker.getBalance()+number*task.getReward());
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            TransactionInformation transactionInformation = new TransactionInformation(0,worker.getId(),task.getId(), now, (float) (task.getPopulation() * task.getReward() * 1.2));
+            transactionInformationRepository.saveAndFlush(transactionInformation);
+            //5. 存回
             workerRepository.saveAndFlush(worker);
         }
     }
