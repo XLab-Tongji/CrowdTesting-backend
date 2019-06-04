@@ -1,13 +1,17 @@
 package com.example.now.service.impl;
 
 import com.example.now.entity.IdStore;
+import com.example.now.entity.WithdrawalInformation;
 import com.example.now.entity.Worker;
+import com.example.now.repository.WithdrawalInformationRepository;
 import com.example.now.service.WorkerService;
 import com.example.now.util.TokenUtils;
 import com.example.now.repository.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +24,8 @@ import java.util.List;
 public class WorkerServiceImpl implements WorkerService {
     @Autowired
     private WorkerRepository workerRepository;
+    @Autowired
+    private WithdrawalInformationRepository withdrawalInformationRepository;
     @Autowired
     private TokenUtils tokenUtils;
 
@@ -72,5 +78,37 @@ public class WorkerServiceImpl implements WorkerService {
         workerRepository.deleteById(id);
         workerRepository.flush();
         return "succeed";
+    }
+
+    @Override
+    public String withdrawMoneyAsWorker(Integer workerId,Float value,String type){
+        //1. 检查 worker 是否存在
+        if(!workerRepository.existsById(workerId)){
+            return "worker does not exist";
+        }
+        //2. 检查余额是否足够
+        Worker worker=workerRepository.findById(workerId.intValue());
+        if(worker.getBalance()<value){
+            return "balance is not enough";
+        }
+        //3. 记录提现数据并存回
+        Timestamp currentTime=new Timestamp(System.currentTimeMillis());
+        int NOT_FINISHED=0;
+        WithdrawalInformation info=new WithdrawalInformation(0,workerId,currentTime,value,type,NOT_FINISHED);
+        withdrawalInformationRepository.saveAndFlush(info);
+        //4. 修改 worker 的 balance 字段并存回
+        worker.setBalance(worker.getBalance()-value);
+        workerRepository.saveAndFlush(worker);
+        return "succeed";
+    }
+
+    @Override
+    public List<WithdrawalInformation> findWithdrawalInformationByWorkerId(Integer workerId){
+        //1. 检查 worker 是否存在
+        if(!workerRepository.existsById(workerId)){
+            return new ArrayList<>();
+        }
+        //2. 查找提现数据并返回
+        return withdrawalInformationRepository.findByWorkerId(workerId);
     }
 }

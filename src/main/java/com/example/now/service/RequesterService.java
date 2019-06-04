@@ -2,6 +2,9 @@ package com.example.now.service;
 
 import com.example.now.entity.IdStore;
 import com.example.now.entity.Requester;
+import com.example.now.entity.WithdrawalInformation;
+
+import java.util.List;
 
 
 /**
@@ -68,4 +71,19 @@ public interface RequesterService {
      * @return 返回值说明：成功或失败信息
      */
     String deleteRequester(int id);
+    /**
+     * withdraw money as requester
+     * @param requesterId requester id
+     * @param value 提现数值
+     * @param type 提现方式
+     * @return 返回值说明：成功或失败信息
+     */
+    String withdrawMoneyAsRequester(Integer requesterId,Float value,String type);
+
+    /**
+     * find withdrawalInformation by requester id
+     * @param requesterId requester id
+     * @return 返回值说明：该 requester 的提现记录
+     */
+    List<WithdrawalInformation> findWithdrawalInformationByRequesterId(Integer requesterId);
 }
