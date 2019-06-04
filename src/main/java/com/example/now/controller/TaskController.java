@@ -56,10 +56,16 @@ public class TaskController {
         Worker worker = workerService.findWorkerByUsername(username);
         worker.setCredit();
         JSONObject areaList = new JSONObject(worker.getWorkArea());
+        String specialType = "ver5";
         List<Task> allTask=taskService.findAllTask();
         List<Task> tasks=new ArrayList<Task>();
         for(Task task : allTask){
-            if(task.getStatus() == 0 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
+            if(specialType.equals(task.getType()) && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
+                if(task.getStatus() < task.getPopulation()){
+                    tasks.add(task);
+                }
+            }
+            else if(task.getStatus() == 0 && task.getMinAge() <= worker.getAge() && task.getMaxAge() >= worker.getAge() && task.getRestrictions() <= worker.getCredit() && areaList.toString().contains(task.getArea())){
                 JSONObject restOfQuestions = new JSONObject(task.getRestOfQuestion());
                 Iterator iterator = restOfQuestions.keys();
                 while(iterator.hasNext()) {

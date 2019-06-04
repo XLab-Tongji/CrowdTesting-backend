@@ -54,12 +54,18 @@ public class SubtaskController {
     }
 
     @RequestMapping(value = "/find-by-sub-task-id", method = RequestMethod.GET)
-    public ResultMap subtaskFindById(int id) {
+    public ResultMap subtaskFindById(Integer id) {
+        if (id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         return new ResultMap().success().data("Subtask", subtaskService.findSubtaskById(id));
     }
 
     @RequestMapping(value = "/find-by-task-id", method = RequestMethod.GET)
-    public ResultMap subtaskFindByTaskId(int taskId) {
+    public ResultMap subtaskFindByTaskId(Integer taskId) {
+        if (taskId == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         List<Subtask> result = subtaskService.findSubtaskByTaskId(taskId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no Subtask.");
@@ -68,7 +74,10 @@ public class SubtaskController {
     }
 
     @RequestMapping(value = "/find-by-worker-id", method = RequestMethod.GET)
-    public ResultMap subtaskFindByWorkerId(int workerId) {
+    public ResultMap subtaskFindByWorkerId(Integer workerId) {
+        if (workerId == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         List<Subtask> result = subtaskService.findSubtaskByWorkerId(workerId);
         if (result.isEmpty()) {
             return new ResultMap().success("204").message("there is no Subtask.");
@@ -89,7 +98,10 @@ public class SubtaskController {
     }
 
     @RequestMapping(value = "/read-subtask-resource", method = RequestMethod.GET)
-    public String subtaskResourceFind(int subtaskId){
+    public String subtaskResourceFind(Integer subtaskId){
+        if (subtaskId == null) {
+            return "empty input";
+        }
         String content = subtaskService.readSubtaskResource(subtaskId);
         JSONObject json=new JSONObject(content);
         json.put("code",200);
@@ -97,7 +109,10 @@ public class SubtaskController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResultMap subtaskAdd(int numberWanted, int taskId, Timestamp createdTime, Timestamp deadline) {
+    public ResultMap subtaskAdd(Integer numberWanted, Integer taskId, Timestamp createdTime, Timestamp deadline) {
+        if (numberWanted == null || taskId == null || createdTime == null || deadline == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore subtaskId=new IdStore();
@@ -159,14 +174,20 @@ public class SubtaskController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
-    public ResultMap subtaskUpdate(Timestamp updatedTime, Timestamp deadline, int id) {
+    public ResultMap subtaskUpdate(Timestamp updatedTime, Timestamp deadline, Integer id) {
+        if (updatedTime == null || deadline == null || id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         Subtask theSubtask = subtaskService.findSubtaskById(id);
         String message = subtaskService.updateSubtask(theSubtask.getBegin(), theSubtask.getEnd(), theSubtask.getCreatedTime(), deadline, updatedTime, theSubtask.getIsFinished(), theSubtask.getType(), theSubtask.getWorkerId(), theSubtask.getTaskId(),theSubtask.getNumberOfTask(), theSubtask.getNowBegin(), id);
         return new ResultMap().success("201").message(message);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResultMap subtaskDelete(int id) {
+    public ResultMap subtaskDelete(Integer id) {
+        if (id == null) {
+            return new ResultMap().fail("400").message("empty input");
+        }
         String message = subtaskService.deleteSubtask(id);
         return new ResultMap().success("201").message(message);
     }

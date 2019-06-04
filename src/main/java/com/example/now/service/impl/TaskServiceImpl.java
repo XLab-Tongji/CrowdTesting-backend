@@ -104,6 +104,7 @@ public class TaskServiceImpl implements TaskService {
         Task temp = new Task(name, description, reward, status, requesterId, type, restrictions, startTime, endTime, population, level, timeLimitation, payTime, area, usage, minAge, maxAge, unReviewed, allNumber);
         //初始化 answer 放在 createTaskResource() 中
         temp.setJudgedNumber(0);
+        temp.setRestOfQuestion("{}");
         Task result = taskRepository.saveAndFlush(temp);
         taskId.setId(result.getId());
         return "succeed";
