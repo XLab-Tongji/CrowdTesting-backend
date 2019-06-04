@@ -15,15 +15,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -50,9 +49,19 @@ public class AnswerController {
     @Autowired
     private HttpServletRequest request;
 
-    @RequestMapping(value = "/find-all", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/find-all", method = RequestMethod.GET)
+    @ResponseBody
     public ResultMap answerFindAll() {
-        return new ResultMap().success().data("Answers", answerService.findAllAnswer());
+        ResultMap result=new ResultMap().success().data("Answers", answerService.findAllAnswer());
+        return result;
+    }*/
+    @RequestMapping(value = "/find-all", method = RequestMethod.GET)
+    public HashMap<String, Object> answerFindAll() {
+        HashMap<String,Object> map=new HashMap<>();
+        map.put("code",2);
+        map.put("message","sdf");
+
+        return map;
     }
 
     @RequestMapping(value = "/find-by-answer-id", method = RequestMethod.GET)

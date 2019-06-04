@@ -61,9 +61,12 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public String addAnswer(int workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt) {
+    public String addAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt) {
         if (answer == null){
             return "inputs are not enough";
+        }
+        if(workerId==null||workerId<=0||taskId<=0||"".equals(answer)||subtaskId<=0||beginAt<=0||endAt<=0||beginAt>endAt){
+            return "invalid parameter";
         }
         Answer temp = new Answer(workerId, taskId, answerTime, answer);
         temp.setSubtaskId(subtaskId);
@@ -92,8 +95,11 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public String updateAnswer(int workerId, int taskId, String answer, Timestamp answerTime,int id,int subtaskId,Integer beginAt,Integer endAt) {
-        Answer newAnswer=answerRepository.findById(id);
+    public String updateAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime,Integer id,int subtaskId,Integer beginAt,Integer endAt) {
+        if(workerId==null||workerId<=0||taskId<=0||"".equals(answer)||id<=0||subtaskId<=0||beginAt<=0||endAt<=0||beginAt>endAt){
+            return "invalid parameter";
+        }
+        Answer newAnswer=answerRepository.findById(id.intValue());
         //判断答案是否相连，即 new_answer.endAt 是否等于 beginAt-1
         if(newAnswer.getEndAt()==beginAt-1){
             //答案 json 合并，并更新字段

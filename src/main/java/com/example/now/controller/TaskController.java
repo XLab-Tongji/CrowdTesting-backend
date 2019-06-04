@@ -49,6 +49,8 @@ public class TaskController {
     @Autowired
     private HttpServletRequest request;
 
+    //TODO : 1. 待改 RestOfQuestion 为空时崩掉
+    //TODO : 2. 未处理'ver5'种类的题
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
         String authToken = request.getHeader(this.tokenHeader);
