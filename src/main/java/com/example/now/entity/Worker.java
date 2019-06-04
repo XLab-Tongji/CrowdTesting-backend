@@ -95,6 +95,7 @@ public class Worker {
             double b = 2 / (Math.exp(-allNumberAnswered/100)+1);
             double c = 2 /(Math.exp(-overtimeNumber/10)+1);
             this.credit = (int)(4 + (accuracyRate - 0.8) * 5 + 2 / (Math.exp(-allNumberAnswered/100)+1) - 2/(Math.exp(-overtimeNumber/10)+1));
+            //this.credit = (int)(((accuracyRate - 0.6) * 2.5 * 0.8527 + 0.1862 * 2 / (Math.exp(-allNumberAnswered/100)+1) - 0.4881 * 2/(Math.exp(-overtimeNumber/10)+1))*6/1.527);
         }
     }
 
