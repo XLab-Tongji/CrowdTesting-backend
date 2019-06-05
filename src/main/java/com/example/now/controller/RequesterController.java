@@ -1,9 +1,6 @@
 package com.example.now.controller;
 
-import com.example.now.entity.IdStore;
-import com.example.now.entity.Requester;
-import com.example.now.entity.ResultMap;
-import com.example.now.entity.TransactionInformation;
+import com.example.now.entity.*;
 import com.example.now.repository.TransactionInformationRepository;
 import com.example.now.service.RequesterService;
 import com.example.now.service.TaskService;
@@ -159,5 +156,36 @@ public class RequesterController {
         Requester requester = requesterService.findRequesterByUsername(username);
         List<TransactionInformation> transactionInformations = transactionInformationRepository.findByRequesterId(requester.getRequesterId());
         return new ResultMap().success().data("transaction_info", transactionInformations);
+    }
+
+    /**
+     * 添加 requester 提现记录
+     * @param requesterId requester id
+     * @param value 提现数值
+     * @param type 提现方式
+     * @return ResultMap
+     */
+    @RequestMapping(value = "/withdrawal-information",method = RequestMethod.POST)
+    public ResultMap withdrawMoneyAsRequester(Integer requesterId,Float value,String type){
+        if(requesterId==null||value==null||type==null){
+            return new ResultMap().fail("400").message("empty input");
+        }
+        String message=requesterService.withdrawMoneyAsRequester(requesterId,value,type);
+        if("requester does not exist".equals(message))
+            return new ResultMap().fail("400").message("requester does not exist");
+        if("balance is not enough".equals(message))
+            return new ResultMap().fail("400").message("balance is not enough");
+        return new ResultMap().success("201").message(message);
+    }
+
+    /**
+     * 查询 requester 提现记录
+     * @param requesterId requester id
+     * @return ResultMap
+     */
+    @RequestMapping(value = "/withdrawal-information",method = RequestMethod.GET)
+    public ResultMap findWithdrawalInformation(Integer requesterId){
+        List<WithdrawalInformation> informations=requesterService.findWithdrawalInformationByRequesterId(requesterId);
+        return new ResultMap().success().data("withdrawal_information",informations);
     }
 }

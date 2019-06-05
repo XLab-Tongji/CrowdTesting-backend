@@ -1,6 +1,7 @@
 package com.example.now.service;
 
 import com.example.now.entity.IdStore;
+import com.example.now.entity.WithdrawalInformation;
 import com.example.now.entity.Worker;
 
 import java.util.List;
@@ -93,4 +94,20 @@ public interface WorkerService {
      * @return 返回值说明：成功或失败信息
      */
     String deleteWorker(int id);
+
+    /**
+     * withdraw money as worker
+     * @param workerId worker id
+     * @param value 提现数值
+     * @param type 提现方式
+     * @return 返回值说明：成功或失败信息
+     */
+    String withdrawMoneyAsWorker(Integer workerId,Float value,String type);
+
+    /**
+     * find withdrawalInformation by worker id
+     * @param workerId worker id
+     * @return 返回值说明：该 worker 的提现记录
+     */
+    List<WithdrawalInformation> findWithdrawalInformationByWorkerId(Integer workerId);
 }

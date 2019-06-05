@@ -58,7 +58,7 @@ public interface AnswerService {
      * @param endAt endAt
      * @return 返回值说明：成功或失败信息
      */
-    String addAnswer(int workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt);
+    String addAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt);
 
     /**
      * update new answer
@@ -73,7 +73,7 @@ public interface AnswerService {
      * @param endAt endAt
      * @return 返回值说明：成功或失败信息
      */
-    String updateAnswer(int workerId, int taskId, String answer, Timestamp answerTime, int id,int subtaskId,Integer beginAt,Integer endAt);
+    String updateAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime, Integer id,int subtaskId,Integer beginAt,Integer endAt);
 
     /**
      * delete answer by answer id

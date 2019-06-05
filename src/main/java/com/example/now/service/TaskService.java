@@ -282,4 +282,10 @@ public interface TaskService {
      */
     String judgeAnswer(int taskId,String answer);
 
+    /**
+     * convert answer to txt file
+     * @param taskId task id
+     * @return false or true
+     */
+    Boolean convertAnswerToFile(Integer taskId);
 }

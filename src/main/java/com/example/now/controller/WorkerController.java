@@ -126,4 +126,35 @@ public class WorkerController {
         List<TransactionInformation> transactionInformations = transactionInformationRepository.findByWorkerId(worker.getId());
         return new ResultMap().success().data("transaction_info", transactionInformations);
     }
+
+    /**
+     * 添加 worker 提现记录
+     * @param workerId worker id
+     * @param value 提现数值
+     * @param type 提现方式
+     * @return ResultMap
+     */
+    @RequestMapping(value = "/withdrawal-information",method = RequestMethod.POST)
+    public ResultMap withdrawMoneyAsWorker(Integer workerId,Float value,String type){
+        if(workerId==null||value==null||type==null){
+            return new ResultMap().fail("400").message("empty input");
+        }
+        String message=workerService.withdrawMoneyAsWorker(workerId,value,type);
+        if("worker does not exist".equals(message))
+            return new ResultMap().fail("400").message("worker does not exist");
+        if("balance is not enough".equals(message))
+            return new ResultMap().fail("400").message("balance is not enough");
+        return new ResultMap().success("201").message(message);
+    }
+
+    /**
+     * 查询 worker 提现记录
+     * @param workerId worker id
+     * @return ResultMap
+     */
+    @RequestMapping(value = "/withdrawal-information",method = RequestMethod.GET)
+    public ResultMap findWithdrawalInformation(Integer workerId){
+        List<WithdrawalInformation> informations=workerService.findWithdrawalInformationByWorkerId(workerId);
+        return new ResultMap().success().data("withdrawal_information",informations);
+    }
 }
