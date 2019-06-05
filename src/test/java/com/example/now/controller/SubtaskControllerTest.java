@@ -77,7 +77,7 @@ public class SubtaskControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
+    /*@Test
     public void subtaskAdd() throws Exception{
         String example = "{\"taskId\":1}";
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/sub-task/add/");
@@ -89,7 +89,7 @@ public class SubtaskControllerTest {
                 .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
-    }
+    }*/
 
     @Test
     public void subtaskUpdate() throws Exception{
