@@ -736,9 +736,8 @@ public class TaskServiceImpl implements TaskService {
         JSONArray answers=new JSONArray(task.getAnswer());
         int population=task.getPopulation();
         int numberOfQuestions=task.getNumberOfQuestions();
-        //TODO : 待改
-        //String filepath="C:/Users/Administrator/Desktop/answer/";
-        String filepath="C:\\testdata\\";
+        String filepath="C:/Users/Administrator/Desktop/answer/";
+        //String filepath="C:\\testdata\\";
         List<String> outputAnswer=new ArrayList<>();
         for(int i=0;i<population;i++){
             JSONArray currentAnswer=answers.getJSONArray(i);

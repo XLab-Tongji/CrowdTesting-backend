@@ -305,9 +305,8 @@ public class TaskController {
     public void getAnswerFile(HttpServletResponse res,Integer taskId){
         if (taskId==null)
             return ;
-        //TODO : 待改
-        //String filePath = "C:/Users/Administrator/Desktop/answer/";
-        String filePath = "C:\\testdata\\";
+        String filePath = "C:/Users/Administrator/Desktop/answer/";
+        //String filePath = "C:\\testdata\\";
         String resourceLink = filePath + taskId + ".txt";
         String filename=taskId+".txt";
         res.setHeader("content-type","application/octet-stream");
