@@ -8,6 +8,7 @@ import com.example.now.service.RequesterService;
 
 import java.io.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
@@ -721,5 +722,59 @@ public class TaskServiceImpl implements TaskService {
             //5. 存回
             workerRepository.saveAndFlush(worker);
         }
+    }
+
+    //TODO : 目前只生成一个 txt 文件，是否要改成一套答案一个 txt 文件
+    //TODO : 放入检测 task 是否完成的函数中
+    @Override
+    public Boolean convertAnswerToFile(Integer taskId){
+        //1. 检查 task 是否存在
+        if(taskId<=0||!taskRepository.existsById(taskId))
+            return false;
+        //2. 准备存入文件内容
+        Task task=taskRepository.findById(taskId.intValue());
+        JSONArray answers=new JSONArray(task.getAnswer());
+        int population=task.getPopulation();
+        int numberOfQuestions=task.getNumberOfQuestions();
+        //TODO : 待改
+        //String filepath="C:/Users/Administrator/Desktop/answer/";
+        String filepath="C:\\testdata\\";
+        List<String> outputAnswer=new ArrayList<>();
+        for(int i=0;i<population;i++){
+            JSONArray currentAnswer=answers.getJSONArray(i);
+            //每道题按 1,1 （前为题号，后为答案）方式存储
+            for(int j=0;j<numberOfQuestions;j++){
+                JSONObject content=currentAnswer.getJSONObject(j).getJSONObject("content");
+                String singleAnswer=content.getInt("index")+","+content.getInt("ans");
+                outputAnswer.add(singleAnswer);
+            }
+        }
+        String resourceLink=filepath+taskId+".txt";
+        //3. 检查放置文件的文件夹路径是否存在，不存在则创建
+        File dir=new File(filepath);
+        if(!dir.exists()){
+            //创建多级目录
+            dir.mkdirs();
+        }
+        File checkFile=new File(resourceLink);
+        BufferedWriter writer=null;
+        try{
+            //4. 检查目标文件是否存在，不存在则创建
+            if(!checkFile.exists()){
+                checkFile.createNewFile();//创建目标文件
+            }
+            //5. 向目标文件写入内容
+            OutputStream out=new FileOutputStream(checkFile);
+            writer=new BufferedWriter(new OutputStreamWriter(out,"UTF-8"));
+            for(String str:outputAnswer){
+                writer.append(str);
+                writer.append(System.getProperty("line.separator"));
+            }
+            writer.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }

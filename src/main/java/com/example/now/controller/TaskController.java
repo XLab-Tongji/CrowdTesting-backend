@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,7 +51,7 @@ public class TaskController {
     @Autowired
     private HttpServletRequest request;
 
-    //TODO : 1. 待改 RestOfQuestion 为空时崩掉
+
     //TODO : 2. 未处理'ver5'种类的题
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
@@ -288,5 +290,50 @@ public class TaskController {
     public ResultMap taskUpdateStatus(){
         taskService.updateStatus();
         return new ResultMap().success("201").message("success");
+    }
+
+    @RequestMapping(value = "/answer-file",method = RequestMethod.POST)
+    public ResultMap convertAnswerToFile(Integer taskId){
+        if(taskId==null)
+            return new ResultMap().fail("400").message("empty input");
+        if(taskService.convertAnswerToFile(taskId))
+            return new ResultMap().success("201").message("success");
+        return new ResultMap().fail("400").message("fail to convert");
+    }
+
+    @RequestMapping(value = "/answer-file",method = RequestMethod.GET)
+    public void getAnswerFile(HttpServletResponse res,Integer taskId){
+        if (taskId==null)
+            return ;
+        //TODO : 待改
+        //String filePath = "C:/Users/Administrator/Desktop/answer/";
+        String filePath = "C:\\testdata\\";
+        String resourceLink = filePath + taskId + ".txt";
+        String filename=taskId+".txt";
+        res.setHeader("content-type","application/octet-stream");
+        res.setHeader("Content-Disposition","attachment;filename="+filename);
+        byte[] buff = new byte[1024];
+        BufferedInputStream bis = null;
+        OutputStream os = null;
+        try {
+            os = res.getOutputStream();
+            bis = new BufferedInputStream(new FileInputStream(new File(resourceLink)));
+            int i = bis.read(buff);
+            while (i != -1) {
+                os.write(buff, 0, buff.length);
+                os.flush();
+                i = bis.read(buff);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
