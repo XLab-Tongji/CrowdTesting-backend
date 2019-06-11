@@ -49,19 +49,10 @@ public class AnswerController {
     @Autowired
     private HttpServletRequest request;
 
-    /*@RequestMapping(value = "/find-all", method = RequestMethod.GET)
-    @ResponseBody
+    @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap answerFindAll() {
         ResultMap result=new ResultMap().success().data("Answers", answerService.findAllAnswer());
         return result;
-    }*/
-    @RequestMapping(value = "/find-all", method = RequestMethod.GET)
-    public HashMap<String, Object> answerFindAll() {
-        HashMap<String,Object> map=new HashMap<>();
-        map.put("code",2);
-        map.put("message","sdf");
-
-        return map;
     }
 
     @RequestMapping(value = "/find-by-answer-id", method = RequestMethod.GET)

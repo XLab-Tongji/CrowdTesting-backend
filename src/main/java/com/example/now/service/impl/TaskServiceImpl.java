@@ -488,6 +488,9 @@ public class TaskServiceImpl implements TaskService {
         if(empty.equals(task.getAnswer())) {
             return false;
         }
+        if(task.getAnswer()==null){
+            return false;
+        }
         JSONArray answers=new JSONArray(task.getAnswer());
         int number=2;
         //TODO : 改为由 population 生成
@@ -507,6 +510,9 @@ public class TaskServiceImpl implements TaskService {
         Task task=taskRepository.findById(taskId);
         String empty = "[]";
         if(empty.equals(task.getAnswer())) {
+            return false;
+        }
+        if(task.getAnswer()==null){
             return false;
         }
         JSONArray answers=new JSONArray(task.getAnswer());
@@ -734,6 +740,7 @@ public class TaskServiceImpl implements TaskService {
             return false;
         //2. 准备存入文件内容
         Task task=taskRepository.findById(taskId.intValue());
+        String type=task.getType();
         JSONArray answers=new JSONArray(task.getAnswer());
         int population=task.getPopulation();
         int numberOfQuestions=task.getNumberOfQuestions();
@@ -745,7 +752,13 @@ public class TaskServiceImpl implements TaskService {
             //每道题按 1,1 （前为题号，后为答案）方式存储
             for(int j=0;j<numberOfQuestions;j++){
                 JSONObject content=currentAnswer.getJSONObject(j).getJSONObject("content");
-                String singleAnswer=content.getInt("index")+","+content.getInt("ans");
+                String singleAnswer="";
+                if("ver1".equals(type)||"ver4".equals(type)) {
+                    singleAnswer = content.getInt("index") + "," + content.getInt("ans");
+                }
+                else if("ver2".equals(type)||"ver3".equals(type)){
+                    singleAnswer=content.getInt("index")+","+content.get("ans").toString();
+                }
                 outputAnswer.add(singleAnswer);
             }
         }
