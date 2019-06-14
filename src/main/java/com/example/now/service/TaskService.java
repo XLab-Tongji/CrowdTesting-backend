@@ -288,4 +288,12 @@ public interface TaskService {
      * @return false or true
      */
     Boolean convertAnswerToFile(Integer taskId);
+
+    /**
+     * find Answer by taskId
+     * 获取 answer 字段并改变格式，例：由  {"content": {"ans": 0, "index": 16}, "isFinished": false} 变为 {"ans": 0, "index": 16}
+     * @param taskId task id
+     * @return String
+     */
+    String findAnswerById(Integer taskId);
 }

@@ -790,4 +790,30 @@ public class TaskServiceImpl implements TaskService {
         }
         return true;
     }
+
+    @Override
+    public String findAnswerById(Integer taskId){
+        //1. 从数据库中获取对应 task 的 answer 字段
+        Task task=taskRepository.findById(taskId.intValue());
+        if(task.getAnswer()==null||task.getNumberOfQuestions()==0)
+            return "failed";
+        String answer=task.getAnswer();
+        int population=task.getPopulation();
+        int numberOfQuestions=task.getNumberOfQuestions();
+        //2. 修改格式
+        JSONArray answerJson=new JSONArray(answer);
+        JSONArray newAnswerJson=new JSONArray();
+        for(int i=0;i<population;i++){
+            JSONArray singleAnswerJson=answerJson.getJSONArray(i);
+            JSONArray newSingleAnswerJson=new JSONArray();
+            for(int j=0;j<numberOfQuestions;j++){
+                JSONObject oneAnswer=singleAnswerJson.getJSONObject(j);
+                newSingleAnswerJson.put(oneAnswer.getJSONObject("content"));
+            }
+            newAnswerJson.put(newSingleAnswerJson);
+        }
+        //3. 返回 answer
+        return newAnswerJson.toString();
+    }
+
 }

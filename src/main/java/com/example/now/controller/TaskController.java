@@ -143,6 +143,18 @@ public class TaskController {
         return new ResultMap().success().data("tasks", result);
     }
 
+    @RequestMapping(value ="/find-answer-by-id",method = RequestMethod.GET)
+    public ResultMap taskFindAnswerById(Integer taskId){
+        if(taskId==null){
+            return new ResultMap().fail("400").message("empty input");
+        }
+        String answer=taskService.findAnswerById(taskId);
+        if("failed".equals(answer)){
+            return new ResultMap().fail("400").message("answer is null");
+        }
+        return new ResultMap().success().data("answer",answer);
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResultMap taskAdd(String name, String description, Float reward, Integer status, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge) {
         if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null) {
