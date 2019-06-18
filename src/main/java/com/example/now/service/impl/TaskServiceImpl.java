@@ -6,6 +6,7 @@ import com.example.now.service.TaskService;
 import com.example.now.repository.SubtaskRepository;
 import com.example.now.service.RequesterService;
 
+import java.awt.event.FocusAdapter;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -600,6 +601,24 @@ public class TaskServiceImpl implements TaskService {
             transactionInformationRepository.saveAndFlush(transactionInformation);
             workerRepository.saveAndFlush(worker);
         }
+        //6. 更新 task 的 answer 字段
+        int population=task.getPopulation();
+        for(int i=0;i<population-1;i++){
+            JSONArray currentAnswer=answers.getJSONArray(i);
+            for(int j=0;j<task.getNumberOfQuestions();j++){
+                //答案正确
+                if(currentAnswer.getJSONObject(j).getJSONObject("content").getInt("ans")==correctAnswer.getJSONObject(j).getJSONObject("content").getInt("ans")){
+                    currentAnswer.getJSONObject(j).getJSONObject("content").put("isCorrect",1);
+                }
+                else{//答案不正确
+                    currentAnswer.getJSONObject(j).getJSONObject("content").put("isCorrect",0);
+                }
+            }
+            answers.put(i,currentAnswer);
+        }
+        task.setAnswer(answers.toString());
+        //写回
+        taskRepository.saveAndFlush(task);
     }
 
     @Override
@@ -634,7 +653,7 @@ public class TaskServiceImpl implements TaskService {
             return "failed";
         }
         //判断是否有足够多需要被判断的题
-        if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getAllNumber()) {
+        if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getPopulation()*task.getNumberOfQuestions()) {
             return "failed";
         }
         //获取答案
@@ -648,21 +667,23 @@ public class TaskServiceImpl implements TaskService {
             int count=0;
             for(int j=0;j<answer.length();j++){
                 JSONObject singleAnswer=answer.getJSONObject(j);
-                if(singleAnswer.getJSONObject("content").isNull("isCorrect")){
+                if(singleAnswer.getJSONObject("content").isNull("isCorrect")||singleAnswer.getJSONObject("content").getInt("isCorrect")==-1){
                     //将 isCorrect 放入 content 中
                     singleAnswer.getJSONObject("content").put("isCorrect",-1);
-                    outputAnswer.put(singleAnswer);
+                    answer.put(j,singleAnswer);
+                    outputAnswer.put(singleAnswer.getJSONObject("content"));
                     count++;
                     if(count==number){
                         break;
                     }
                 }
             }
+            answers.put(i,answer);
             outputAnswers.put(outputAnswer);
         }
         //更新 judgedNumber 与 answer
         task.setJudgedNumber(task.getJudgedNumber()+number);
-        task.setAnswer(outputAnswers.toString());
+        task.setAnswer(answers.toString());
         //存回
         taskRepository.saveAndFlush(task);
         return outputAnswers.toString();
@@ -687,7 +708,7 @@ public class TaskServiceImpl implements TaskService {
                 int index=inputAnswer.getJSONObject(j).getInt("index");
                 singleAnswer.put(index-1,inputAnswer);
             }
-            answers.put(i,answer);
+            answers.put(i,singleAnswer);
         }
         //存回
         task.setAnswer(answers.toString());
@@ -818,4 +839,32 @@ public class TaskServiceImpl implements TaskService {
         return task.getAnswer();
     }
 
+    @Override
+    public String getCorrectRateForTask(Integer taskId){
+        if(!taskRepository.existsById(taskId)){
+            return "task does not exist";
+        }
+        Task task=taskRepository.findById(taskId.intValue());
+        int population=task.getPopulation();
+        int numberOfQuestions=task.getNumberOfQuestions();
+        JSONArray answers=new JSONArray(task.getAnswer());
+        List<Float> output=new ArrayList<>();
+        //根据 content 中的 isCorrect 选项统计任务正确率。若遇到 isCorrect 不存在的情况，就返回"task is not finished"
+        for(int i=0;i<population-1;i++){
+            JSONArray answer=answers.getJSONArray(i);
+            int correctNumber=0;
+            for(int j=0;j<numberOfQuestions;j++){
+                if(answer.getJSONObject(j).getJSONObject("content").isNull("isCorrect")){
+                    return "task is not finished";
+                }
+                if(answer.getJSONObject(j).getJSONObject("content").getInt("isCorrect")==1){
+                    correctNumber++;
+                }
+            }
+            float correctNumberF=correctNumber;
+            output.add(correctNumberF/numberOfQuestions);
+        }
+
+        return output.toString();
+    }
 }
