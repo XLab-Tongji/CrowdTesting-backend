@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -353,4 +354,28 @@ public class TaskController {
             }
         }
     }
+
+    @RequestMapping(value="/correct-rate",method = RequestMethod.GET)
+    public ResultMap getCorrectRateForTask(Integer taskId){
+        if(taskId==null){
+            return new ResultMap().fail("400").message("empty input");
+        }
+        String message=taskService.getCorrectRateForTask(taskId);
+        if("task does not exist".equals(message)){
+            return new ResultMap().fail("400").message(message);
+        }
+        else if ("task is not finished".equals(message)){
+            return new ResultMap().fail("400").message(message);
+        }
+        else{
+            String output=message.substring(1,message.lastIndexOf(']')-1);
+            String[] results=output.split(",");
+            List<Float> correctRate=new ArrayList<>();
+            for(String str:results) {
+                correctRate.add(new Float(str));
+            }
+            return new ResultMap().success().data("correctRate",correctRate);
+        }
+    }
+
 }

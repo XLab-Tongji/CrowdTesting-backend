@@ -296,4 +296,11 @@ public interface TaskService {
      * @return String
      */
     String findAnswerById(Integer taskId);
+
+    /**
+     * 获取前 population-1 套答案的正确率
+     * @param taskId task id
+     * @return String
+     */
+    String getCorrectRateForTask(Integer taskId);
 }

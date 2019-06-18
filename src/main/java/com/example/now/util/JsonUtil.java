@@ -50,8 +50,8 @@ public class JsonUtil {
 
     //初始化 task 中的 answer 字段
     //格式（以 population=3 为例）
-    //[[{"content":{"ans":0,"index":0},"isFinished":false}],[],[]]   单选题
-    //[[{"content":{"ans":[],"index":0},"isFinished":false}],[],[]]   图像题
+    //[[{"content":{"ans":0,"index":0,"isCorrect":-1},"isFinished":false}],[],[]]   单选题
+    //[[{"content":{"ans":0,"index":0,"isCorrect":-1},"isFinished":false}],[],[]]   图像题
     public static String initializeAnswer(int population,int numberOfQuestions,String type){
         JSONArray answers=new JSONArray();
         JSONArray answer=new JSONArray();
@@ -79,7 +79,8 @@ public class JsonUtil {
                 content.put("ans",ans);
             }*/
             content.put("index",i+1);//从第一题开始
-            singleAnswer.put("content",content);
+            content.put("isCorrect",-1);
+            singleAnswer.put("content",content);//代表该答案是否正确（与第三套做对比），在判断正误时修改该值，0 为错误，1 为正确，-1 为未判断正误
             singleAnswer.put("isFinished",false);//代表该答案是否做过
             answer.put(singleAnswer);
         }
