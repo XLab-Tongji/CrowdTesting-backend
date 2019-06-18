@@ -797,7 +797,7 @@ public class TaskServiceImpl implements TaskService {
         Task task=taskRepository.findById(taskId.intValue());
         if(task.getAnswer()==null||task.getNumberOfQuestions()==0)
             return "failed";
-        String answer=task.getAnswer();
+        /*String answer=task.getAnswer();
         int population=task.getPopulation();
         int numberOfQuestions=task.getNumberOfQuestions();
         //2. 修改格式
@@ -813,7 +813,9 @@ public class TaskServiceImpl implements TaskService {
             newAnswerJson.put(newSingleAnswerJson);
         }
         //3. 返回 answer
-        return newAnswerJson.toString();
+        return newAnswerJson.toString();*/
+        //2. 直接返回
+        return task.getAnswer();
     }
 
 }
