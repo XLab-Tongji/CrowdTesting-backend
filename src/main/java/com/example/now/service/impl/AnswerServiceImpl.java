@@ -100,6 +100,16 @@ public class AnswerServiceImpl implements AnswerService {
             return "invalid parameter";
         }
         Answer newAnswer=answerRepository.findById(id.intValue());
+        Subtask subtask=subtaskRepository.findById(subtaskId);
+        //判断该子任务为普通任务还是审核任务
+        int type=subtask.getType();
+        if(type==1){//若为审核任务则需对 answer 进行处理
+            taskService.judgeAnswer(taskId,answer);
+            JSONArray answerJson=new JSONArray(answer);
+            //TODO: 这里硬编码成 2 了，之后需改
+            JSONArray thirdAnswerJson=answerJson.getJSONArray(2);
+            answer=thirdAnswerJson.toString();
+        }
         //判断答案是否相连，即 new_answer.endAt 是否等于 beginAt-1
         if(newAnswer.getEndAt()==beginAt-1){
             //答案 json 合并，并更新字段
@@ -110,8 +120,8 @@ public class AnswerServiceImpl implements AnswerService {
             return "failed";
         }
         answerRepository.saveAndFlush(newAnswer);
+
         //更新对应 subtask 中的 updated_time,now_begin
-        Subtask subtask=subtaskRepository.findById(subtaskId);
         subtask.setNowBegin(endAt+1);
         subtask.setUpdatedTime(new Timestamp(System.currentTimeMillis()));
         //若该子任务已完成，则修改对应子任务字段

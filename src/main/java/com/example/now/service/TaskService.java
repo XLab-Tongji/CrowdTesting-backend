@@ -248,6 +248,7 @@ public interface TaskService {
     void updateStatus();
 
     /**
+     * 已弃用
      * calculate the correct number of answers and update balance
      * 计算 worker 的正确题数、做题总数和余额并更新（针对 ver1,ver4 类型题）
      *
@@ -257,20 +258,21 @@ public interface TaskService {
 
     /**
      * calculate the correct number of answers and update balance
-     * 计算 worker 的正确题数、做题总数和余额并更新（针对 ver2,ver3 类型题）
+     * 计算 worker 的正确题数、做题总数和余额并更新（针对所有类型题）
      *
      * @param taskId task id
      */
-    void calculateCorrectNumberAndBalanceForImage(int taskId);
+    void calculateCorrectNumberAndBalanceForAll(int taskId);
 
     /**
      * get judge answer
      *
      * @param taskId task id
      * @param number number
+     * @param subtaskId subtaskId
      * @return 返回值说明：成功或失败信息
      */
-    String getJudgedAnswer(int taskId,int number);
+    String getJudgedAnswer(int taskId,int number,int subtaskId);
 
     /**
      * get judge answer
