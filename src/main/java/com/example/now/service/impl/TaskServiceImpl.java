@@ -809,7 +809,14 @@ public class TaskServiceImpl implements TaskService {
                      if ("ver1".equals(type) || "ver4".equals(type)) {
                          singleAnswer = content.getInt("index") + "," + content.getInt("ans");
                      } else if ("ver2".equals(type) || "ver3".equals(type)) {
-                         singleAnswer = content.getInt("index") + "," + content.get("ans").toString();
+                         if(currentAnswer.getJSONObject(j).getBoolean("isFinished")) {
+                             //将图像标记题答案归一化
+                             JSONObject customizedContent = JsonUtil.customizeAnswer(content,task.getType());
+                             singleAnswer = customizedContent.getInt("index") + "," + customizedContent.get("ans").toString();
+                         }
+                         else {
+                             singleAnswer = content.getInt("index") + "," + content.get("ans").toString();
+                         }
                      }
                      outputAnswer.add(singleAnswer);
                  }

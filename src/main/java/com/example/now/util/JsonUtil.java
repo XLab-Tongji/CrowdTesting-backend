@@ -91,4 +91,69 @@ public class JsonUtil {
         return answers.toString();
     }
 
+    /**
+     * 在图像标记类问题答案输出成 txt 文件的时候将数值归一化
+     * @param content 结构为: {ans: [[{h:213,x:21,y:25}],[],[],[]], index: 1, isCorrect:-1} ver2
+     *                       {ans: [[[{x:21,y:25},{}]],[],[],[]], index: 1, isCorrect:-1}  ver3
+     * @return JSONObject
+     */
+    public static JSONObject customizeAnswer(JSONObject content,String type){
+        int divisor=256;
+        JSONArray ans=content.getJSONArray("ans");
+
+        if("ver2".equals(type)) {//嵌套两层数组
+            for (int i = 0; i < ans.length(); i++) {
+                if (ans.getJSONArray(i).length() == 0) {
+                    continue;
+                }
+                //遍历 length 大于 0 数组的每一个数值
+                JSONObject singleAns = ans.getJSONArray(i).getJSONObject(0);
+                Iterator iterator = singleAns.keys();
+                while (iterator.hasNext()) {
+                    String key = (String) iterator.next();
+                    Integer value = singleAns.getInt(key);
+                    singleAns.put(key, (float) value / (float) divisor);
+                }
+                //更新
+                ans.getJSONArray(i).put(singleAns);
+            }
+            //更新
+            content.put("ans", ans);
+            return content;
+        }
+        else if("ver3".equals(type)){//嵌套三层数组
+            for(int i=0;i<ans.length();i++){
+                if(ans.getJSONArray(i).length()==0){
+                    continue;
+                }
+                //遍历 length 大于 0 数组的每一个数值
+                JSONArray singleAns=ans.getJSONArray(i);
+                for(int j=0;j<singleAns.length();j++){
+                    if(singleAns.getJSONArray(j).length()==0){
+                        continue;
+                    }
+                    //遍历 length 大于 0 数组的每一个数值
+                    JSONArray thirdAns=singleAns.getJSONArray(j);
+                    for(int index=0;index<thirdAns.length();index++){
+                        JSONObject fourthAns=thirdAns.getJSONObject(index);
+                        Iterator iterator=fourthAns.keys();
+                        while (iterator.hasNext()){
+                            String key=(String) iterator.next();
+                            Integer value=fourthAns.getInt(key);
+                            fourthAns.put(key,(float) value/(float) divisor);
+                        }
+                        thirdAns.put(index,fourthAns);
+                    }
+                    singleAns.put(j,thirdAns);
+                }
+                ans.put(i,singleAns);
+            }
+            content.put("ans",ans);
+            return content;
+        }
+        else{
+            return content;
+        }
+    }
+
 }
