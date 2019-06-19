@@ -118,11 +118,11 @@ public class RequesterController {
      * 参数：number 代表想要判断的题数，1 题对应 population 份答案
      */
     @RequestMapping(value = "/judge-answer",method = RequestMethod.GET)
-    public ResultMap getJudgedAnswer(Integer taskId, Integer number){
-        if (taskId == null || number == null) {
+    public ResultMap getJudgedAnswer(Integer taskId, Integer number,Integer subtaskId){
+        if (taskId == null || number == null||subtaskId==null) {
             return new ResultMap().fail("400").message("empty input");
         }
-        String answer=taskService.getJudgedAnswer(taskId,number);
+        String answer=taskService.getJudgedAnswer(taskId,number,subtaskId);
         String fail = "failed";
         if(fail.equals(answer)) {
             return new ResultMap().fail("400").message("failed");

@@ -111,7 +111,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(null,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(null,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -132,7 +132,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(-1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(-1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -152,7 +152,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(0,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(0,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -172,7 +172,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(Integer.MAX_VALUE,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(Integer.MAX_VALUE,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -192,7 +192,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,-1,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,-1,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -212,7 +212,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,0,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,0,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -233,7 +233,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(1,1,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,1,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -253,7 +253,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,Integer.MAX_VALUE,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,Integer.MAX_VALUE,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -274,7 +274,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(1,taskId,"",currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,"",currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -294,7 +294,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -315,7 +315,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,-1,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,-1,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -336,7 +336,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,0,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,0,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -356,7 +356,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -377,7 +377,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,Integer.MAX_VALUE,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,Integer.MAX_VALUE,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -397,7 +397,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,-1,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,-1,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -417,7 +417,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=1;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,0,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,0,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -437,7 +437,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -457,7 +457,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=1;
         Integer endAt=1;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,Integer.MAX_VALUE,Integer.MAX_VALUE);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,Integer.MAX_VALUE,Integer.MAX_VALUE,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -477,7 +477,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=1;
         Integer endAt=1;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,2,1);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,2,1,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -497,7 +497,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=1;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,-1);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,-1,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -517,7 +517,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=1;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,0);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,0,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -537,7 +537,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -557,7 +557,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=Integer.MAX_VALUE;
         Integer endAt=Integer.MAX_VALUE;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,Integer.MAX_VALUE);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,Integer.MAX_VALUE,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -577,7 +577,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -597,7 +597,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -618,7 +618,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer endAt=2;
 
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -638,7 +638,7 @@ public class AnswerServiceImplTestForUpdateAnswer {
         Integer beginAt=2;
         Integer endAt=2;
         //when
-        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.updateAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }

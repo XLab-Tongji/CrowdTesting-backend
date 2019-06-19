@@ -321,12 +321,12 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/answer-file",method = RequestMethod.GET)
-    public void getAnswerFile(HttpServletResponse res,Integer taskId){
-        if (taskId==null)
+    public void getAnswerFile(HttpServletResponse res,Integer taskId,Integer no){
+        if (taskId==null||no==null)
             return ;
         String filePath = "C:/Users/Administrator/Desktop/answer/";
         //String filePath = "C:\\testdata\\";
-        String resourceLink = filePath + taskId + ".txt";
+        String resourceLink = filePath + taskId+'_'+ no +  ".txt";
         String filename=taskId+".txt";
         res.setHeader("content-type","application/octet-stream");
         res.setHeader("Content-Disposition","attachment;filename="+filename);

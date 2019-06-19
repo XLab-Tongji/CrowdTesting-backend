@@ -531,10 +531,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateStatus(){
-        //获得 isFinished 字段为 0 或 1 的任务
+        //获得 status 字段为 0 或 1 的任务
         List<Task> tasks0=taskRepository.findByStatus(0);
         List<Task> tasks1=taskRepository.findByStatus(1);
-        //处理 isFinished 字段为 0 的任务(普通任务已完成)
+        //处理 status 字段为 0 的任务(普通任务未完成)
         for(int i=0;i<tasks0.size();i++){
             if(isFinishedForSimpleSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(1);
@@ -542,24 +542,22 @@ public class TaskServiceImpl implements TaskService {
             if(isFinishedForAllSubtasks(tasks0.get(i).getId())){
                 tasks0.get(i).setStatus(2);
                 //更新 worker 的正确题数、做题总数、余额
-                String ver1 = "ver1";
-                String ver4 = "ver4";
-                if(ver1.equals(tasks0.get(i).getType())||ver4.equals(tasks0.get(i).getType())){
-                    calculateCorrectNumberAndBalanceForChoice(tasks0.get(i).getId());
+                String ver5 = "ver5";
+                if(!ver5.equals(tasks0.get(i).getType())){
+                    calculateCorrectNumberAndBalanceForAll(tasks0.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks0.get(i));
             //存回
         }
-        //处理 isFinished 字段为 1 的任务(所有任务都已完成)
+        //处理 status 字段为 1 的任务(普通任务已完成)
         for(int i=0;i<tasks1.size();i++){
             if(isFinishedForAllSubtasks(tasks1.get(i).getId())){
                 tasks1.get(i).setStatus(2);
                 //更新 worker 的正确题数和做题总数、余额
-                String ver1 = "ver1";
-                String ver4 = "ver4";
-                if(ver1.equals(tasks1.get(i).getType())||ver4.equals(tasks1.get(i).getType())){
-                    calculateCorrectNumberAndBalanceForChoice(tasks1.get(i).getId());
+                String ver5 = "ver5";
+                if(!ver5.equals(tasks0.get(i).getType())){
+                    calculateCorrectNumberAndBalanceForAll(tasks1.get(i).getId());
                 }
             }
             taskRepository.saveAndFlush(tasks1.get(i));
@@ -644,16 +642,25 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String getJudgedAnswer(int taskId,int number){
-        //判断任务类型
-        Task task=taskRepository.findById(taskId);
-        String ver2 = "ver2";
-        String ver3 = "ver3";
-        if(!(ver2.equals(task.getType()))&&!(ver3.equals(task.getType()))) {
+    public String getJudgedAnswer(int taskId,int number,int subtaskId){
+        //获取起止点
+        if(!subTaskRepository.existsById(subtaskId)){
             return "failed";
         }
-        //判断是否有足够多需要被判断的题
+        Subtask subtask=subTaskRepository.findById(subtaskId);
+        int beginAtNow=subtask.getNowBegin();
+        //判断任务类型（目前不需要判断任务类型了，不是 ver5 就行）
+        Task task=taskRepository.findById(taskId);
+        String ver5 = "ver5";
+        if(ver5.equals(task.getType())) {
+            return "failed";
+        }
+        /*//判断是否有足够多需要被判断的题
         if(task.getJudgedNumber()*task.getPopulation()+number*task.getPopulation()>task.getPopulation()*task.getNumberOfQuestions()) {
+            return "failed";
+        }*/
+        //判断 number 是否超出 subtask 的规定值
+        if(beginAtNow+number>subtask.getEnd()){
             return "failed";
         }
         //获取答案
@@ -665,7 +672,7 @@ public class TaskServiceImpl implements TaskService {
 
             //计数器
             int count=0;
-            for(int j=0;j<answer.length();j++){
+            for(int j=beginAtNow-1;j<answer.length();j++){
                 JSONObject singleAnswer=answer.getJSONObject(j);
                 if(singleAnswer.getJSONObject("content").isNull("isCorrect")||singleAnswer.getJSONObject("content").getInt("isCorrect")==-1){
                     //将 isCorrect 放入 content 中
@@ -691,11 +698,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public String judgeAnswer(int taskId,String answer){
-        //判断任务类型
+        //判断任务类型（目前不需要判断任务类型了，不是 ver5 就行）
         Task task=taskRepository.findById(taskId);
-        String ver2 = "ver2";
-        String ver3 = "ver3";
-        if(!(ver2.equals(task.getType()))&&!(ver3.equals(task.getType()))) {
+        String ver5 = "ver5";
+        if(ver5.equals(task.getType())) {
             return "failed";
         }
         //更新 answer 字段
@@ -714,18 +720,18 @@ public class TaskServiceImpl implements TaskService {
         task.setAnswer(answers.toString());
         //此任务的所有答案是否已经判断完成,若完成，则更新对应 worker 的正确题数，做题总数
         if(task.getJudgedNumber()*task.getPopulation()==task.getAllNumber()){
-            calculateCorrectNumberAndBalanceForImage(taskId);
+            calculateCorrectNumberAndBalanceForAll(taskId);
         }
         return "success";
     }
 
     @Override
-    public void calculateCorrectNumberAndBalanceForImage(int taskId){
+    public void calculateCorrectNumberAndBalanceForAll(int taskId){
         //1. 获取所有答案
         Task task=taskRepository.findById(taskId);
         JSONArray answers=new JSONArray(task.getAnswer());
-        //2. 获取 task 对应的所有 subtask
-        List<Subtask> subtasks=subTaskRepository.findByTaskId(taskId);
+        //2. 获取 task 对应的所有 type 为 0 的 subtask
+        List<Subtask> subtasks=subTaskRepository.findByTaskIdAndType(taskId,0);
         for(int i=0;i<subtasks.size();i++){
             int workerId=subtasks.get(i).getWorkerId();
             int numberOfTask=subtasks.get(i).getNumberOfTask();
@@ -750,65 +756,97 @@ public class TaskServiceImpl implements TaskService {
             //5. 存回
             workerRepository.saveAndFlush(worker);
         }
+        //6. 获取 task 对应的所有 type 为 1 的 subtask
+        List<Subtask> subtasksTypeIs1=subTaskRepository.findByTaskIdAndType(taskId,1);
+        for(int i=0;i<subtasks.size();i++){
+            int workerId=subtasks.get(i).getWorkerId();
+            int numberOfTask=subtasks.get(i).getNumberOfTask();
+            int begin=subtasks.get(i).getBegin();
+            int end=subtasks.get(i).getEnd();
+            Worker worker=workerRepository.findById(workerId);
+            //7. 根据以上信息修改对应 worker 的正确题数，做题总数(对于 checker 默认全对）
+            for(int j=begin-1;j<end;j++){
+                worker.setCorrectNumberAnswered(worker.getCorrectNumberAnswered()+1);
+                worker.setAllNumberAnswered(worker.getAllNumberAnswered()+1);
+            }
+            //8. 记录收支情况
+            int number=end-begin+1;
+            worker.setBalance(worker.getBalance()+number*task.getReward());
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            TransactionInformation transactionInformation = new TransactionInformation(0,worker.getId(),task.getId(), now, (float) (task.getPopulation() * task.getReward() * 1.2));
+            transactionInformationRepository.saveAndFlush(transactionInformation);
+            //9. 存回
+            workerRepository.saveAndFlush(worker);
+        }
     }
 
     //TODO : 目前只生成一个 txt 文件，是否要改成一套答案一个 txt 文件
     //TODO : 放入检测 task 是否完成的函数中
     @Override
     public Boolean convertAnswerToFile(Integer taskId){
-        //1. 检查 task 是否存在
-        if(taskId<=0||!taskRepository.existsById(taskId))
-            return false;
-        //2. 准备存入文件内容
-        Task task=taskRepository.findById(taskId.intValue());
-        String type=task.getType();
-        JSONArray answers=new JSONArray(task.getAnswer());
-        int population=task.getPopulation();
-        int numberOfQuestions=task.getNumberOfQuestions();
-        String filepath="C:/Users/Administrator/Desktop/answer/";
-        //String filepath="C:\\testdata\\";
-        List<String> outputAnswer=new ArrayList<>();
-        for(int i=0;i<population;i++){
-            JSONArray currentAnswer=answers.getJSONArray(i);
-            //每道题按 1,1 （前为题号，后为答案）方式存储
-            for(int j=0;j<numberOfQuestions;j++){
-                JSONObject content=currentAnswer.getJSONObject(j).getJSONObject("content");
-                String singleAnswer="";
-                if("ver1".equals(type)||"ver4".equals(type)) {
-                    singleAnswer = content.getInt("index") + "," + content.getInt("ans");
-                }
-                else if("ver2".equals(type)||"ver3".equals(type)){
-                    singleAnswer=content.getInt("index")+","+content.get("ans").toString();
-                }
-                outputAnswer.add(singleAnswer);
-            }
-        }
-        String resourceLink=filepath+taskId+".txt";
-        //3. 检查放置文件的文件夹路径是否存在，不存在则创建
-        File dir=new File(filepath);
-        if(!dir.exists()){
-            //创建多级目录
-            dir.mkdirs();
-        }
-        File checkFile=new File(resourceLink);
-        BufferedWriter writer=null;
-        try{
-            //4. 检查目标文件是否存在，不存在则创建
-            if(!checkFile.exists()){
-                checkFile.createNewFile();//创建目标文件
-            }
-            //5. 向目标文件写入内容
-            OutputStream out=new FileOutputStream(checkFile);
-            writer=new BufferedWriter(new OutputStreamWriter(out,"UTF-8"));
-            for(String str:outputAnswer){
-                writer.append(str);
-                writer.append(System.getProperty("line.separator"));
-            }
-            writer.flush();
-        }catch (IOException e){
-            e.printStackTrace();
-            return false;
-        }
+         //TODO: 改掉硬编码
+         for(int index=0;index<3;index++) {
+             //1. 检查 task 是否存在
+             if (taskId <= 0 || !taskRepository.existsById(taskId))
+                 return false;
+             //2. 准备存入文件内容
+             Task task = taskRepository.findById(taskId.intValue());
+             String type = task.getType();
+             JSONArray answers = new JSONArray(task.getAnswer());
+             int population = task.getPopulation();
+             int numberOfQuestions = task.getNumberOfQuestions();
+            /*for(int index=0;index<population;index++){
+
+            }*/
+             String filepath = "C:/Users/Administrator/Desktop/answer/";
+             //String filepath="C:\\testdata\\";
+             List<String> outputAnswer = new ArrayList<>();
+                 JSONArray currentAnswer = answers.getJSONArray(index);
+                 //每道题按 1,1 （前为题号，后为答案）方式存储
+                 for (int j = 0; j < numberOfQuestions; j++) {
+                     JSONObject content = currentAnswer.getJSONObject(j).getJSONObject("content");
+                     String singleAnswer = "";
+                     if ("ver1".equals(type) || "ver4".equals(type)) {
+                         singleAnswer = content.getInt("index") + "," + content.getInt("ans");
+                     } else if ("ver2".equals(type) || "ver3".equals(type)) {
+                         if(currentAnswer.getJSONObject(j).getBoolean("isFinished")) {
+                             //将图像标记题答案归一化
+                             JSONObject customizedContent = JsonUtil.customizeAnswer(content,task.getType());
+                             singleAnswer = customizedContent.getInt("index") + "," + customizedContent.get("ans").toString();
+                         }
+                         else {
+                             singleAnswer = content.getInt("index") + "," + content.get("ans").toString();
+                         }
+                     }
+                     outputAnswer.add(singleAnswer);
+                 }
+             String resourceLink = filepath + taskId +'_'+index+ ".txt";
+             //3. 检查放置文件的文件夹路径是否存在，不存在则创建
+             File dir = new File(filepath);
+             if (!dir.exists()) {
+                 //创建多级目录
+                 dir.mkdirs();
+             }
+             File checkFile = new File(resourceLink);
+             BufferedWriter writer = null;
+             try {
+                 //4. 检查目标文件是否存在，不存在则创建
+                 if (!checkFile.exists()) {
+                     checkFile.createNewFile();//创建目标文件
+                 }
+                 //5. 向目标文件写入内容
+                 OutputStream out = new FileOutputStream(checkFile);
+                 writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                 for (String str : outputAnswer) {
+                     writer.append(str);
+                     writer.append(System.getProperty("line.separator"));
+                 }
+                 writer.flush();
+             } catch (IOException e) {
+                 e.printStackTrace();
+                 return false;
+             }
+         }
         return true;
     }
 
