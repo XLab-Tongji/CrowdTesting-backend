@@ -206,7 +206,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(null,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(null,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -245,7 +245,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(-1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(-1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -283,7 +283,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(0,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(0,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -321,7 +321,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(Integer.MAX_VALUE,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(Integer.MAX_VALUE,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -359,7 +359,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,-1,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,-1,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -397,7 +397,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,0,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,0,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -435,7 +435,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,1,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,1,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -473,7 +473,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,Integer.MAX_VALUE,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,Integer.MAX_VALUE,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -511,7 +511,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,"",currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,"",currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -549,7 +549,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -587,7 +587,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,-1,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,-1,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -625,7 +625,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,0,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,0,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -663,7 +663,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -702,7 +702,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,Integer.MAX_VALUE,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,Integer.MAX_VALUE,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -740,7 +740,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,-1,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,-1,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -778,7 +778,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,0,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,0,endAt,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -816,7 +816,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -854,7 +854,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,Integer.MAX_VALUE,Integer.MAX_VALUE);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,Integer.MAX_VALUE,Integer.MAX_VALUE,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -892,7 +892,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,2,1);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,2,1,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -930,7 +930,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,-1);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,-1,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -968,7 +968,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,0);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,0,"");
         //then
         assertThat(message).isEqualTo("invalid parameter");
     }
@@ -1006,7 +1006,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,endAt,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }
@@ -1044,7 +1044,7 @@ public class AnswerServiceImplTest {
         Mockito.when(taskService.updateAnswer(Mockito.any(int.class),Mockito.any(String.class),Mockito.any(int.class))).thenReturn(true);
 
         //when
-        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,Integer.MAX_VALUE);
+        String message=answerService.addAnswer(1,taskId,answer,currentTime,id,subtaskId,beginAt,Integer.MAX_VALUE,"");
         //then
         assertThat(message).isEqualTo("succeed");
     }

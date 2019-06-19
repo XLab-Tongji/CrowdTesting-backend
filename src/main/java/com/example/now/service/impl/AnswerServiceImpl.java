@@ -61,7 +61,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public String addAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt) {
+    public String addAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime, IdStore id,int subtaskId,Integer beginAt,Integer endAt,String isCorrect) {
         if (answer == null){
             return "inputs are not enough";
         }
@@ -73,6 +73,51 @@ public class AnswerServiceImpl implements AnswerService {
         temp.setBeginAt(beginAt);
         temp.setEndAt(endAt);
         Subtask subtask=subtaskRepository.findById(subtaskId);
+        //判断该子任务为普通任务还是审核任务
+        int type=subtask.getType();
+        if(type==1){//若为审核任务则需对 answer 进行处理
+            if("".equals(isCorrect)){
+                return "invalid parameter";
+            }
+            //根据 isCorrect 数组更新 task 的 answer 字段中
+            Task task=taskRepository.findById(taskId);
+            JSONArray answers=new JSONArray(task.getAnswer());
+            JSONArray isCorrectArray =new JSONArray(isCorrect);
+            /*//遍历前 population-1 套答案
+            for(int i=0;i<task.getPopulation()-1;i++){
+                JSONArray singelAnswer=answers.getJSONArray(i);
+                JSONArray isCorrectSingleArray=isCorrectArray.getJSONArray(i);
+                //处理本套答案中 beginAt--endAt 区间的数据
+                for (int j=beginAt-1;j<endAt;j++){
+                    if(isCorrectSingleArray.getInt(j-beginAt+1)==0){//该题错误
+                        singelAnswer.getJSONObject(j).getJSONObject("content").put("isCorrect",0);
+                    }
+                    if(isCorrectSingleArray.getInt(j-beginAt+1)==1){//该题正确
+                        singelAnswer.getJSONObject(j).getJSONObject("content").put("isCorrect",1);
+                    }
+                }
+                //更新 answers
+                answers.put(i,singelAnswer);
+            }*/
+            //处理本套答案中 beginAt--endAt 区间的数据
+            for(int i=beginAt-1;i<endAt;i++){
+                JSONArray isCorrectSingleArray=isCorrectArray.getJSONArray(i-beginAt+1);
+                for(int j=0;j<task.getPopulation()-1;j++){
+                    if(isCorrectSingleArray.getInt(j)==0){//该题错误
+                        //更新 answers
+                        answers.getJSONArray(j).getJSONObject(i).getJSONObject("content").put("isCorrect",0);
+                    }
+                    if(isCorrectSingleArray.getInt(j)==1){//该题正确
+                        //更新 answers
+                        answers.getJSONArray(j).getJSONObject(i).getJSONObject("content").put("isCorrect",1);
+                    }
+                }
+            }
+
+            //存回
+            task.setAnswer(answers.toString());
+            taskRepository.saveAndFlush(task);
+        }
         temp.setNumber(subtask.getEnd()-subtask.getBegin()+1);
         Answer result=answerRepository.saveAndFlush(temp);
         id.setId(result.getId());
@@ -95,7 +140,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public String updateAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime,Integer id,int subtaskId,Integer beginAt,Integer endAt) {
+    public String updateAnswer(Integer workerId, int taskId, String answer, Timestamp answerTime,Integer id,int subtaskId,Integer beginAt,Integer endAt,String isCorrect) {
         if(workerId==null||workerId<=0||taskId<=0||"".equals(answer)||id<=0||subtaskId<=0||beginAt<=0||endAt<=0||beginAt>endAt){
             return "invalid parameter";
         }
@@ -104,11 +149,46 @@ public class AnswerServiceImpl implements AnswerService {
         //判断该子任务为普通任务还是审核任务
         int type=subtask.getType();
         if(type==1){//若为审核任务则需对 answer 进行处理
-            taskService.judgeAnswer(taskId,answer);
-            JSONArray answerJson=new JSONArray(answer);
-            //TODO: 这里硬编码成 2 了，之后需改
-            JSONArray thirdAnswerJson=answerJson.getJSONArray(2);
-            answer=thirdAnswerJson.toString();
+            if("".equals(isCorrect)){
+                return "invalid parameter";
+            }
+            //TODO: 将 isCorrect 数组统计到 task 的 answer 字段中
+            Task task=taskRepository.findById(taskId);
+            JSONArray answers=new JSONArray(task.getAnswer());
+            JSONArray isCorrectArray =new JSONArray(isCorrect);
+            /*//遍历前 population-1 套答案
+            for(int i=0;i<task.getPopulation()-1;i++){
+                JSONArray singelAnswer=answers.getJSONArray(i);
+                JSONArray isCorrectSingleArray=isCorrectArray.getJSONArray(i);
+                //处理本套答案中 beginAt--endAt 区间的数据
+                for (int j=beginAt-1;j<endAt;j++){
+                    if(isCorrectSingleArray.getInt(j-beginAt+1)==0){//该题错误
+                        singelAnswer.getJSONObject(j).getJSONObject("content").put("isCorrect",0);
+                    }
+                    if(isCorrectSingleArray.getInt(j-beginAt+1)==1){//该题正确
+                        singelAnswer.getJSONObject(j).getJSONObject("content").put("isCorrect",1);
+                    }
+                }
+                //更新 answers
+                answers.put(i,singelAnswer);
+            }*/
+            //处理本套答案中 beginAt--endAt 区间的数据
+            for(int i=beginAt-1;i<endAt;i++){
+                JSONArray isCorrectSingleArray=isCorrectArray.getJSONArray(i-beginAt+1);
+                for(int j=0;j<task.getPopulation()-1;j++){
+                    if(isCorrectSingleArray.getInt(j)==0){//该题错误
+                        //更新 answers
+                        answers.getJSONArray(j).getJSONObject(i).getJSONObject("content").put("isCorrect",0);
+                    }
+                    if(isCorrectSingleArray.getInt(j)==1){//该题正确
+                        //更新 answers
+                        answers.getJSONArray(j).getJSONObject(i).getJSONObject("content").put("isCorrect",1);
+                    }
+                }
+            }
+            //存回
+            task.setAnswer(answers.toString());
+            taskRepository.saveAndFlush(task);
         }
         //判断答案是否相连，即 new_answer.endAt 是否等于 beginAt-1
         if(newAnswer.getEndAt()==beginAt-1){
