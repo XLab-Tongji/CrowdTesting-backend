@@ -323,6 +323,9 @@ public class TaskServiceImpl implements TaskService {
             in.read(filecontent);
             in.close();
             String str = new String(filecontent, 0, fileLength.intValue(), StandardCharsets.UTF_8);
+            if("".equals(str)){
+                return str;
+            }
             JSONObject json = new JSONObject(str);
             return json.toString();
         } catch (FileNotFoundException e) {

@@ -144,7 +144,13 @@ public class AnswerController {
             Answer answer1=answerRepository.findBySubtaskId(subtaskId);
             String authToken = request.getHeader(this.tokenHeader);
             String username = this.tokenUtils.getUsernameFromToken(authToken);
-            String message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getId(),taskId, answer,answerTime,answer1.getId(),subtaskId,beginAt,endAt,isCorrect);
+            String message;
+            if(isCorrect==null){
+                message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getId(),taskId, answer,answerTime,answer1.getId(),subtaskId,beginAt,endAt,"");
+            }
+            else {
+                message = answerService.updateAnswer(workerService.findWorkerByUsername(username).getId(), taskId, answer, answerTime, answer1.getId(), subtaskId, beginAt, endAt, isCorrect);
+            }
             String succeed = "succeed";
             if(!succeed.equals(message)){
                 return new ResultMap().fail("400").message("update failed");
@@ -156,7 +162,13 @@ public class AnswerController {
             String authToken = request.getHeader(this.tokenHeader);
             String username = this.tokenUtils.getUsernameFromToken(authToken);
             IdStore answerId=new IdStore();
-            String message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), taskId,answer,answerTime,answerId,subtaskId,beginAt,endAt,isCorrect);
+            String message;
+            if(isCorrect==null) {
+                message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), taskId, answer, answerTime, answerId, subtaskId, beginAt, endAt, "");
+            }
+            else {
+                message = answerService.addAnswer(workerService.findWorkerByUsername(username).getId(), taskId, answer, answerTime, answerId, subtaskId, beginAt, endAt, isCorrect);
+            }
             String succeed = "succeed";
             if (!succeed.equals(message)) {
                 return new ResultMap().fail("400").message(message);

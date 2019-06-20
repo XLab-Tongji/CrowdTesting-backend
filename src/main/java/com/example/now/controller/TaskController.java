@@ -265,6 +265,12 @@ public class TaskController {
             return "empty input";
         }
         String content = taskService.readTaskResource(taskId);
+        if ("".equals(content)) {//如果 content 为空字符串，则返回的 urls 为空数组
+            JSONObject json=new JSONObject();
+            json.put("code",400);
+            json.put("urls",new ArrayList<>());
+            return json.toString();
+        }
         JSONObject json=new JSONObject(content);
         json.put("code",200);
         return json.toString();
