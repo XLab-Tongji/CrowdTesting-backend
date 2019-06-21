@@ -98,13 +98,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId) {
+    public String addTask(String name, String description, Float reward, int status, Integer requesterId, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, int population, int level, Float timeLimitation, Float payTime, String area, String usage, int minAge, int maxAge, IdStore taskId, int numberOfQuestions) {
         if (name == null || description == null) {
             return "inputs are not enough";
         }
-        int allNumber = 0;
-        Task temp = new Task(name, description, reward, status, requesterId, type, restrictions, startTime, endTime, population, level, timeLimitation, payTime, area, usage, minAge, maxAge, unReviewed, allNumber);
+        Task temp = new Task(name, description, reward, status, requesterId, type, restrictions, startTime, endTime, population, level, timeLimitation, payTime, area, usage, minAge, maxAge, unReviewed, 0);
         //初始化 answer 放在 createTaskResource() 中
+        temp.setNumberOfQuestions(numberOfQuestions);
         temp.setJudgedNumber(0);
         temp.setRestOfQuestion("{}");
         Task result = taskRepository.saveAndFlush(temp);

@@ -164,7 +164,7 @@ public class TaskController {
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge,taskId);
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge,taskId,0);
         String succeed = "succeed";
         if (!succeed.equals(message)) {
             return new ResultMap().fail("400").message(message);
@@ -173,20 +173,16 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/add-questionnaire", method = RequestMethod.POST)
-    public ResultMap questionnaireAdd(String name, String description, Float reward, Integer status, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge,String url) {
-        if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null || url == null) {
+    public ResultMap questionnaireAdd(String name, String description, Float reward, Integer status, String type, Integer restrictions, Timestamp startTime, Timestamp endTime, Integer population, Integer level, Float timeLimitation, Float payTime, String area, String usage, Integer minAge, Integer maxAge,Integer numberOfQuestions) {
+        if (name == null || description == null || reward == null || status == null || type == null || restrictions == null || startTime == null || endTime == null || population == null || level == null || timeLimitation == null || payTime == null || area == null || usage == null || minAge == null || maxAge == null || numberOfQuestions == null) {
             return new ResultMap().fail("400").message("empty input");
         }
         String authToken = request.getHeader(this.tokenHeader);
         String username = this.tokenUtils.getUsernameFromToken(authToken);
         IdStore taskId=new IdStore();
-        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge,taskId);
+        String message = taskService.addTask(name, description,reward,status,requesterService.findRequesterByUsername(username).getRequesterId(),type,restrictions,startTime,endTime,population,level,timeLimitation,payTime,area,usage,minAge,maxAge,taskId, numberOfQuestions);
         String succeed = "succeed";
         if (!succeed.equals(message)) {
-            return new ResultMap().fail("400").message(message);
-        }
-        String message1 = taskService.createTaskResource(taskId.getId(), url);
-        if (!succeed.equals(message1)) {
             return new ResultMap().fail("400").message(message);
         }
         return new ResultMap().success("201").message(message).data("taskId",taskId.getId());
