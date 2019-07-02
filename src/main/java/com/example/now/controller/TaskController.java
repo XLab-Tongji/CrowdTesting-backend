@@ -53,7 +53,6 @@ public class TaskController {
     private HttpServletRequest request;
 
 
-    //TODO : 2. 未处理'ver5'种类的题
     @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public ResultMap taskFindAll() {
         String authToken = request.getHeader(this.tokenHeader);
@@ -61,7 +60,7 @@ public class TaskController {
         Worker worker = workerService.findWorkerByUsername(username);
         worker.setCredit();
         JSONObject areaList = new JSONObject(worker.getWorkArea());
-        String specialType = "ver5";
+        String specialType = "ver6";
         List<Task> allTask=taskService.findAllTask();
         List<Task> tasks=new ArrayList<Task>();
         for(Task task : allTask){

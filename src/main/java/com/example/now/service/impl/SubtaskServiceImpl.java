@@ -60,12 +60,17 @@ public class SubtaskServiceImpl implements SubtaskService{
     @Override
     public Subtask findSubtaskById(int id) {
         Subtask temp = subtaskRepository.findById(id);
-        Task theTask =  taskRepository.findById(temp.getTaskId());
-        Requester theRequester = requesterRepository.findById(theTask.getRequesterId()).get();
-        temp.setTaskType(theTask.getType());
-        temp.setTitle(theTask.getName());
-        temp.setUsername(theRequester.getUsername());
-        return temp;
+        if(temp!=null) {
+            Task theTask = taskRepository.findById(temp.getTaskId());
+            Requester theRequester = requesterRepository.findById(theTask.getRequesterId()).get();
+            temp.setTaskType(theTask.getType());
+            temp.setTitle(theTask.getName());
+            temp.setUsername(theRequester.getUsername());
+            return temp;
+        }
+        else{
+            return null;
+        }
     }
 
     @Override
