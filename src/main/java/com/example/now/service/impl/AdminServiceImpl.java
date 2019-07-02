@@ -39,7 +39,7 @@ public class AdminServiceImpl implements AdminService {
     public boolean reviewTask(int id){
         Task task=taskRepository.findById(id);
         task.setReviewed(reviewed);
-        String type = "调查问卷";
+        String type = "ver6";
         if(!type.equals(task.getType())) {
             Requester requester = requesterRepository.findById(task.getRequesterId()).get();
             Timestamp now = new Timestamp(System.currentTimeMillis());
