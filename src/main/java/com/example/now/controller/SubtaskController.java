@@ -55,16 +55,24 @@ public class SubtaskController {
 
     @RequestMapping(value = "/find-by-sub-task-id", method = RequestMethod.GET)
     public ResultMap subtaskFindById(Integer id) {
+        int max = 10000000;
         if (id == null) {
             return new ResultMap().fail("400").message("empty input");
+        }
+        else if(id <= 0 || id >  max){
+            return new ResultMap().fail("400").message("wrong range");
         }
         return new ResultMap().success().data("Subtask", subtaskService.findSubtaskById(id));
     }
 
     @RequestMapping(value = "/find-by-task-id", method = RequestMethod.GET)
     public ResultMap subtaskFindByTaskId(Integer taskId) {
+        int max = 10000000;
         if (taskId == null) {
             return new ResultMap().fail("400").message("empty input");
+        }
+        else if(taskId <= 0 || taskId >  max){
+            return new ResultMap().fail("400").message("wrong range");
         }
         List<Subtask> result = subtaskService.findSubtaskByTaskId(taskId);
         if (result.isEmpty()) {
@@ -75,8 +83,12 @@ public class SubtaskController {
 
     @RequestMapping(value = "/find-by-worker-id", method = RequestMethod.GET)
     public ResultMap subtaskFindByWorkerId(Integer workerId) {
+        int max = 10000000;
         if (workerId == null) {
             return new ResultMap().fail("400").message("empty input");
+        }
+        else if(workerId <= 0 || workerId >  max){
+            return new ResultMap().fail("400").message("wrong range");
         }
         List<Subtask> result = subtaskService.findSubtaskByWorkerId(workerId);
         if (result.isEmpty()) {

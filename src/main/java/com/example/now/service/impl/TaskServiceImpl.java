@@ -783,15 +783,14 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    //TODO : 目前只生成一个 txt 文件，是否要改成一套答案一个 txt 文件
-    //TODO : 放入检测 task 是否完成的函数中
     @Override
     public Boolean convertAnswerToFile(Integer taskId){
          //TODO: 改掉硬编码
          for(int index=0;index<3;index++) {
              //1. 检查 task 是否存在
-             if (taskId <= 0 || !taskRepository.existsById(taskId))
+             if (taskId <= 0 || !taskRepository.existsById(taskId)) {
                  return false;
+             }
              //2. 准备存入文件内容
              Task task = taskRepository.findById(taskId.intValue());
              String type = task.getType();
@@ -857,8 +856,9 @@ public class TaskServiceImpl implements TaskService {
     public String findAnswerById(Integer taskId){
         //1. 从数据库中获取对应 task 的 answer 字段
         Task task=taskRepository.findById(taskId.intValue());
-        if(task.getAnswer()==null||task.getNumberOfQuestions()==0)
+        if(task.getAnswer()==null||task.getNumberOfQuestions()==0) {
             return "failed";
+        }
         /*String answer=task.getAnswer();
         int population=task.getPopulation();
         int numberOfQuestions=task.getNumberOfQuestions();

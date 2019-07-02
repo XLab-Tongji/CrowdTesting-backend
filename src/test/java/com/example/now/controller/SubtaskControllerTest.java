@@ -1,5 +1,7 @@
 package com.example.now.controller;
 
+import com.example.now.entity.IdStore;
+import com.example.now.entity.ResultMap;
 import com.example.now.entity.Subtask;
 import com.example.now.service.SubtaskService;
 import org.json.JSONObject;
@@ -27,7 +29,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -63,12 +67,9 @@ public class SubtaskControllerTest {
         subtaskList.add(subtask);
 
         //创建 mock 数据
-        //SubtaskController.subtaskFindById 001-004
-        //Mockito.when(subtaskService.findSubtaskById(nullInt)).thenReturn("");
-        //Mockito.when(subtaskService.findSubtaskById(0)).thenReturn(emptyAnswerList);
-        //Mockito.when(subtaskService.findSubtaskById(1)).thenReturn(subtask);
-        //Mockito.when(subtaskService.findSubtaskById(136)).thenReturn(subtask);
-        //Mockito.when(subtaskService.findByWorkerId(Integer.MAX_VALUE)).thenReturn(emptyAnswerList);
+        //构建stub
+        //SubtaskController.subtaskFindById UT_005_001 001-004
+        Mockito.when(subtaskService.findSubtaskById(136)).thenReturn(subtask);
 
         //SubtaskController.subtaskFindByWorkerId 001-004
         Mockito.when(subtaskService.findSubtaskByWorkerId(-1)).thenReturn(emptySubtaskList);
@@ -81,74 +82,197 @@ public class SubtaskControllerTest {
         Mockito.when(subtaskService.findSubtaskByTaskId(-1)).thenReturn(emptySubtaskList);
         Mockito.when(subtaskService.findSubtaskByTaskId(0)).thenReturn(emptySubtaskList);
         Mockito.when(subtaskService.findSubtaskByTaskId(1)).thenReturn(emptySubtaskList);
-        Mockito.when(subtaskService.findSubtaskByTaskId(101)).thenReturn(subtaskList);
+        Mockito.when(subtaskService.findSubtaskByTaskId(110)).thenReturn(subtaskList);
         Mockito.when(subtaskService.findSubtaskByTaskId(Integer.MAX_VALUE)).thenReturn(emptySubtaskList);
-    }
 
 
-    @Test
-    public void subtaskFindById() throws Exception{
-//        String example = "{\"id\":136}";
-//        //mock 行为
-//        Mockito.doReturn("200").when(subtaskService).findSubtaskById(Mockito.any());
-//        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id?id=136")
-//                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
-    public void subtaskFindByTaskId() throws Exception{
-        String json="{\"taskId\":\"-1\"}";
-        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.getBytes())//传json参数
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
-    }
+    public void ut_005_001_001_001() throws Exception{
+        String id = null;
 
-    @Test
-    public void subtaskFindByWorkerId() throws Exception{
-        String json="{\"workerId\":\"-1\"}";
-        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-                .content(json.getBytes())//传json参数
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    public void subtaskResourceFind() throws Exception{
-//        String json="{\"subtaskId\":\"null\"}";
-//        mvc.perform(MockMvcRequestBuilders.get("/sub-task/read-subtask-resource")
-//                .accept(MediaType.APPLICATION_JSON_UTF8)
-//                .content(json.getBytes())//传json参数
-//        )
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andDo(MockMvcResultHandlers.print());
-    }
-
-    /*@Test
-    public void subtaskAdd() throws Exception{
-        String example = "{\"taskId\":1}";
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/sub-task/add/");
-        request.param("taskId","1");
-        request.param("numberWanted","1");
-        request.param("createdTime","2019-06-03 14:40:40");
-        request.param("deadline","2019-06-03 14:40:40");
-        mvc.perform(request
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id").param("id",id)
                 .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
-    }*/
-
-    @Test
-    public void subtaskUpdate() throws Exception{
+                .andDo(print());
     }
 
     @Test
-    public void subtaskDelete() throws Exception{
+    public void ut_005_001_002_001() throws Exception{
+        String id = "-1";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id").param("id",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_001_002_002() throws Exception{
+        String id = "0";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id").param("id",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_001_002_003() throws Exception{
+        String id = "20000000";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id").param("id",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_001_003_001() throws Exception{
+        String id = "1";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id").param("id",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_001_004_001() throws Exception{
+        String id = "136";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-sub-task-id").param("id",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+
+    @Test
+    public void ut_005_002_001_001() throws Exception{
+        String id = null;
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id").param("workerId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_002_002_001() throws Exception{
+        String id = "-1";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id").param("workerId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_002_002_002() throws Exception{
+        String id = "0";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id").param("workerId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_002_002_003() throws Exception{
+        String id = "20000000";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id").param("workerId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_002_003_001() throws Exception{
+        String id = "1";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id").param("workerId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_002_004_001() throws Exception{
+        String id = "101";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-worker-id").param("workerId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_003_001_001() throws Exception{
+        String id = null;
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id").param("taskId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_003_002_001() throws Exception{
+        String id = "-1";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id").param("taskId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_003_002_002() throws Exception{
+        String id = "0";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id").param("taskId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_003_002_003() throws Exception{
+        String id = "20000000";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id").param("taskId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_003_003_001() throws Exception{
+        String id = "1";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id").param("taskId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+    @Test
+    public void ut_005_003_004_001() throws Exception{
+        String id = "110";
+
+        mvc.perform(MockMvcRequestBuilders.get("/sub-task/find-by-task-id").param("taskId",id)
+                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+                .andDo(print());
+    }
+
+
+    @Test
+    public void ut_005_004_001_001() throws Exception{
+//        String workerId = "null";
+//        String taskId = "110";
+//        String createdTime = "2019-5-20 20:00:00";
+//        String deadline = "2019-5-20 20:00:00";
+//        String updatedTime = "2019-5-20 20:00:00";
+//        String isFinished = "0";
+//        String type = "0";
+//        String numberOfTask = "1";
+//        String nowBegin = "1";
+//        String id = new IdStore();
+//        String begin = "1";
+//        String end=1
+
+//        String id = "null";
+//        String createdTime = "2019-5-20 20:00:00";
+//        String deadline = "2019-5-20 20:00:00";
+//
+//        mvc.perform(MockMvcRequestBuilders.get("/sub-task/update").param("id",id).param("createdTime",createdTime).param("deadline",deadline)
+//                .accept(MediaType.APPLICATION_JSON)) //accept指定客户端能够接收的内容类型
+//                .andDo(print());
     }
 }
